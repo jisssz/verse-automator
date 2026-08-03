@@ -1,3 +1,4 @@
+import { useEffect, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -7,9 +8,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { supabase } from "@/integrations/supabase/client";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -77,20 +78,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "DailyVerse AI — Affiliate Content Automation" },
+      { name: "description", content: "Generate trending product ideas, AI-written Pinterest pins, and images. Built for affiliate marketers." },
+      { name: "author", content: "DailyVerse AI" },
+      { property: "og:title", content: "DailyVerse AI — Affiliate Content Automation" },
+      { property: "og:description", content: "Generate trending product ideas, AI-written Pinterest pins, and images. Built for affiliate marketers." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
@@ -117,10 +114,41 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
+        queryClient.invalidateQueries();
+      }
+    });
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, [queryClient]);
+
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <Header />
       <Outlet />
     </QueryClientProvider>
+  );
+}
+
+function Header() {
+  return (
+    <header className="border-b border-border bg-background">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <Link to="/" className="text-lg font-bold tracking-tight text-foreground">
+          DailyVerse AI
+        </Link>
+        <nav className="flex items-center gap-4">
+          <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+            Home
+          </Link>
+          <Link to="/auth" className="text-sm text-muted-foreground hover:text-foreground">
+            Sign in
+          </Link>
+        </nav>
+      </div>
+    </header>
   );
 }
