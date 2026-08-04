@@ -1,6 +1,6 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,9 +8,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Sparkles, Image, Pin, FileSpreadsheet, ArrowLeft, Save } from "lucide-react";
+import {
+  Loader2,
+  Sparkles,
+  Image as ImageIcon,
+  Pin,
+  Download,
+  ArrowLeft,
+  Save,
+} from "lucide-react";
 import { useState } from "react";
-import { getCampaignWithProducts } from "@/lib/campaigns.functions";
+import { toast } from "sonner";
+import { getCampaignWithProducts, getProfile } from "@/lib/campaigns.functions";
 import { generatePinContent, generateImagePrompt, saveGeneratedContent } from "@/lib/ai.functions";
 import { streamImage } from "@/lib/streamImage";
 
