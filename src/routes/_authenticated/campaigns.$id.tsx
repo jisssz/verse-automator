@@ -410,7 +410,7 @@ function ProductCard({
                 {generatingImage ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
-                  <Image className="mr-2 h-4 w-4" />
+                  <ImageIcon className="mr-2 h-4 w-4" />
                 )}
                 Generate image
               </Button>
@@ -423,16 +423,13 @@ function ProductCard({
 
           <TabsContent value="publish" className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Publish this pin to Pinterest or export to Google Sheets. Connect your accounts in settings first.
+              Use "Export CSV" at the top of the page to import every pin into Google Sheets.
+              Direct Pinterest posting needs a Pinterest connection, which isn't set up yet.
             </p>
             <div className="flex flex-wrap gap-2">
               <Button disabled size="sm" variant="outline">
                 <Pin className="mr-2 h-4 w-4" />
-                Post to Pinterest
-              </Button>
-              <Button disabled size="sm" variant="outline">
-                <FileSpreadsheet className="mr-2 h-4 w-4" />
-                Export to Sheets
+                Post to Pinterest (coming soon)
               </Button>
             </div>
           </TabsContent>
