@@ -129,11 +129,37 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <Header />
       <Outlet />
+      <Toaster />
     </QueryClientProvider>
   );
 }
 
 function Header() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void supabase.auth.getSession().then(({ data }) => {
+      if (active) setSignedIn(Boolean(data.session));
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSignedIn(Boolean(session));
+    });
+    return () => {
+      active = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    void router.navigate({ to: "/auth", replace: true });
+  }
+
   return (
     <header className="border-b border-border bg-background">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
@@ -144,9 +170,26 @@ function Header() {
           <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
             Home
           </Link>
-          <Link to="/auth" className="text-sm text-muted-foreground hover:text-foreground">
-            Sign in
-          </Link>
+          {signedIn ? (
+            <>
+              <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
+                Dashboard
+              </Link>
+              <Link to="/settings" className="text-sm text-muted-foreground hover:text-foreground">
+                Settings
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link to="/auth" className="text-sm text-muted-foreground hover:text-foreground">
+              Sign in
+            </Link>
+          )}
         </nav>
       </div>
     </header>
