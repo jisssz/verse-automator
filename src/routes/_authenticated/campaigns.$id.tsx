@@ -38,8 +38,10 @@ export const Route = createFileRoute("/_authenticated/campaigns/$id")({
 function CampaignDetailPage() {
   const { id } = Route.useParams();
   const queryClient = useQueryClient();
+  const [bulkRunning, setBulkRunning] = useState(false);
 
   const getCampaignFn = useServerFn(getCampaignWithProducts);
+  const getProfileFn = useServerFn(getProfile);
   const generateContentFn = useServerFn(generatePinContent);
   const generateImagePromptFn = useServerFn(generateImagePrompt);
   const saveContentFn = useServerFn(saveGeneratedContent);
@@ -49,8 +51,25 @@ function CampaignDetailPage() {
     queryFn: () => getCampaignFn({ data: { id } }),
   });
 
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => getProfileFn(),
+  });
+
   if (error) {
-    throw notFound();
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="text-center">
+          <h1 className="text-xl font-semibold text-foreground">Campaign not found</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            It may have been deleted or you don't have access.
+          </p>
+          <Link to="/dashboard" className="mt-4 inline-block">
+            <Button variant="outline">Back to dashboard</Button>
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   if (isLoading || !data) {
@@ -62,25 +81,110 @@ function CampaignDetailPage() {
   }
 
   const { campaign, products } = data;
+  const affiliateTemplate = profile?.affiliate_link_template ?? "";
+
+  async function handleGenerateAll() {
+    setBulkRunning(true);
+    let ok = 0;
+    for (const product of products) {
+      try {
+        const result = await generateContentFn({
+          data: {
+            campaignId: campaign.id,
+            productId: product.id,
+            productName: product.product_name,
+            ...(product.trend_note ? { trendNote: product.trend_note } : {}),
+            ...(campaign.niche ? { niche: campaign.niche } : {}),
+            ...(affiliateTemplate ? { affiliateLinkTemplate: affiliateTemplate } : {}),
+          },
+        });
+        await saveContentFn({
+          data: {
+            productId: product.id,
+            headline: result.headline,
+            description: result.description || result.headline,
+            pinTitle: result.pinTitle,
+            pinDescription: result.pinDescription || result.headline,
+            ...(result.affiliateLink ? { affiliateLink: result.affiliateLink } : {}),
+          },
+        });
+        ok += 1;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    setBulkRunning(false);
+    toast.success(`Generated copy for ${ok} of ${products.length} products`);
+    void queryClient.invalidateQueries({ queryKey: ["campaign", id] });
+  }
+
+  function handleExportCsv() {
+    const rows = [
+      ["Product", "Trend note", "Headline", "Description", "Pin title", "Pin description", "Affiliate link", "Image URL"],
+      ...products.map((p: any) => {
+        const c = p.generated_content?.[0] ?? {};
+        return [
+          p.product_name ?? "",
+          p.trend_note ?? "",
+          c.headline ?? "",
+          c.description ?? "",
+          c.pinterest_title ?? "",
+          c.pin_description ?? "",
+          c.affiliate_link ?? "",
+          c.image_url ?? "",
+        ];
+      }),
+    ];
+    const csv = rows
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${campaign.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-pins.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("CSV exported — import it into Google Sheets");
+  }
 
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-6 flex flex-wrap items-center gap-4">
           <Link to="/dashboard">
             <Button variant="ghost" size="icon">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <div>
+          <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">{campaign.name}</h1>
             <p className="text-muted-foreground">Niche: {campaign.niche || "General"}</p>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={handleGenerateAll} disabled={bulkRunning}>
+              {bulkRunning ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="mr-2 h-4 w-4" />
+              )}
+              Generate all copy
+            </Button>
+            <Button variant="outline" onClick={handleExportCsv}>
+              <Download className="mr-2 h-4 w-4" />
+              Export CSV
+            </Button>
           </div>
         </div>
 
         <div className="mb-6 flex flex-wrap gap-2">
           <Badge variant="outline">{products.length} products</Badge>
           <Badge variant="outline">Status: {campaign.status || "draft"}</Badge>
+          {!affiliateTemplate && (
+            <Badge variant="secondary">
+              No affiliate template — set one in Settings
+            </Badge>
+          )}
         </div>
 
         <div className="space-y-6">
@@ -89,6 +193,7 @@ function CampaignDetailPage() {
               key={product.id}
               product={product}
               campaign={campaign}
+              affiliateTemplate={affiliateTemplate}
               generateContentFn={generateContentFn}
               generateImagePromptFn={generateImagePromptFn}
               saveContentFn={saveContentFn}
