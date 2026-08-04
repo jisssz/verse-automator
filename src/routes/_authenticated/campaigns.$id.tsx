@@ -211,6 +211,7 @@ function CampaignDetailPage() {
 function ProductCard({
   product,
   campaign,
+  affiliateTemplate,
   generateContentFn,
   generateImagePromptFn,
   saveContentFn,
@@ -218,6 +219,7 @@ function ProductCard({
 }: {
   product: any;
   campaign: any;
+  affiliateTemplate: string;
   generateContentFn: ReturnType<typeof useServerFn<typeof generatePinContent>>;
   generateImagePromptFn: ReturnType<typeof useServerFn<typeof generateImagePrompt>>;
   saveContentFn: ReturnType<typeof useServerFn<typeof saveGeneratedContent>>;
@@ -246,22 +248,21 @@ function ProductCard({
           campaignId: campaign.id,
           productId: product.id,
           productName: product.product_name,
-          trendNote: product.trend_note || undefined,
-          niche: campaign.niche || undefined,
-          affiliateLinkTemplate: "",
+          ...(product.trend_note ? { trendNote: product.trend_note } : {}),
+          ...(campaign.niche ? { niche: campaign.niche } : {}),
+          ...(affiliateTemplate ? { affiliateLinkTemplate: affiliateTemplate } : {}),
         },
       });
-      const nextContent = {
+      setContent({
         ...existingContent,
         headline: result.headline,
         description: result.description,
         pinterest_title: result.pinTitle,
         pin_description: result.pinDescription,
         affiliate_link: result.affiliateLink,
-      };
-      setContent(nextContent);
+      });
     } catch (e) {
-      console.error(e);
+      toast.error(e instanceof Error ? e.message : "Generation failed");
     } finally {
       setGenerating(false);
     }
@@ -273,9 +274,9 @@ function ProductCard({
       const promptResult = await generateImagePromptFn({
         data: {
           productName: product.product_name,
-          trendNote: product.trend_note || undefined,
-          niche: campaign.niche || undefined,
-          headline: existingContent.headline || undefined,
+          ...(product.trend_note ? { trendNote: product.trend_note } : {}),
+          ...(campaign.niche ? { niche: campaign.niche } : {}),
+          ...(existingContent.headline ? { headline: existingContent.headline } : {}),
         },
       });
       const prompt = promptResult.imagePrompt;
@@ -286,7 +287,7 @@ function ProductCard({
         if (final) setGeneratingImage(false);
       });
     } catch (e) {
-      console.error(e);
+      toast.error(e instanceof Error ? e.message : "Image generation failed");
       setGeneratingImage(false);
     }
   };
