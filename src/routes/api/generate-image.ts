@@ -1,35 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { OpenAiServiceError, streamOpenAiImageGeneration } from "@/lib/openai.server";
 
 export const Route = createFileRoute("/api/generate-image")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { prompt } = (await request.json()) as { prompt: string };
-        const key = process.env["LOVABLE_API_KEY"];
-        if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
-
-        const upstream = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${key}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "openai/gpt-image-2",
-            prompt,
-            quality: "low",
-            stream: true,
-            partial_images: 1,
-          }),
-        });
-
-        if (!upstream.ok || !upstream.body) {
-          return new Response(await upstream.text(), { status: upstream.status });
+        try {
+          const { prompt } = (await request.json()) as { prompt: string };
+          return await streamOpenAiImageGeneration(prompt);
+        } catch (error) {
+          const message =
+            error instanceof OpenAiServiceError ? error.message : "Image generation failed";
+          const status =
+            error instanceof OpenAiServiceError && error.statusCode ? error.statusCode : 500;
+          return new Response(message, { status });
         }
-
-        return new Response(upstream.body, {
-          headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" },
-        });
       },
     },
   },

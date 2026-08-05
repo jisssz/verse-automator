@@ -1,8 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { generateText } from "ai";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { createLovableAiGatewayProvider } from "./ai-gateway.server";
+import {
+  generateImagePrompt as generateOpenAiImagePrompt,
+  generatePinCopy as generateOpenAiPinCopy,
+  generateTrendIdeas as generateOpenAiTrendIdeas,
+  generateProductResearch as generateOpenAiProductResearch,
+  generateSeoKeywords as generateOpenAiSeoKeywords,
+  generateHashtags as generateOpenAiHashtags,
+  generateBlogOutline as generateOpenAiBlogOutline,
+  generateVideoScript as generateOpenAiVideoScript,
+  generateProductSummary as generateOpenAiProductSummary,
+  generateComparisonTable as generateOpenAiComparisonTable,
+  generateReview as generateOpenAiReview,
+  generateAndStoreImage as generateOpenAiAndStoreImage,
+} from "./openai.server";
+import { generateDailyVerseContent } from "./daily-verse-engine";
 
 const GenerateContentInput = z.object({
   campaignId: z.string().uuid(),
@@ -20,6 +33,11 @@ const GenerateImagePromptInput = z.object({
   headline: z.string().optional(),
 });
 
+const GenerateDailyVerseContentInput = z.object({
+  productName: z.string().min(1),
+  productCategory: z.string().min(1),
+});
+
 const SaveGeneratedContentInput = z.object({
   productId: z.string().uuid(),
   headline: z.string().min(1),
@@ -31,85 +49,90 @@ const SaveGeneratedContentInput = z.object({
   imageUrl: z.string().optional(),
 });
 
+const ProductResearchInput = z.object({
+  productName: z.string().min(1),
+  niche: z.string().optional(),
+  trendNote: z.string().optional(),
+});
+
+const SeoKeywordsInput = z.object({
+  productName: z.string().min(1),
+  niche: z.string().optional(),
+});
+
+const HashtagsInput = z.object({
+  productName: z.string().min(1),
+  niche: z.string().optional(),
+  platform: z.enum(["pinterest", "instagram", "tiktok"]).optional(),
+});
+
+const BlogOutlineInput = z.object({
+  productName: z.string().min(1),
+  niche: z.string().optional(),
+  trendNote: z.string().optional(),
+  targetKeyword: z.string().optional(),
+});
+
+const VideoScriptInput = z.object({
+  productName: z.string().min(1),
+  niche: z.string().optional(),
+  trendNote: z.string().optional(),
+  durationSeconds: z.number().min(10).max(300).optional(),
+});
+
+const ProductSummaryInput = z.object({
+  productName: z.string().min(1),
+  niche: z.string().optional(),
+  keyBenefits: z.array(z.string()).optional(),
+});
+
+const ComparisonTableInput = z.object({
+  productName: z.string().min(1),
+  competitorName: z.string().optional(),
+  niche: z.string().optional(),
+});
+
+const ReviewInput = z.object({
+  productName: z.string().min(1),
+  niche: z.string().optional(),
+  trendNote: z.string().optional(),
+  affiliateLink: z.string().optional(),
+});
+
+const GenerateAndStoreImageInput = z.object({
+  prompt: z.string().min(1),
+  productId: z.string().uuid(),
+  size: z.enum(["1024x1024", "1024x1792", "1792x1024"]).optional(),
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXISTING SERVER FUNCTIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const generatePinContent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => GenerateContentInput.parse(input))
   .handler(async ({ data }) => {
-    const lovableApiKey = process.env["LOVABLE_API_KEY"];
-    if (!lovableApiKey) throw new Error("Missing LOVABLE_API_KEY");
-
-    const gateway = createLovableAiGatewayProvider(lovableApiKey);
-    const model = gateway("google/gemini-3.6-flash");
-
-    const affiliateLink = data.affiliateLinkTemplate
-      ? data.affiliateLinkTemplate.replace(/\{\{product\}\}/g, data.productName)
-      : "";
-
-    const prompt = `You are an expert Pinterest affiliate marketer.
-
-Product: ${data.productName}
-Niche: ${data.niche || "general"}
-Trend note: ${data.trendNote || "N/A"}
-
-Write the following for a Pinterest pin promoting this product:
-1. A catchy headline (max 60 chars).
-2. A short body description (1-2 sentences, max 160 chars).
-3. A Pinterest title (max 60 chars).
-4. A Pinterest description (max 300 chars, include relevant keywords).
-
-Format exactly as:
-Headline: ...
-Description: ...
-PinTitle: ...
-PinDescription: ...
-
-${affiliateLink ? `End the PinDescription with the link: ${affiliateLink}` : ""}`;
-
-    const result = await generateText({
-      model,
-      prompt,
-      temperature: 0.7,
+    return generateOpenAiPinCopy({
+      productName: data.productName,
+      trendNote: data.trendNote,
+      niche: data.niche,
+      affiliateLinkTemplate: data.affiliateLinkTemplate,
+      safetyIdentifier: data.campaignId,
     });
-
-    const text = result.text;
-    const headline = text.match(/Headline:\s*(.*)/)?.[1]?.trim() || data.productName;
-    const description = text.match(/Description:\s*(.*)/)?.[1]?.trim() || "";
-    const pinTitle = text.match(/PinTitle:\s*(.*)/)?.[1]?.trim() || headline;
-    const pinDescription = text.match(/PinDescription:\s*(.*)/)?.[1]?.trim() || "";
-
-    return {
-      headline,
-      description,
-      pinTitle,
-      pinDescription,
-      affiliateLink,
-    };
   });
 
 export const generateImagePrompt = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => GenerateImagePromptInput.parse(input))
   .handler(async ({ data }) => {
-    const lovableApiKey = process.env["LOVABLE_API_KEY"];
-    if (!lovableApiKey) throw new Error("Missing LOVABLE_API_KEY");
-
-    const gateway = createLovableAiGatewayProvider(lovableApiKey);
-    const model = gateway("google/gemini-3.6-flash");
-
-    const prompt = `Write a short, vivid image-generation prompt for a Pinterest pin about "${data.productName}".
-Niche: ${data.niche || "general"}
-Trend note: ${data.trendNote || "N/A"}
-${data.headline ? `Headline: ${data.headline}` : ""}
-
-The image should be vertical (2:3), bright, aesthetically pleasing, and suitable for a Pinterest pin. No text in the image. Keep it under 2 sentences.`;
-
-    const result = await generateText({
-      model,
-      prompt,
-      temperature: 0.8,
+    return generateOpenAiImagePrompt({
+      productName: data.productName,
+      trendNote: data.trendNote,
+      niche: data.niche,
+      headline: data.headline,
+      safetyIdentifier: data.productName,
     });
-
-    return { imagePrompt: result.text.trim() };
   });
 
 export const saveGeneratedContent = createServerFn({ method: "POST" })
@@ -131,7 +154,7 @@ export const saveGeneratedContent = createServerFn({ method: "POST" })
 
     const { error } = await supabase.from("generated_content").upsert(
       {
-        product_id: data.productId,
+        campaign_product_id: data.productId,
         headline: data.headline,
         description: data.description,
         pinterest_title: data.pinTitle,
@@ -140,7 +163,7 @@ export const saveGeneratedContent = createServerFn({ method: "POST" })
         image_prompt: data.imagePrompt || null,
         image_url: data.imageUrl || null,
       },
-      { onConflict: "product_id" },
+      { onConflict: "campaign_product_id" },
     );
 
     if (error) throw new Error(error.message);
@@ -158,38 +181,204 @@ export const generateTrendIdeas = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }) => {
-    const lovableApiKey = process.env["LOVABLE_API_KEY"];
-    if (!lovableApiKey) throw new Error("Missing LOVABLE_API_KEY");
+    return generateOpenAiTrendIdeas({
+      niche: data.niche,
+      count: data.count,
+      safetyIdentifier: data.niche,
+    });
+  });
 
-    const gateway = createLovableAiGatewayProvider(lovableApiKey);
-    const model = gateway("google/gemini-3.6-flash");
+export const generateDailyVerseEngine = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => GenerateDailyVerseContentInput.parse(input))
+  .handler(async ({ data }) => {
+    return generateDailyVerseContent({
+      productName: data.productName,
+      productCategory: data.productCategory,
+    });
+  });
 
-    const prompt = `You are a trend researcher for Pinterest affiliate marketing.
-Niche: ${data.niche}
+// ─────────────────────────────────────────────────────────────────────────────
+// NEW SERVER FUNCTIONS
+// ─────────────────────────────────────────────────────────────────────────────
 
-Generate ${data.count} trending product ideas or topics that would perform well as Pinterest pins right now. Each idea should be a concrete product name or topic with a short trend note.
+/**
+ * Deep product research — target audience, key benefits, competitive advantage,
+ * pricing insight, market trend, content angles.
+ */
+export const generateProductResearch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => ProductResearchInput.parse(input))
+  .handler(async ({ data }) => {
+    return generateOpenAiProductResearch({
+      productName: data.productName,
+      niche: data.niche,
+      trendNote: data.trendNote,
+      safetyIdentifier: data.productName,
+    });
+  });
 
-Format as a numbered list, one per line:
-1. Product name | trend note
-2. Product name | trend note
-...`;
+/**
+ * Standalone SEO keyword generation — primary, secondary, long-tail, search intent.
+ */
+export const generateSeoKeywords = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => SeoKeywordsInput.parse(input))
+  .handler(async ({ data }) => {
+    return generateOpenAiSeoKeywords({
+      productName: data.productName,
+      niche: data.niche,
+      safetyIdentifier: data.productName,
+    });
+  });
 
-    const result = await generateText({
-      model,
-      prompt,
-      temperature: 0.8,
+/**
+ * Standalone hashtag generator — niche, broad, and combined lists.
+ */
+export const generateHashtags = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => HashtagsInput.parse(input))
+  .handler(async ({ data }) => {
+    return generateOpenAiHashtags({
+      productName: data.productName,
+      niche: data.niche,
+      platform: data.platform,
+      safetyIdentifier: data.productName,
+    });
+  });
+
+/**
+ * Full blog post outline — H1/H2/H3 structure with key points.
+ */
+export const generateBlogOutline = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => BlogOutlineInput.parse(input))
+  .handler(async ({ data }) => {
+    return generateOpenAiBlogOutline({
+      productName: data.productName,
+      niche: data.niche,
+      trendNote: data.trendNote,
+      targetKeyword: data.targetKeyword,
+      safetyIdentifier: data.productName,
+    });
+  });
+
+/**
+ * Short-form video script for Reels/TikTok/Pinterest Video.
+ */
+export const generateVideoScript = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => VideoScriptInput.parse(input))
+  .handler(async ({ data }) => {
+    return generateOpenAiVideoScript({
+      productName: data.productName,
+      niche: data.niche,
+      trendNote: data.trendNote,
+      durationSeconds: data.durationSeconds,
+      safetyIdentifier: data.productName,
+    });
+  });
+
+/**
+ * Concise product summary — one-liner, paragraph summary, bullet points.
+ */
+export const generateProductSummary = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => ProductSummaryInput.parse(input))
+  .handler(async ({ data }) => {
+    return generateOpenAiProductSummary({
+      productName: data.productName,
+      niche: data.niche,
+      keyBenefits: data.keyBenefits,
+      safetyIdentifier: data.productName,
+    });
+  });
+
+/**
+ * Structured comparison table — product vs competitor feature comparison.
+ */
+export const generateComparisonTable = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => ComparisonTableInput.parse(input))
+  .handler(async ({ data }) => {
+    return generateOpenAiComparisonTable({
+      productName: data.productName,
+      competitorName: data.competitorName,
+      niche: data.niche,
+      safetyIdentifier: data.productName,
+    });
+  });
+
+/**
+ * Editorial product review — rating, pros, cons, body copy, recommendation.
+ */
+export const generateReview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => ReviewInput.parse(input))
+  .handler(async ({ data }) => {
+    return generateOpenAiReview({
+      productName: data.productName,
+      niche: data.niche,
+      trendNote: data.trendNote,
+      affiliateLink: data.affiliateLink,
+      safetyIdentifier: data.productName,
+    });
+  });
+
+/**
+ * Generate image via OpenAI DALL-E and store in Supabase Storage.
+ * Returns imageUrl (public URL or data URL fallback), storagePath, model, dimensions.
+ */
+export const generateAndStoreImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => GenerateAndStoreImageInput.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    // Verify product ownership before generating
+    const { data: product, error: productError } = await supabase
+      .from("campaign_products")
+      .select("campaign_id, campaigns!inner(owner_id)")
+      .eq("id", data.productId)
+      .eq("campaigns.owner_id", userId)
+      .single();
+
+    if (productError || !product) {
+      throw new Error(productError?.message || "Product not found or access denied");
+    }
+
+    const result = await generateOpenAiAndStoreImage({
+      prompt: data.prompt,
+      productId: data.productId,
+      size: data.size,
     });
 
-    const lines = result.text
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => /^\d+\.\s*/.test(line));
-
-    const ideas = lines.map((line) => {
-      const cleaned = line.replace(/^\d+\.\s*/, "");
-      const [productName, trendNote] = cleaned.split("|").map((s) => s.trim());
-      return { productName, trendNote: trendNote || "" };
+    // Write row to generated_images table
+    const { error: insertError } = await supabase.from("generated_images").insert({
+      product_id: data.productId,
+      image_prompt: data.prompt,
+      image_url: result.imageUrl,
+      image_storage_path: result.storagePath,
+      model_name: result.model,
+      width: result.width,
+      height: result.height,
+      status: "completed",
+      is_primary: true,
+      prompt_payload: { prompt: data.prompt, size: data.size ?? "1024x1792" },
+      response_payload: {
+        imageUrl: result.imageUrl,
+        storagePath: result.storagePath,
+        model: result.model,
+      },
     });
 
-    return { ideas: ideas.filter((i) => i.productName) };
+    if (insertError) {
+      // Non-fatal — still return result
+      console.error(
+        "[generateAndStoreImage] Failed to insert generated_images row:",
+        insertError.message,
+      );
+    }
+
+    return result;
   });

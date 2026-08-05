@@ -13,9 +13,37 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedPinsRouteImport } from './routes/_authenticated/pins'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
 import { Route as AuthenticatedCampaignsIdRouteImport } from './routes/_authenticated/campaigns.$id'
+import { Route as ApiN8nAnalyticsRouteImport } from './routes/api/n8n/analytics'
+import { Route as ApiN8nGenerateRouteImport } from './routes/api/n8n/generate'
+import { Route as ApiN8nGenerateContentRouteImport } from './routes/api/n8n/generate-content'
+import { Route as ApiN8nGenerateImageRouteImport } from './routes/api/n8n/generate-image'
+import { Route as ApiN8nHealthRouteImport } from './routes/api/n8n/health'
+import { Route as ApiN8nImportProductsRouteImport } from './routes/api/n8n/import-products'
+import { Route as ApiN8nLogsRouteImport } from './routes/api/n8n/logs'
+import { Route as ApiN8nPipelineRouteImport } from './routes/api/n8n/pipeline'
+import { Route as ApiN8nProductRouteImport } from './routes/api/n8n/product'
+import { Route as ApiN8nPublishPinRouteImport } from './routes/api/n8n/publish-pin'
+import { Route as ApiN8nRetryWorkflowRouteImport } from './routes/api/n8n/retry-workflow'
+import { Route as ApiN8nStartRouteImport } from './routes/api/n8n/start'
+import { Route as ApiN8nStatusRouteImport } from './routes/api/n8n/status'
+import { Route as ApiN8nTestRouteImport } from './routes/api/n8n/test'
+import { Route as ApiPinterestAnalyticsRouteImport } from './routes/api/pinterest/analytics'
+import { Route as ApiPinterestBoardsRouteImport } from './routes/api/pinterest/boards'
+import { Route as ApiPinterestCallbackRouteImport } from './routes/api/pinterest/callback'
+import { Route as ApiPinterestConnectRouteImport } from './routes/api/pinterest/connect'
+import { Route as ApiPinterestDisconnectRouteImport } from './routes/api/pinterest/disconnect'
+import { Route as ApiPinterestJobsRouteImport } from './routes/api/pinterest/jobs'
+import { Route as ApiPinterestPinRouteImport } from './routes/api/pinterest/pin'
+import { Route as ApiPinterestProcessJobsRouteImport } from './routes/api/pinterest/process-jobs'
+import { Route as ApiSheetsAnalyticsRouteImport } from './routes/api/sheets/analytics'
+import { Route as ApiSheetsExportRouteImport } from './routes/api/sheets/export'
+import { Route as ApiSheetsImportRouteImport } from './routes/api/sheets/import'
+import { Route as ApiSheetsRetryRouteImport } from './routes/api/sheets/retry'
+import { Route as ApiSheetsValidateRouteImport } from './routes/api/sheets/validate'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,6 +64,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedPinsRoute = AuthenticatedPinsRouteImport.update({
+  id: '/pins',
+  path: '/pins',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -52,22 +85,213 @@ const AuthenticatedCampaignsIdRoute =
     path: '/campaigns/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const ApiN8nAnalyticsRoute = ApiN8nAnalyticsRouteImport.update({
+  id: '/api/n8n/analytics',
+  path: '/api/n8n/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nGenerateRoute = ApiN8nGenerateRouteImport.update({
+  id: '/api/n8n/generate',
+  path: '/api/n8n/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nGenerateContentRoute = ApiN8nGenerateContentRouteImport.update({
+  id: '/api/n8n/generate-content',
+  path: '/api/n8n/generate-content',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nGenerateImageRoute = ApiN8nGenerateImageRouteImport.update({
+  id: '/api/n8n/generate-image',
+  path: '/api/n8n/generate-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nHealthRoute = ApiN8nHealthRouteImport.update({
+  id: '/api/n8n/health',
+  path: '/api/n8n/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nImportProductsRoute = ApiN8nImportProductsRouteImport.update({
+  id: '/api/n8n/import-products',
+  path: '/api/n8n/import-products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nLogsRoute = ApiN8nLogsRouteImport.update({
+  id: '/api/n8n/logs',
+  path: '/api/n8n/logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nPipelineRoute = ApiN8nPipelineRouteImport.update({
+  id: '/api/n8n/pipeline',
+  path: '/api/n8n/pipeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nProductRoute = ApiN8nProductRouteImport.update({
+  id: '/api/n8n/product',
+  path: '/api/n8n/product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nPublishPinRoute = ApiN8nPublishPinRouteImport.update({
+  id: '/api/n8n/publish-pin',
+  path: '/api/n8n/publish-pin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nRetryWorkflowRoute = ApiN8nRetryWorkflowRouteImport.update({
+  id: '/api/n8n/retry-workflow',
+  path: '/api/n8n/retry-workflow',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nStartRoute = ApiN8nStartRouteImport.update({
+  id: '/api/n8n/start',
+  path: '/api/n8n/start',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nStatusRoute = ApiN8nStatusRouteImport.update({
+  id: '/api/n8n/status',
+  path: '/api/n8n/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiN8nTestRoute = ApiN8nTestRouteImport.update({
+  id: '/api/n8n/test',
+  path: '/api/n8n/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPinterestAnalyticsRoute = ApiPinterestAnalyticsRouteImport.update({
+  id: '/api/pinterest/analytics',
+  path: '/api/pinterest/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPinterestBoardsRoute = ApiPinterestBoardsRouteImport.update({
+  id: '/api/pinterest/boards',
+  path: '/api/pinterest/boards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPinterestCallbackRoute = ApiPinterestCallbackRouteImport.update({
+  id: '/api/pinterest/callback',
+  path: '/api/pinterest/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPinterestConnectRoute = ApiPinterestConnectRouteImport.update({
+  id: '/api/pinterest/connect',
+  path: '/api/pinterest/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPinterestDisconnectRoute = ApiPinterestDisconnectRouteImport.update({
+  id: '/api/pinterest/disconnect',
+  path: '/api/pinterest/disconnect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPinterestJobsRoute = ApiPinterestJobsRouteImport.update({
+  id: '/api/pinterest/jobs',
+  path: '/api/pinterest/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPinterestPinRoute = ApiPinterestPinRouteImport.update({
+  id: '/api/pinterest/pin',
+  path: '/api/pinterest/pin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPinterestProcessJobsRoute = ApiPinterestProcessJobsRouteImport.update({
+  id: '/api/pinterest/process-jobs',
+  path: '/api/pinterest/process-jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSheetsAnalyticsRoute = ApiSheetsAnalyticsRouteImport.update({
+  id: '/api/sheets/analytics',
+  path: '/api/sheets/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSheetsExportRoute = ApiSheetsExportRouteImport.update({
+  id: '/api/sheets/export',
+  path: '/api/sheets/export',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSheetsImportRoute = ApiSheetsImportRouteImport.update({
+  id: '/api/sheets/import',
+  path: '/api/sheets/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSheetsRetryRoute = ApiSheetsRetryRouteImport.update({
+  id: '/api/sheets/retry',
+  path: '/api/sheets/retry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSheetsValidateRoute = ApiSheetsValidateRouteImport.update({
+  id: '/api/sheets/validate',
+  path: '/api/sheets/validate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/pins': typeof AuthenticatedPinsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
+  '/api/n8n/analytics': typeof ApiN8nAnalyticsRoute
+  '/api/n8n/generate': typeof ApiN8nGenerateRoute
+  '/api/n8n/generate-content': typeof ApiN8nGenerateContentRoute
+  '/api/n8n/generate-image': typeof ApiN8nGenerateImageRoute
+  '/api/n8n/health': typeof ApiN8nHealthRoute
+  '/api/n8n/import-products': typeof ApiN8nImportProductsRoute
+  '/api/n8n/logs': typeof ApiN8nLogsRoute
+  '/api/n8n/pipeline': typeof ApiN8nPipelineRoute
+  '/api/n8n/product': typeof ApiN8nProductRoute
+  '/api/n8n/publish-pin': typeof ApiN8nPublishPinRoute
+  '/api/n8n/retry-workflow': typeof ApiN8nRetryWorkflowRoute
+  '/api/n8n/start': typeof ApiN8nStartRoute
+  '/api/n8n/status': typeof ApiN8nStatusRoute
+  '/api/n8n/test': typeof ApiN8nTestRoute
+  '/api/pinterest/analytics': typeof ApiPinterestAnalyticsRoute
+  '/api/pinterest/boards': typeof ApiPinterestBoardsRoute
+  '/api/pinterest/callback': typeof ApiPinterestCallbackRoute
+  '/api/pinterest/connect': typeof ApiPinterestConnectRoute
+  '/api/pinterest/disconnect': typeof ApiPinterestDisconnectRoute
+  '/api/pinterest/jobs': typeof ApiPinterestJobsRoute
+  '/api/pinterest/pin': typeof ApiPinterestPinRoute
+  '/api/pinterest/process-jobs': typeof ApiPinterestProcessJobsRoute
+  '/api/sheets/analytics': typeof ApiSheetsAnalyticsRoute
+  '/api/sheets/export': typeof ApiSheetsExportRoute
+  '/api/sheets/import': typeof ApiSheetsImportRoute
+  '/api/sheets/retry': typeof ApiSheetsRetryRoute
+  '/api/sheets/validate': typeof ApiSheetsValidateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/pins': typeof AuthenticatedPinsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
+  '/api/n8n/analytics': typeof ApiN8nAnalyticsRoute
+  '/api/n8n/generate': typeof ApiN8nGenerateRoute
+  '/api/n8n/generate-content': typeof ApiN8nGenerateContentRoute
+  '/api/n8n/generate-image': typeof ApiN8nGenerateImageRoute
+  '/api/n8n/health': typeof ApiN8nHealthRoute
+  '/api/n8n/import-products': typeof ApiN8nImportProductsRoute
+  '/api/n8n/logs': typeof ApiN8nLogsRoute
+  '/api/n8n/pipeline': typeof ApiN8nPipelineRoute
+  '/api/n8n/product': typeof ApiN8nProductRoute
+  '/api/n8n/publish-pin': typeof ApiN8nPublishPinRoute
+  '/api/n8n/retry-workflow': typeof ApiN8nRetryWorkflowRoute
+  '/api/n8n/start': typeof ApiN8nStartRoute
+  '/api/n8n/status': typeof ApiN8nStatusRoute
+  '/api/n8n/test': typeof ApiN8nTestRoute
+  '/api/pinterest/analytics': typeof ApiPinterestAnalyticsRoute
+  '/api/pinterest/boards': typeof ApiPinterestBoardsRoute
+  '/api/pinterest/callback': typeof ApiPinterestCallbackRoute
+  '/api/pinterest/connect': typeof ApiPinterestConnectRoute
+  '/api/pinterest/disconnect': typeof ApiPinterestDisconnectRoute
+  '/api/pinterest/jobs': typeof ApiPinterestJobsRoute
+  '/api/pinterest/pin': typeof ApiPinterestPinRoute
+  '/api/pinterest/process-jobs': typeof ApiPinterestProcessJobsRoute
+  '/api/sheets/analytics': typeof ApiSheetsAnalyticsRoute
+  '/api/sheets/export': typeof ApiSheetsExportRoute
+  '/api/sheets/import': typeof ApiSheetsImportRoute
+  '/api/sheets/retry': typeof ApiSheetsRetryRoute
+  '/api/sheets/validate': typeof ApiSheetsValidateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -75,9 +299,37 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/pins': typeof AuthenticatedPinsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/_authenticated/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
+  '/api/n8n/analytics': typeof ApiN8nAnalyticsRoute
+  '/api/n8n/generate': typeof ApiN8nGenerateRoute
+  '/api/n8n/generate-content': typeof ApiN8nGenerateContentRoute
+  '/api/n8n/generate-image': typeof ApiN8nGenerateImageRoute
+  '/api/n8n/health': typeof ApiN8nHealthRoute
+  '/api/n8n/import-products': typeof ApiN8nImportProductsRoute
+  '/api/n8n/logs': typeof ApiN8nLogsRoute
+  '/api/n8n/pipeline': typeof ApiN8nPipelineRoute
+  '/api/n8n/product': typeof ApiN8nProductRoute
+  '/api/n8n/publish-pin': typeof ApiN8nPublishPinRoute
+  '/api/n8n/retry-workflow': typeof ApiN8nRetryWorkflowRoute
+  '/api/n8n/start': typeof ApiN8nStartRoute
+  '/api/n8n/status': typeof ApiN8nStatusRoute
+  '/api/n8n/test': typeof ApiN8nTestRoute
+  '/api/pinterest/analytics': typeof ApiPinterestAnalyticsRoute
+  '/api/pinterest/boards': typeof ApiPinterestBoardsRoute
+  '/api/pinterest/callback': typeof ApiPinterestCallbackRoute
+  '/api/pinterest/connect': typeof ApiPinterestConnectRoute
+  '/api/pinterest/disconnect': typeof ApiPinterestDisconnectRoute
+  '/api/pinterest/jobs': typeof ApiPinterestJobsRoute
+  '/api/pinterest/pin': typeof ApiPinterestPinRoute
+  '/api/pinterest/process-jobs': typeof ApiPinterestProcessJobsRoute
+  '/api/sheets/analytics': typeof ApiSheetsAnalyticsRoute
+  '/api/sheets/export': typeof ApiSheetsExportRoute
+  '/api/sheets/import': typeof ApiSheetsImportRoute
+  '/api/sheets/retry': typeof ApiSheetsRetryRoute
+  '/api/sheets/validate': typeof ApiSheetsValidateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -85,26 +337,110 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/pins'
     | '/settings'
     | '/api/generate-image'
     | '/campaigns/$id'
+    | '/api/n8n/analytics'
+    | '/api/n8n/generate'
+    | '/api/n8n/generate-content'
+    | '/api/n8n/generate-image'
+    | '/api/n8n/health'
+    | '/api/n8n/import-products'
+    | '/api/n8n/logs'
+    | '/api/n8n/pipeline'
+    | '/api/n8n/product'
+    | '/api/n8n/publish-pin'
+    | '/api/n8n/retry-workflow'
+    | '/api/n8n/start'
+    | '/api/n8n/status'
+    | '/api/n8n/test'
+    | '/api/pinterest/analytics'
+    | '/api/pinterest/boards'
+    | '/api/pinterest/callback'
+    | '/api/pinterest/connect'
+    | '/api/pinterest/disconnect'
+    | '/api/pinterest/jobs'
+    | '/api/pinterest/pin'
+    | '/api/pinterest/process-jobs'
+    | '/api/sheets/analytics'
+    | '/api/sheets/export'
+    | '/api/sheets/import'
+    | '/api/sheets/retry'
+    | '/api/sheets/validate'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/pins'
     | '/settings'
     | '/api/generate-image'
     | '/campaigns/$id'
+    | '/api/n8n/analytics'
+    | '/api/n8n/generate'
+    | '/api/n8n/generate-content'
+    | '/api/n8n/generate-image'
+    | '/api/n8n/health'
+    | '/api/n8n/import-products'
+    | '/api/n8n/logs'
+    | '/api/n8n/pipeline'
+    | '/api/n8n/product'
+    | '/api/n8n/publish-pin'
+    | '/api/n8n/retry-workflow'
+    | '/api/n8n/start'
+    | '/api/n8n/status'
+    | '/api/n8n/test'
+    | '/api/pinterest/analytics'
+    | '/api/pinterest/boards'
+    | '/api/pinterest/callback'
+    | '/api/pinterest/connect'
+    | '/api/pinterest/disconnect'
+    | '/api/pinterest/jobs'
+    | '/api/pinterest/pin'
+    | '/api/pinterest/process-jobs'
+    | '/api/sheets/analytics'
+    | '/api/sheets/export'
+    | '/api/sheets/import'
+    | '/api/sheets/retry'
+    | '/api/sheets/validate'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/dashboard'
+    | '/_authenticated/pins'
     | '/_authenticated/settings'
     | '/api/generate-image'
     | '/_authenticated/campaigns/$id'
+    | '/api/n8n/analytics'
+    | '/api/n8n/generate'
+    | '/api/n8n/generate-content'
+    | '/api/n8n/generate-image'
+    | '/api/n8n/health'
+    | '/api/n8n/import-products'
+    | '/api/n8n/logs'
+    | '/api/n8n/pipeline'
+    | '/api/n8n/product'
+    | '/api/n8n/publish-pin'
+    | '/api/n8n/retry-workflow'
+    | '/api/n8n/start'
+    | '/api/n8n/status'
+    | '/api/n8n/test'
+    | '/api/pinterest/analytics'
+    | '/api/pinterest/boards'
+    | '/api/pinterest/callback'
+    | '/api/pinterest/connect'
+    | '/api/pinterest/disconnect'
+    | '/api/pinterest/jobs'
+    | '/api/pinterest/pin'
+    | '/api/pinterest/process-jobs'
+    | '/api/sheets/analytics'
+    | '/api/sheets/export'
+    | '/api/sheets/import'
+    | '/api/sheets/retry'
+    | '/api/sheets/validate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -112,6 +448,33 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
+  ApiN8nAnalyticsRoute: typeof ApiN8nAnalyticsRoute
+  ApiN8nGenerateRoute: typeof ApiN8nGenerateRoute
+  ApiN8nGenerateContentRoute: typeof ApiN8nGenerateContentRoute
+  ApiN8nGenerateImageRoute: typeof ApiN8nGenerateImageRoute
+  ApiN8nHealthRoute: typeof ApiN8nHealthRoute
+  ApiN8nImportProductsRoute: typeof ApiN8nImportProductsRoute
+  ApiN8nLogsRoute: typeof ApiN8nLogsRoute
+  ApiN8nPipelineRoute: typeof ApiN8nPipelineRoute
+  ApiN8nProductRoute: typeof ApiN8nProductRoute
+  ApiN8nPublishPinRoute: typeof ApiN8nPublishPinRoute
+  ApiN8nRetryWorkflowRoute: typeof ApiN8nRetryWorkflowRoute
+  ApiN8nStartRoute: typeof ApiN8nStartRoute
+  ApiN8nStatusRoute: typeof ApiN8nStatusRoute
+  ApiN8nTestRoute: typeof ApiN8nTestRoute
+  ApiPinterestAnalyticsRoute: typeof ApiPinterestAnalyticsRoute
+  ApiPinterestBoardsRoute: typeof ApiPinterestBoardsRoute
+  ApiPinterestCallbackRoute: typeof ApiPinterestCallbackRoute
+  ApiPinterestConnectRoute: typeof ApiPinterestConnectRoute
+  ApiPinterestDisconnectRoute: typeof ApiPinterestDisconnectRoute
+  ApiPinterestJobsRoute: typeof ApiPinterestJobsRoute
+  ApiPinterestPinRoute: typeof ApiPinterestPinRoute
+  ApiPinterestProcessJobsRoute: typeof ApiPinterestProcessJobsRoute
+  ApiSheetsAnalyticsRoute: typeof ApiSheetsAnalyticsRoute
+  ApiSheetsExportRoute: typeof ApiSheetsExportRoute
+  ApiSheetsImportRoute: typeof ApiSheetsImportRoute
+  ApiSheetsRetryRoute: typeof ApiSheetsRetryRoute
+  ApiSheetsValidateRoute: typeof ApiSheetsValidateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -144,6 +507,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/pins': {
+      id: '/_authenticated/pins'
+      path: '/pins'
+      fullPath: '/pins'
+      preLoaderRoute: typeof AuthenticatedPinsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
@@ -165,17 +535,208 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignsIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/n8n/analytics': {
+      id: '/api/n8n/analytics'
+      path: '/api/n8n/analytics'
+      fullPath: '/api/n8n/analytics'
+      preLoaderRoute: typeof ApiN8nAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/generate': {
+      id: '/api/n8n/generate'
+      path: '/api/n8n/generate'
+      fullPath: '/api/n8n/generate'
+      preLoaderRoute: typeof ApiN8nGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/generate-content': {
+      id: '/api/n8n/generate-content'
+      path: '/api/n8n/generate-content'
+      fullPath: '/api/n8n/generate-content'
+      preLoaderRoute: typeof ApiN8nGenerateContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/generate-image': {
+      id: '/api/n8n/generate-image'
+      path: '/api/n8n/generate-image'
+      fullPath: '/api/n8n/generate-image'
+      preLoaderRoute: typeof ApiN8nGenerateImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/health': {
+      id: '/api/n8n/health'
+      path: '/api/n8n/health'
+      fullPath: '/api/n8n/health'
+      preLoaderRoute: typeof ApiN8nHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/import-products': {
+      id: '/api/n8n/import-products'
+      path: '/api/n8n/import-products'
+      fullPath: '/api/n8n/import-products'
+      preLoaderRoute: typeof ApiN8nImportProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/logs': {
+      id: '/api/n8n/logs'
+      path: '/api/n8n/logs'
+      fullPath: '/api/n8n/logs'
+      preLoaderRoute: typeof ApiN8nLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/pipeline': {
+      id: '/api/n8n/pipeline'
+      path: '/api/n8n/pipeline'
+      fullPath: '/api/n8n/pipeline'
+      preLoaderRoute: typeof ApiN8nPipelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/product': {
+      id: '/api/n8n/product'
+      path: '/api/n8n/product'
+      fullPath: '/api/n8n/product'
+      preLoaderRoute: typeof ApiN8nProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/publish-pin': {
+      id: '/api/n8n/publish-pin'
+      path: '/api/n8n/publish-pin'
+      fullPath: '/api/n8n/publish-pin'
+      preLoaderRoute: typeof ApiN8nPublishPinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/retry-workflow': {
+      id: '/api/n8n/retry-workflow'
+      path: '/api/n8n/retry-workflow'
+      fullPath: '/api/n8n/retry-workflow'
+      preLoaderRoute: typeof ApiN8nRetryWorkflowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/start': {
+      id: '/api/n8n/start'
+      path: '/api/n8n/start'
+      fullPath: '/api/n8n/start'
+      preLoaderRoute: typeof ApiN8nStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/status': {
+      id: '/api/n8n/status'
+      path: '/api/n8n/status'
+      fullPath: '/api/n8n/status'
+      preLoaderRoute: typeof ApiN8nStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n8n/test': {
+      id: '/api/n8n/test'
+      path: '/api/n8n/test'
+      fullPath: '/api/n8n/test'
+      preLoaderRoute: typeof ApiN8nTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pinterest/analytics': {
+      id: '/api/pinterest/analytics'
+      path: '/api/pinterest/analytics'
+      fullPath: '/api/pinterest/analytics'
+      preLoaderRoute: typeof ApiPinterestAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pinterest/boards': {
+      id: '/api/pinterest/boards'
+      path: '/api/pinterest/boards'
+      fullPath: '/api/pinterest/boards'
+      preLoaderRoute: typeof ApiPinterestBoardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pinterest/callback': {
+      id: '/api/pinterest/callback'
+      path: '/api/pinterest/callback'
+      fullPath: '/api/pinterest/callback'
+      preLoaderRoute: typeof ApiPinterestCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pinterest/connect': {
+      id: '/api/pinterest/connect'
+      path: '/api/pinterest/connect'
+      fullPath: '/api/pinterest/connect'
+      preLoaderRoute: typeof ApiPinterestConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pinterest/disconnect': {
+      id: '/api/pinterest/disconnect'
+      path: '/api/pinterest/disconnect'
+      fullPath: '/api/pinterest/disconnect'
+      preLoaderRoute: typeof ApiPinterestDisconnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pinterest/jobs': {
+      id: '/api/pinterest/jobs'
+      path: '/api/pinterest/jobs'
+      fullPath: '/api/pinterest/jobs'
+      preLoaderRoute: typeof ApiPinterestJobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pinterest/pin': {
+      id: '/api/pinterest/pin'
+      path: '/api/pinterest/pin'
+      fullPath: '/api/pinterest/pin'
+      preLoaderRoute: typeof ApiPinterestPinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pinterest/process-jobs': {
+      id: '/api/pinterest/process-jobs'
+      path: '/api/pinterest/process-jobs'
+      fullPath: '/api/pinterest/process-jobs'
+      preLoaderRoute: typeof ApiPinterestProcessJobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sheets/analytics': {
+      id: '/api/sheets/analytics'
+      path: '/api/sheets/analytics'
+      fullPath: '/api/sheets/analytics'
+      preLoaderRoute: typeof ApiSheetsAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sheets/export': {
+      id: '/api/sheets/export'
+      path: '/api/sheets/export'
+      fullPath: '/api/sheets/export'
+      preLoaderRoute: typeof ApiSheetsExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sheets/import': {
+      id: '/api/sheets/import'
+      path: '/api/sheets/import'
+      fullPath: '/api/sheets/import'
+      preLoaderRoute: typeof ApiSheetsImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sheets/retry': {
+      id: '/api/sheets/retry'
+      path: '/api/sheets/retry'
+      fullPath: '/api/sheets/retry'
+      preLoaderRoute: typeof ApiSheetsRetryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sheets/validate': {
+      id: '/api/sheets/validate'
+      path: '/api/sheets/validate'
+      fullPath: '/api/sheets/validate'
+      preLoaderRoute: typeof ApiSheetsValidateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedPinsRoute: typeof AuthenticatedPinsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedCampaignsIdRoute: typeof AuthenticatedCampaignsIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedPinsRoute: AuthenticatedPinsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedCampaignsIdRoute: AuthenticatedCampaignsIdRoute,
 }
@@ -189,7 +750,44 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
+  ApiN8nAnalyticsRoute: ApiN8nAnalyticsRoute,
+  ApiN8nGenerateRoute: ApiN8nGenerateRoute,
+  ApiN8nGenerateContentRoute: ApiN8nGenerateContentRoute,
+  ApiN8nGenerateImageRoute: ApiN8nGenerateImageRoute,
+  ApiN8nHealthRoute: ApiN8nHealthRoute,
+  ApiN8nImportProductsRoute: ApiN8nImportProductsRoute,
+  ApiN8nLogsRoute: ApiN8nLogsRoute,
+  ApiN8nPipelineRoute: ApiN8nPipelineRoute,
+  ApiN8nProductRoute: ApiN8nProductRoute,
+  ApiN8nPublishPinRoute: ApiN8nPublishPinRoute,
+  ApiN8nRetryWorkflowRoute: ApiN8nRetryWorkflowRoute,
+  ApiN8nStartRoute: ApiN8nStartRoute,
+  ApiN8nStatusRoute: ApiN8nStatusRoute,
+  ApiN8nTestRoute: ApiN8nTestRoute,
+  ApiPinterestAnalyticsRoute: ApiPinterestAnalyticsRoute,
+  ApiPinterestBoardsRoute: ApiPinterestBoardsRoute,
+  ApiPinterestCallbackRoute: ApiPinterestCallbackRoute,
+  ApiPinterestConnectRoute: ApiPinterestConnectRoute,
+  ApiPinterestDisconnectRoute: ApiPinterestDisconnectRoute,
+  ApiPinterestJobsRoute: ApiPinterestJobsRoute,
+  ApiPinterestPinRoute: ApiPinterestPinRoute,
+  ApiPinterestProcessJobsRoute: ApiPinterestProcessJobsRoute,
+  ApiSheetsAnalyticsRoute: ApiSheetsAnalyticsRoute,
+  ApiSheetsExportRoute: ApiSheetsExportRoute,
+  ApiSheetsImportRoute: ApiSheetsImportRoute,
+  ApiSheetsRetryRoute: ApiSheetsRetryRoute,
+  ApiSheetsValidateRoute: ApiSheetsValidateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

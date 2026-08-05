@@ -1,14 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Pin, TrendingUp, Image } from "lucide-react";
+import { Sparkles, Pin, TrendingUp, Image as ImageIcon, Crown, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "DailyVerse AI — Automate Your Pinterest Affiliate Content" },
-      { name: "description", content: "Generate trending product ideas, AI-written pins, and images. Export to Google Sheets and post to Pinterest automatically." },
-      { property: "og:title", content: "DailyVerse AI — Automate Your Pinterest Affiliate Content" },
-      { property: "og:description", content: "Generate trending product ideas, AI-written pins, and images. Export to Google Sheets and post to Pinterest automatically." },
+      { title: "DailyVerse AI — Luxury Skincare AI Automation" },
+      {
+        name: "description",
+        content:
+          "Generate trending skincare product ideas, editorial Pinterest pin copy, and images. Export to Google Sheets and post to Pinterest automatically.",
+      },
+      {
+        property: "og:title",
+        content: "DailyVerse AI — Luxury Skincare AI Automation",
+      },
+      {
+        property: "og:description",
+        content:
+          "Generate trending skincare product ideas, editorial Pinterest pin copy, and images. Export to Google Sheets and post to Pinterest automatically.",
+      },
     ],
   }),
   component: LandingPage,
@@ -16,58 +27,77 @@ export const Route = createFileRoute("/")({
 
 function LandingPage() {
   return (
-    <div className="bg-background text-foreground">
-      <section className="mx-auto max-w-6xl px-4 py-20 text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">
-          Automate Your Pinterest Affiliate Content
+    <div className="bg-[#F8F6F2] text-[#222222] min-h-screen flex flex-col justify-between">
+      {/* Hero Section */}
+      <section className="mx-auto max-w-5xl px-4 py-24 text-center space-y-8">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1E4734]/10 border border-[#C8A96A]/40 text-[#1E4734] text-xs font-semibold uppercase tracking-widest shadow-xs">
+          <Crown className="h-3.5 w-3.5 text-[#C8A96A]" /> Luxury Skincare & Beauty AI Suite
+        </div>
+
+        <h1 className="font-serif text-5xl sm:text-6xl font-bold tracking-tight text-[#222222] leading-tight">
+          Automate Your Luxury Beauty & Skincare Affiliate Pipeline
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-          DailyVerse AI turns a single niche into a week of trending product ideas, AI-written pins, ready-to-post images, and scheduled Pinterest uploads.
+
+        <p className="mx-auto max-w-2xl text-base sm:text-lg text-[#666666] leading-relaxed">
+          DailyVerse AI transforms skincare trends into editorial Pinterest pin copy,
+          high-converting product prompts, Google Sheets exports, and automated Pinterest uploads.
         </p>
-        <div className="mt-8 flex justify-center gap-4">
+
+        <div className="flex flex-wrap justify-center gap-4 pt-4">
           <Link to="/auth">
-            <Button size="lg">Get Started</Button>
+            <Button
+              size="lg"
+              className="bg-[#1E4734] hover:bg-[#355E4D] text-white font-medium shadow-md h-12 px-8 text-sm"
+            >
+              Launch Suite <ArrowRight className="ml-2 h-4 w-4 text-[#C8A96A]" />
+            </Button>
           </Link>
           <Link to="/auth">
-            <Button size="lg" variant="outline">
-              Sign in
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-[#E7E2D9] text-[#1E4734] hover:bg-[#F3EFE8] font-medium h-12 px-8 text-sm"
+            >
+              Instant Demo Access
             </Button>
           </Link>
         </div>
       </section>
 
+      {/* Feature Cards Grid */}
       <section className="mx-auto max-w-6xl px-4 py-16">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <FeatureCard
-            icon={<TrendingUp className="h-6 w-6" />}
-            title="Trend Collection"
-            description="Generate 15 trending product ideas for any niche using AI."
+            icon={<TrendingUp className="h-6 w-6 text-[#1E4734]" />}
+            title="Beauty Trend Intelligence"
+            description="Generate 15 trending skincare & botanical product ideas tailored to high-converting Pinterest niches."
           />
           <FeatureCard
-            icon={<Sparkles className="h-6 w-6" />}
-            title="AI Copywriting"
-            description="Auto-write headlines, descriptions, and Pinterest-optimized titles."
+            icon={<Sparkles className="h-6 w-6 text-[#C8A96A]" />}
+            title="Editorial Copywriting"
+            description="Auto-write high-CTR titles, Pinterest descriptions, and affiliate link templates effortlessly."
           />
           <FeatureCard
-            icon={<Image className="h-6 w-6" />}
-            title="Image Generation"
-            description="Create vertical 2:3 pin images with AI image models."
+            icon={<ImageIcon className="h-6 w-6 text-[#355E4D]" />}
+            title="Luxury Pin Prompting"
+            description="Produce 2:3 vertical product prompts and rendered imagery for aesthetic Pinterest boards."
           />
           <FeatureCard
-            icon={<Pin className="h-6 w-6" />}
-            title="Auto Publishing"
-            description="Export to Google Sheets and post to Pinterest automatically."
+            icon={<Pin className="h-6 w-6 text-[#1E4734]" />}
+            title="Automated Publishing"
+            description="Export to Google Sheets and schedule pins directly via Pinterest API and n8n webhooks."
           />
         </div>
       </section>
 
-      <section className="border-t border-border bg-muted/30">
-        <div className="mx-auto max-w-6xl px-4 py-12 text-center">
-          <p className="text-sm text-muted-foreground">
-            Built as a portfolio project for an AI-powered affiliate marketing workflow.
+      {/* Footer */}
+      <footer className="border-t border-[#E7E2D9] bg-[#FFFFFF]/60 py-8 text-center text-xs text-[#666666]">
+        <div className="mx-auto max-w-6xl px-4">
+          <p>
+            © {new Date().getFullYear()} DailyVerse AI. Luxury Skincare Content Automation Suite.
           </p>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }
@@ -82,10 +112,10 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-      <div className="mb-4 text-primary">{icon}</div>
-      <h3 className="text-lg font-semibold text-card-foreground">{title}</h3>
-      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+    <div className="luxury-card rounded-2xl p-6 space-y-3">
+      <div className="p-3 rounded-xl bg-[#F8F6F2] border border-[#E7E2D9] w-fit">{icon}</div>
+      <h3 className="font-serif text-lg font-bold text-[#222222]">{title}</h3>
+      <p className="text-xs text-[#666666] leading-relaxed">{description}</p>
     </div>
   );
 }

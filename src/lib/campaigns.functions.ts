@@ -138,7 +138,11 @@ export const deleteCampaign = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { error } = await supabase.from("campaigns").delete().eq("id", data.id).eq("owner_id", userId);
+    const { error } = await supabase
+      .from("campaigns")
+      .delete()
+      .eq("id", data.id)
+      .eq("owner_id", userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -173,11 +177,68 @@ export const updateProfile = createServerFn({ method: "POST" })
       display_name: data.displayName ?? null,
       affiliate_link_template: data.affiliateLinkTemplate ?? null,
     };
-    const { error } = await supabase
-      .from("profiles")
-      .update(update)
-      .eq("user_id", userId);
+    const { error } = await supabase.from("profiles").update(update).eq("user_id", userId);
 
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+export const addProductsToCampaign = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        campaignId: z.string().uuid(),
+        products: z
+          .array(
+            z.object({
+              productName: z.string().min(1),
+              sourceUrl: z.string().optional(),
+              trendNote: z.string().optional(),
+            }),
+          )
+          .min(1),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    const { data: campaign, error: campaignError } = await supabase
+      .from("campaigns")
+      .select("id")
+      .eq("id", data.campaignId)
+      .eq("owner_id", userId)
+      .single();
+
+    if (campaignError || !campaign) {
+      throw new Error(campaignError?.message || "Campaign not found");
+    }
+
+    const { data: existing } = await supabase
+      .from("campaign_products")
+      .select("position")
+      .eq("campaign_id", data.campaignId)
+      .order("position", { ascending: false })
+      .limit(1);
+
+    const startPos =
+      existing && existing.length > 0 && existing[0]?.position !== undefined
+        ? existing[0].position + 1
+        : 0;
+
+    const productsToInsert = data.products.map((p, index) => ({
+      campaign_id: data.campaignId,
+      product_name: p.productName,
+      source_url: p.sourceUrl || null,
+      trend_note: p.trendNote || null,
+      position: startPos + index,
+    }));
+
+    const { error: insertError } = await supabase
+      .from("campaign_products")
+      .insert(productsToInsert);
+
+    if (insertError) throw new Error(insertError.message);
+    return { ok: true, count: productsToInsert.length };
   });

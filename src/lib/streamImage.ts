@@ -34,14 +34,21 @@ export async function streamImage(
         }
         try {
           const parsed = JSON.parse(payload);
+          const isFinal =
+            Boolean(parsed.final) ||
+            parsed.type === "image_generation.completed" ||
+            parsed.type === "image_edit.completed";
+
           if (parsed.url) {
-            onUpdate(parsed.url, parsed.final ?? false);
+            onUpdate(parsed.url, isFinal);
           } else if (parsed.image_url) {
-            onUpdate(parsed.image_url, parsed.final ?? false);
+            onUpdate(parsed.image_url, isFinal);
           } else if (parsed.data_url) {
-            onUpdate(parsed.data_url, parsed.final ?? false);
+            onUpdate(parsed.data_url, isFinal);
+          } else if (parsed.b64_json) {
+            onUpdate(`data:image/png;base64,${parsed.b64_json}`, isFinal);
           } else if (parsed.data) {
-            onUpdate(parsed.data, parsed.final ?? false);
+            onUpdate(parsed.data, isFinal);
           }
         } catch {
           // ignore malformed lines
