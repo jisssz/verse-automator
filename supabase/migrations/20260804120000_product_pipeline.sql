@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TABLE public.products (
+CREATE TABLE IF NOT EXISTS public.products (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   campaign_id uuid REFERENCES public.campaigns(id) ON DELETE CASCADE,
@@ -23,33 +23,51 @@ CREATE TABLE public.products (
   UNIQUE (owner_id, source_system, source_hash)
 );
 
-CREATE INDEX products_owner_status_idx ON public.products (owner_id, status, created_at DESC);
-CREATE INDEX products_campaign_idx ON public.products (campaign_id, created_at DESC);
-CREATE INDEX products_source_lookup_idx ON public.products (source_system, source_spreadsheet_id, source_sheet_name);
+CREATE INDEX IF NOT EXISTS products_owner_status_idx ON public.products (owner_id, status, created_at DESC);
+CREATE INDEX IF NOT EXISTS products_campaign_idx ON public.products (campaign_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS products_source_lookup_idx ON public.products (source_system, source_spreadsheet_id, source_sheet_name);
 
-CREATE TABLE public.generated_content (
+-- Ensure generated_content table exists and has columns for both products pipeline and campaign_products
+CREATE TABLE IF NOT EXISTS public.generated_content (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  product_id uuid NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
+  product_id uuid REFERENCES public.products(id) ON DELETE CASCADE,
+  campaign_product_id uuid REFERENCES public.campaign_products(id) ON DELETE CASCADE,
+  headline text,
+  description text,
   pinterest_title text,
-  pinterest_description text,
+  pin_description text,
+  affiliate_link text,
   seo_keywords text[] NOT NULL DEFAULT '{}'::text[],
   hashtags text[] NOT NULL DEFAULT '{}'::text[],
   image_prompt text,
   alt_text text,
   affiliate_cta text,
+  image_url text,
   model_name text,
   prompt_version text,
   prompt_payload jsonb NOT NULL DEFAULT '{}'::jsonb,
   response_payload jsonb NOT NULL DEFAULT '{}'::jsonb,
   status text NOT NULL DEFAULT 'draft',
   created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (product_id)
+  updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX generated_content_status_idx ON public.generated_content (status, created_at DESC);
+-- Safely add missing columns to generated_content if table already existed
+ALTER TABLE public.generated_content
+  ADD COLUMN IF NOT EXISTS headline text,
+  ADD COLUMN IF NOT EXISTS pin_description text,
+  ADD COLUMN IF NOT EXISTS affiliate_link text,
+  ADD COLUMN IF NOT EXISTS seo_keywords text[] NOT NULL DEFAULT '{}'::text[],
+  ADD COLUMN IF NOT EXISTS alt_text text,
+  ADD COLUMN IF NOT EXISTS affiliate_cta text,
+  ADD COLUMN IF NOT EXISTS model_name text,
+  ADD COLUMN IF NOT EXISTS prompt_version text,
+  ADD COLUMN IF NOT EXISTS prompt_payload jsonb NOT NULL DEFAULT '{}'::jsonb,
+  ADD COLUMN IF NOT EXISTS response_payload jsonb NOT NULL DEFAULT '{}'::jsonb;
 
-CREATE TABLE public.generated_images (
+CREATE INDEX IF NOT EXISTS generated_content_status_idx ON public.generated_content (status, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS public.generated_images (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id uuid NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
   generated_content_id uuid REFERENCES public.generated_content(id) ON DELETE SET NULL,
@@ -69,13 +87,13 @@ CREATE TABLE public.generated_images (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE UNIQUE INDEX generated_images_primary_idx
+CREATE UNIQUE INDEX IF NOT EXISTS generated_images_primary_idx
   ON public.generated_images (product_id)
   WHERE is_primary;
 
-CREATE INDEX generated_images_status_idx ON public.generated_images (status, created_at DESC);
+CREATE INDEX IF NOT EXISTS generated_images_status_idx ON public.generated_images (status, created_at DESC);
 
-CREATE TABLE public.pinterest_posts (
+CREATE TABLE IF NOT EXISTS public.pinterest_posts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id uuid NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
   generated_content_id uuid REFERENCES public.generated_content(id) ON DELETE SET NULL,
@@ -95,9 +113,9 @@ CREATE TABLE public.pinterest_posts (
   UNIQUE (product_id)
 );
 
-CREATE INDEX pinterest_posts_status_idx ON public.pinterest_posts (status, created_at DESC);
+CREATE INDEX IF NOT EXISTS pinterest_posts_status_idx ON public.pinterest_posts (status, created_at DESC);
 
-CREATE TABLE public.automation_logs (
+CREATE TABLE IF NOT EXISTS public.automation_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id uuid REFERENCES public.products(id) ON DELETE CASCADE,
   generated_content_id uuid REFERENCES public.generated_content(id) ON DELETE CASCADE,
@@ -112,8 +130,8 @@ CREATE TABLE public.automation_logs (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX automation_logs_run_idx ON public.automation_logs (run_id, created_at DESC);
-CREATE INDEX automation_logs_product_idx ON public.automation_logs (product_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS automation_logs_run_idx ON public.automation_logs (run_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS automation_logs_product_idx ON public.automation_logs (product_id, created_at DESC);
 
 CREATE OR REPLACE FUNCTION public.touch_updated_at()
 RETURNS trigger
@@ -125,21 +143,25 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS products_touch_updated_at ON public.products;
 CREATE TRIGGER products_touch_updated_at
 BEFORE UPDATE ON public.products
 FOR EACH ROW
 EXECUTE FUNCTION public.touch_updated_at();
 
+DROP TRIGGER IF EXISTS generated_content_touch_updated_at ON public.generated_content;
 CREATE TRIGGER generated_content_touch_updated_at
 BEFORE UPDATE ON public.generated_content
 FOR EACH ROW
 EXECUTE FUNCTION public.touch_updated_at();
 
+DROP TRIGGER IF EXISTS generated_images_touch_updated_at ON public.generated_images;
 CREATE TRIGGER generated_images_touch_updated_at
 BEFORE UPDATE ON public.generated_images
 FOR EACH ROW
 EXECUTE FUNCTION public.touch_updated_at();
 
+DROP TRIGGER IF EXISTS pinterest_posts_touch_updated_at ON public.pinterest_posts;
 CREATE TRIGGER pinterest_posts_touch_updated_at
 BEFORE UPDATE ON public.pinterest_posts
 FOR EACH ROW
@@ -163,17 +185,19 @@ ALTER TABLE public.generated_images ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pinterest_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.automation_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage their own products" ON public.products;
 CREATE POLICY "Users can manage their own products"
 ON public.products FOR ALL
 TO authenticated
 USING (auth.uid() = owner_id)
 WITH CHECK (auth.uid() = owner_id);
 
+DROP POLICY IF EXISTS "Users can manage generated content for their own products" ON public.generated_content;
 CREATE POLICY "Users can manage generated content for their own products"
 ON public.generated_content FOR ALL
 TO authenticated
 USING (
-  EXISTS (
+  product_id IS NULL OR EXISTS (
     SELECT 1
     FROM public.products
     WHERE products.id = generated_content.product_id
@@ -181,7 +205,7 @@ USING (
   )
 )
 WITH CHECK (
-  EXISTS (
+  product_id IS NULL OR EXISTS (
     SELECT 1
     FROM public.products
     WHERE products.id = generated_content.product_id
@@ -189,6 +213,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "Users can manage generated images for their own products" ON public.generated_images;
 CREATE POLICY "Users can manage generated images for their own products"
 ON public.generated_images FOR ALL
 TO authenticated
@@ -209,6 +234,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "Users can manage pinterest posts for their own products" ON public.pinterest_posts;
 CREATE POLICY "Users can manage pinterest posts for their own products"
 ON public.pinterest_posts FOR ALL
 TO authenticated
@@ -229,6 +255,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "Users can view automation logs for their own products" ON public.automation_logs;
 CREATE POLICY "Users can view automation logs for their own products"
 ON public.automation_logs FOR SELECT
 TO authenticated

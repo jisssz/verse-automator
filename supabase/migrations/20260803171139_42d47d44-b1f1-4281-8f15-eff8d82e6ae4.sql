@@ -1,4 +1,4 @@
-CREATE TABLE public.profiles (
+CREATE TABLE IF NOT EXISTS public.profiles (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   display_name text,
@@ -9,7 +9,7 @@ CREATE TABLE public.profiles (
   UNIQUE (user_id)
 );
 
-CREATE TABLE public.campaigns (
+CREATE TABLE IF NOT EXISTS public.campaigns (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   name text NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE public.campaigns (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.campaign_products (
+CREATE TABLE IF NOT EXISTS public.campaign_products (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   campaign_id uuid NOT NULL REFERENCES public.campaigns(id) ON DELETE CASCADE,
   product_name text NOT NULL,
@@ -31,9 +31,9 @@ CREATE TABLE public.campaign_products (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.generated_content (
+CREATE TABLE IF NOT EXISTS public.generated_content (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  product_id uuid NOT NULL REFERENCES public.campaign_products(id) ON DELETE CASCADE,
+  product_id uuid REFERENCES public.campaign_products(id) ON DELETE CASCADE,
   pinterest_title text,
   description text,
   hashtags text[],
@@ -41,20 +41,18 @@ CREATE TABLE public.generated_content (
   image_url text,
   status text NOT NULL DEFAULT 'draft',
   created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (product_id)
+  updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.published_pins (
+CREATE TABLE IF NOT EXISTS public.published_pins (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  product_id uuid NOT NULL REFERENCES public.campaign_products(id) ON DELETE CASCADE,
+  product_id uuid REFERENCES public.campaign_products(id) ON DELETE CASCADE,
   pinterest_pin_id text,
   pin_url text,
   published_at timestamptz,
   status text NOT NULL DEFAULT 'scheduled',
   created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (product_id)
+  updated_at timestamptz NOT NULL DEFAULT now()
 );
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.profiles TO authenticated;
@@ -78,18 +76,21 @@ ALTER TABLE public.campaign_products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.generated_content ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.published_pins ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage their own profile" ON public.profiles;
 CREATE POLICY "Users can manage their own profile"
 ON public.profiles FOR ALL
 TO authenticated
 USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can manage their own campaigns" ON public.campaigns;
 CREATE POLICY "Users can manage their own campaigns"
 ON public.campaigns FOR ALL
 TO authenticated
 USING (auth.uid() = owner_id)
 WITH CHECK (auth.uid() = owner_id);
 
+DROP POLICY IF EXISTS "Users can manage products in their own campaigns" ON public.campaign_products;
 CREATE POLICY "Users can manage products in their own campaigns"
 ON public.campaign_products FOR ALL
 TO authenticated
@@ -108,6 +109,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "Users can manage generated content for their own products" ON public.generated_content;
 CREATE POLICY "Users can manage generated content for their own products"
 ON public.generated_content FOR ALL
 TO authenticated
@@ -128,6 +130,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "Users can manage published pins for their own products" ON public.published_pins;
 CREATE POLICY "Users can manage published pins for their own products"
 ON public.published_pins FOR ALL
 TO authenticated
@@ -156,11 +159,13 @@ SET search_path = public
 AS $$
 BEGIN
   INSERT INTO public.profiles (user_id)
-  VALUES (NEW.id);
+  VALUES (NEW.id)
+  ON CONFLICT (user_id) DO NOTHING;
   RETURN NEW;
 END;
 $$;
 
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
 AFTER INSERT ON auth.users
 FOR EACH ROW
