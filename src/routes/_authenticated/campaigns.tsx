@@ -62,9 +62,15 @@ function CampaignsIndexPage() {
   const generateTrendsFn = useServerFn(generateTrendIdeas);
   const syncSheetsFn = useServerFn(syncProductsFromGoogleSheets);
 
-  const { data: campaigns = [], isLoading } = useQuery({
+  const {
+    data: campaigns = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["campaigns"],
     queryFn: () => listCampaignsFn(),
+    retry: 2,
   });
 
   const createMutation = useMutation({
@@ -304,6 +310,14 @@ function CampaignsIndexPage() {
         <div className="flex justify-center items-center py-16">
           <Loader2 className="h-8 w-8 animate-spin text-[#1E4734]" />
         </div>
+      ) : isError ? (
+        <Card className="border-red-200 p-8 text-center bg-red-50 space-y-3">
+          <FolderKanban className="mx-auto h-8 w-8 text-red-500" />
+          <p className="text-sm font-semibold text-red-700">Failed to load campaigns</p>
+          <p className="text-xs text-red-600 font-mono">
+            {error instanceof Error ? error.message : "Unknown database error"}
+          </p>
+        </Card>
       ) : campaigns.length === 0 ? (
         <Card className="border-[#E7E2D9] p-12 text-center bg-white space-y-3">
           <FolderKanban className="mx-auto h-8 w-8 text-[#C8A96A]" />

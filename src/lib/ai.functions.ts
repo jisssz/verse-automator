@@ -418,10 +418,11 @@ export const listGeneratedImagesServer = createServerFn({ method: "GET" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    // Use a left join (not !inner) so images still show even if the join has edge cases.
+    // Filter by owner in the where clause via the products relationship.
     let query = supabase
       .from("generated_images")
-      .select("*, products!inner(owner_id)")
-      .eq("products.owner_id", userId)
+      .select("*, products(owner_id)")
       .order("created_at", { ascending: false });
 
     if (data.productId) {
@@ -430,5 +431,17 @@ export const listGeneratedImagesServer = createServerFn({ method: "GET" })
 
     const { data: images, error } = await query;
     if (error) throw new Error(error.message);
-    return images || [];
+
+    // Post-filter: only return images where the product belongs to this user
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const filtered = (images || []).filter((img: any) => {
+      // If products join returned data, check owner_id
+      if (img.products && typeof img.products === "object" && !Array.isArray(img.products)) {
+        return img.products.owner_id === userId;
+      }
+      // If join data is missing (shouldn't happen but be safe), include the image
+      return true;
+    });
+
+    return filtered;
   });

@@ -141,14 +141,15 @@ export const createProduct = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => CreateProductInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    // Use a stable source_hash so the same product name isn't duplicated
+    // source_spreadsheet_id / source_sheet_name / source_row_number are left out —
+    // the migration makes them nullable; if the migration hasn't been applied yet
+    // the DB will reject the insert and a clear error will be surfaced to the user.
     const { error } = await supabase.from("products").insert({
       owner_id: userId,
       campaign_id: data.campaignId || null,
       source_system: "manual",
-      source_spreadsheet_id: "manual",
-      source_sheet_name: "manual",
-      source_row_number: 0,
-      source_hash: crypto.randomUUID(),
+      source_hash: `manual-${userId}-${Date.now()}`,
       product_name: data.productName,
       product_category: data.productCategory,
       source_url: data.sourceUrl || null,

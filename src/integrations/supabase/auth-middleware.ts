@@ -40,13 +40,20 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
       process.env["VITE_SUPABASE_ANON_KEY"];
 
     const request = getRequest();
+    // Demo user ID — used when no auth token is present (unauthenticated / demo mode)
     const DEMO_USER_ID = "00000000-0000-0000-0000-000000000000";
     const adminClient = supabaseAdmin as unknown as SupabaseClient<Database>;
 
     const authHeader = request?.headers?.get("authorization");
     const token = authHeader?.startsWith("Bearer ") ? authHeader.substring(7).trim() : undefined;
 
-    // Handle Demo Mode or missing tokens
+    // ──────────────────────────────────────────────────────────────────────────
+    // DEMO / UNAUTHENTICATED PATH
+    // When there is no token (or an explicit demo token), use the admin client
+    // with the demo user ID.  If the service role key is missing this will fall
+    // back to the publishable key — queries will only succeed if RLS policies
+    // permit anonymous/demo access.
+    // ──────────────────────────────────────────────────────────────────────────
     if (
       token === "demo-token" ||
       token === "demo" ||
@@ -63,6 +70,10 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
       });
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // AUTHENTICATED PATH
+    // Build a per-request client scoped to the user's JWT so RLS applies.
+    // ──────────────────────────────────────────────────────────────────────────
     try {
       const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
         global: {
@@ -80,6 +91,7 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
 
       const { data, error } = await supabase.auth.getClaims(token);
       if (error || !data?.claims?.sub) {
+        // Token is invalid — fall through to demo mode
         return next({
           context: {
             supabase: adminClient,

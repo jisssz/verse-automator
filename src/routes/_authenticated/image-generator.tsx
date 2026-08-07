@@ -80,9 +80,14 @@ function ImageGeneratorPage() {
   const generateImageFn = useServerFn(generateAndStoreImage);
   const listImagesFn = useServerFn(listGeneratedImagesServer);
 
-  const { data: products = [], isLoading: productsLoading } = useQuery({
+  const {
+    data: products = [],
+    isLoading: productsLoading,
+    isError: productsError,
+  } = useQuery({
     queryKey: ["products"],
     queryFn: () => listProductsFn({}),
+    retry: 2,
   });
 
   const selectedProduct = products.find((p: any) => p.id === selectedProductId);
@@ -191,6 +196,10 @@ function ImageGeneratorPage() {
               {productsLoading ? (
                 <div className="flex h-9 items-center px-3 border border-[#E7E2D9] rounded bg-white">
                   <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                </div>
+              ) : productsError ? (
+                <div className="flex h-9 items-center px-3 border border-red-200 rounded bg-red-50 text-xs text-red-600">
+                  DB error — check Settings → Connection Tests
                 </div>
               ) : (
                 <select

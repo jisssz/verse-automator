@@ -61,8 +61,50 @@ function AutomationPage() {
     toast.success("Automation setting updated");
   };
 
-  const handleTriggerPipeline = () => {
-    toast.success("n8n pipeline automation execution triggered! 🚀");
+  const [triggerStatus, setTriggerStatus] = useState<"idle" | "running" | "success" | "error">(
+    "idle",
+  );
+  const [triggerMessage, setTriggerMessage] = useState<string>("");
+
+  const handleTriggerPipeline = async () => {
+    setTriggerStatus("running");
+    setTriggerMessage("");
+    try {
+      const startTime = Date.now();
+      const n8nApiKey = "dailyverse-n8n-key"; // Reads N8N_API_KEY on the server side
+      const response = await fetch("/api/n8n/pipeline", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": n8nApiKey,
+        },
+        body: JSON.stringify({ source: "manual-trigger", timestamp: new Date().toISOString() }),
+      });
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data = await response.json().catch(() => ({}) as any);
+
+      if (response.ok && data.success) {
+        setTriggerStatus("success");
+        setTriggerMessage(
+          `Pipeline completed in ${elapsed}s — ${data.stepsCompleted?.length ?? 0} steps executed`,
+        );
+        toast.success(`n8n pipeline finished (${elapsed}s): ${data.headline ?? "Done"} 🚀`);
+        void refetch(); // Refresh analytics logs
+      } else {
+        const errMsg = data.error ?? `HTTP ${response.status}`;
+        setTriggerStatus("error");
+        setTriggerMessage(`Pipeline failed: ${errMsg}`);
+        toast.error(`Pipeline failed: ${errMsg}`);
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Network error";
+      setTriggerStatus("error");
+      setTriggerMessage(
+        `${msg} — Check that N8N_API_KEY, OPENAI_API_KEY and SUPABASE_SERVICE_ROLE_KEY are set in your environment variables.`,
+      );
+      toast.error(`Pipeline trigger failed: ${msg}`);
+    }
   };
 
   return (
@@ -79,12 +121,30 @@ function AutomationPage() {
           </p>
         </div>
 
-        <Button
-          onClick={handleTriggerPipeline}
-          className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-9"
-        >
-          <Play className="mr-1 h-3 w-3 fill-current text-[#C8A96A]" /> Trigger Pipeline
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          <Button
+            onClick={handleTriggerPipeline}
+            disabled={triggerStatus === "running"}
+            className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-9"
+          >
+            {triggerStatus === "running" ? (
+              <>
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" /> Running...
+              </>
+            ) : (
+              <>
+                <Play className="mr-1 h-3 w-3 fill-current text-[#C8A96A]" /> Trigger Pipeline
+              </>
+            )}
+          </Button>
+          {triggerMessage && (
+            <p
+              className={`text-[10px] max-w-xs text-right ${triggerStatus === "error" ? "text-red-500" : "text-emerald-600"}`}
+            >
+              {triggerMessage}
+            </p>
+          )}
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">

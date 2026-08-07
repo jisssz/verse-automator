@@ -72,11 +72,18 @@ function PublishedPinsPage() {
   const { data: status } = useQuery({
     queryKey: ["pinterest-status"],
     queryFn: () => getStatusFn(),
+    retry: 2,
   });
 
-  const { data: pins = [], isLoading } = useQuery({
+  const {
+    data: pins = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["published-pins"],
     queryFn: () => listPinsFn(),
+    retry: 2,
   });
 
   const handlePublishNow = async (productId: string) => {
