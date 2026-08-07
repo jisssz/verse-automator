@@ -301,11 +301,15 @@ function AutomationPage() {
   );
 }
 
-function IntegrationGatewayStatus({ pinterestStatus }: { pinterestStatus: any }) {
+function IntegrationGatewayStatus({
+  pinterestStatus,
+}: {
+  pinterestStatus?: { connected?: boolean };
+}) {
   const [healthStatus, setHealthStatus] = useState<{
     openai: "unchecked" | "ok" | "error";
     supabase: "unchecked" | "ok" | "error";
-    n8n: "unchecked" | "ok" | "error";
+    n8n: "unchecked" | "ok" | "optional";
   }>({
     openai: "unchecked",
     supabase: "unchecked",
@@ -328,14 +332,14 @@ function IntegrationGatewayStatus({ pinterestStatus }: { pinterestStatus: any })
           dataHealth.integrations?.n8nWebhookUrl === "FOUND" ||
           dataHealth.integrations?.n8nApiKey === "FOUND"
             ? "ok"
-            : "error",
+            : "optional",
       });
     } catch (e: unknown) {
       setErrorMsg(e instanceof Error ? e.message : "Health check failed");
       setHealthStatus({
         openai: "error",
         supabase: "error",
-        n8n: "error",
+        n8n: "optional",
       });
     } finally {
       setIsChecking(false);
@@ -429,21 +433,15 @@ function IntegrationGatewayStatus({ pinterestStatus }: { pinterestStatus: any })
         <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
           {healthStatus.n8n === "ok" ? (
             <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-          ) : healthStatus.n8n === "error" ? (
-            <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
           ) : (
             <Clock className="h-5 w-5 text-gray-400 shrink-0" />
           )}
           <div>
             <p className="text-xs font-semibold text-[#222222]">n8n Automation Trigger</p>
             <p
-              className={`text-[10px] font-medium ${healthStatus.n8n === "ok" ? "text-emerald-600" : healthStatus.n8n === "error" ? "text-red-500" : "text-gray-400"}`}
+              className={`text-[10px] font-medium ${healthStatus.n8n === "ok" ? "text-emerald-600" : "text-gray-500"}`}
             >
-              {healthStatus.n8n === "ok"
-                ? "Connected"
-                : healthStatus.n8n === "error"
-                  ? "Error"
-                  : "Unchecked"}
+              {healthStatus.n8n === "ok" ? "Connected" : "Optional (Not Configured)"}
             </p>
           </div>
         </div>

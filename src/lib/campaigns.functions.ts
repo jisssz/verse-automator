@@ -299,7 +299,8 @@ export const testOpenAiConnection = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async () => {
     const apiKey = process.env["OPENAI_API_KEY"];
-    if (!apiKey) throw new Error("Missing OPENAI_API_KEY environment variable in production settings");
+    if (!apiKey)
+      throw new Error("Missing OPENAI_API_KEY environment variable in production settings");
 
     try {
       const res = await fetch("https://api.openai.com/v1/models", {

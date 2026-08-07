@@ -34,7 +34,10 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
   async ({ next }) => {
     const rawUrl = process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"];
     const SUPABASE_URL = rawUrl
-      ? rawUrl.trim().replace(/\/rest\/v1\/?$/, "").replace(/\/+$/, "")
+      ? rawUrl
+          .trim()
+          .replace(/\/rest\/v1\/?$/, "")
+          .replace(/\/+$/, "")
       : undefined;
     const SUPABASE_PUBLISHABLE_KEY = (
       process.env["SUPABASE_PUBLISHABLE_KEY"] ||

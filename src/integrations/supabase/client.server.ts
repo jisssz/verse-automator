@@ -73,20 +73,16 @@ function createSupabaseAdminClient() {
     );
   }
 
-  return createClient<Database>(
-    SUPABASE_URL,
-    effectiveKey || "placeholder-key",
-    {
-      global: {
-        fetch: createSupabaseFetch(effectiveKey || "placeholder-key"),
-      },
-      auth: {
-        storage: undefined,
-        persistSession: false,
-        autoRefreshToken: false,
-      },
+  return createClient<Database>(SUPABASE_URL, effectiveKey || "placeholder-key", {
+    global: {
+      fetch: createSupabaseFetch(effectiveKey || "placeholder-key"),
     },
-  );
+    auth: {
+      storage: undefined,
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
 }
 
 let _supabaseAdmin: ReturnType<typeof createSupabaseAdminClient> | undefined;
