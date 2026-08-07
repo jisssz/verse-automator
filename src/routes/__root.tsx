@@ -118,6 +118,12 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  const isDashboardRoute =
+    router.state.location.pathname.startsWith("/dashboard") ||
+    router.state.location.pathname.startsWith("/pins") ||
+    router.state.location.pathname.startsWith("/settings") ||
+    router.state.location.pathname.startsWith("/campaigns");
 
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange((event) => {
@@ -132,7 +138,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Header />
+      {!isDashboardRoute && <Header />}
       <Outlet />
       <Toaster />
     </QueryClientProvider>

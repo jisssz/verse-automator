@@ -132,16 +132,32 @@ function AuthenticatedLayout() {
               Platform Navigation
             </div>
           )}
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              to={item.to}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#F8F6F2]/80 hover:bg-[#1E4734] hover:text-[#FFFFFF] transition-all group"
-            >
-              <item.icon className="h-4 w-4 text-[#C8A96A] group-hover:scale-110 transition-transform shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive =
+              (item.to === "/dashboard" &&
+                (router.state.location.pathname === "/dashboard" ||
+                  router.state.location.pathname.startsWith("/campaigns"))) ||
+              router.state.location.pathname === item.to;
+
+            return (
+              <Link
+                key={item.label}
+                to={item.to}
+                onClick={(e) => {
+                  e.preventDefault();
+                  void navigate({ to: item.to });
+                }}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group cursor-pointer ${
+                  isActive
+                    ? "bg-[#1E4734] text-white border-l-2 border-[#C8A96A] shadow-xs"
+                    : "text-[#F8F6F2]/80 hover:bg-[#1E4734]/60 hover:text-[#FFFFFF]"
+                }`}
+              >
+                <item.icon className="h-4 w-4 text-[#C8A96A] group-hover:scale-110 transition-transform shrink-0" />
+                {!collapsed && <span>{item.label}</span>}
+              </Link>
+            );
+          })}
         </div>
 
         {/* User Profile & Logout Section */}
