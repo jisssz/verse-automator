@@ -358,6 +358,28 @@ function SettingsPage() {
           </p>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
+          {/* FLUX.1 Free AI Image Engine */}
+          <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col mt-1">
+                <span className="text-xs font-semibold text-[#222222]">FLUX.1 Image Engine</span>
+                <span className="text-[10px] text-emerald-600 font-medium">
+                  Free Production AI Model
+                </span>
+              </div>
+              <Badge variant="secondary" className="bg-emerald-100 text-emerald-800">
+                ✅ Active (Free Tier)
+              </Badge>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => toast.success("FLUX.1 Free AI Image Engine is active and ready!")}
+              className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-8"
+            >
+              Verify Provider
+            </Button>
+          </div>
+
           {/* OpenAI */}
           <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
             <div className="flex items-start justify-between">

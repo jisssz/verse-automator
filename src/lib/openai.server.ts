@@ -434,23 +434,36 @@ export async function generateImageFromPrompt(options: {
   const size =
     options.size ||
     (options.aspectRatio === "2:3" || options.aspectRatio === "9:16" ? "1024x1792" : "1024x1024");
-  const response = await openAiJsonRequest<{
-    data?: Array<{ url?: string; b64_json?: string }>;
-  }>("/images/generations", {
-    model: DEFAULT_IMAGE_MODEL,
-    prompt: options.prompt,
-    n: 1,
-    size,
-    quality: options.quality || "standard",
-    response_format: "url",
-  });
+  const [width, height] = size.split("x").map(Number) as [number, number];
 
-  const url = response.data?.[0]?.url;
-  if (!url) {
-    throw new OpenAiServiceError("OpenAI did not return an image URL");
+  // Try OpenAI if configured
+  if (process.env["OPENAI_API_KEY"]) {
+    try {
+      const response = await openAiJsonRequest<{
+        data?: Array<{ url?: string; b64_json?: string }>;
+      }>("/images/generations", {
+        model: DEFAULT_IMAGE_MODEL,
+        prompt: options.prompt,
+        n: 1,
+        size,
+        quality: options.quality || "standard",
+        response_format: "url",
+      });
+
+      const url = response.data?.[0]?.url;
+      if (url) return url;
+    } catch (openAiErr) {
+      console.warn(
+        "[ImageProvider] OpenAI image generation unavailable or credit exhausted. Falling back to FLUX.1:",
+        openAiErr instanceof Error ? openAiErr.message : openAiErr,
+      );
+    }
   }
 
-  return url;
+  // FLUX.1 Free Production Provider Fallback
+  const seed = Math.floor(Math.random() * 1000000);
+  const encodedPrompt = encodeURIComponent(options.prompt);
+  return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&model=flux&nologo=true&seed=${seed}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -817,112 +830,138 @@ interface GenerateAndStoreImageResult {
  *
  * Falls back to returning the OpenAI URL directly if storage upload fails.
  */
+async function generateFluxImageAndStore(options: {
+  prompt: string;
+  productId: string;
+  width: number;
+  height: number;
+}): Promise<GenerateAndStoreImageResult> {
+  const seed = Math.floor(Math.random() * 1000000);
+  const encodedPrompt = encodeURIComponent(options.prompt);
+  const fluxUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${options.width}&height=${options.height}&model=flux&nologo=true&seed=${seed}`;
+
+  try {
+    const res = await fetch(fluxUrl);
+    if (res.ok) {
+      const buffer = Buffer.from(await res.arrayBuffer());
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const storagePath = `products/${options.productId}/${Date.now()}.jpg`;
+
+      const { error: uploadError } = await supabaseAdmin.storage
+        .from("generated-images")
+        .upload(storagePath, buffer, {
+          contentType: "image/jpeg",
+          upsert: true,
+        });
+
+      if (!uploadError) {
+        const { data: urlData } = supabaseAdmin.storage
+          .from("generated-images")
+          .getPublicUrl(storagePath);
+
+        return {
+          imageUrl: urlData.publicUrl,
+          storagePath,
+          model: "flux-1-dev",
+          promptUsed: options.prompt,
+          width: options.width,
+          height: options.height,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn("[FLUX Engine] Storage upload fallback:", err);
+  }
+
+  return {
+    imageUrl: fluxUrl,
+    storagePath: null,
+    model: "flux-1-dev",
+    promptUsed: options.prompt,
+    width: options.width,
+    height: options.height,
+  };
+}
+
 export async function generateAndStoreImage(options: {
   prompt: string;
   productId: string;
   size?: "1024x1024" | "1024x1792" | "1792x1024" | undefined;
 }): Promise<GenerateAndStoreImageResult> {
   const size = options.size ?? "1024x1792";
-  const model = DEFAULT_IMAGE_MODEL;
-
-  const imageResponse = await runWithRetries(async () => {
-    const res = await fetch(`${OPENAI_API_BASE_URL}/images/generations`, {
-      method: "POST",
-      headers: buildOpenAiHeaders(),
-      body: JSON.stringify({
-        model,
-        prompt: options.prompt,
-        n: 1,
-        size,
-        quality: "standard",
-        response_format: "b64_json",
-      }),
-    });
-
-    if (!res.ok) {
-      throw new OpenAiServiceError(await readResponseError(res), res.status);
-    }
-
-    return res;
-  });
-
-  const imageData = (await imageResponse.json()) as {
-    data?: Array<{ b64_json?: string; url?: string; revised_prompt?: string }>;
-  };
-
-  const imageItem = imageData.data?.[0];
-  if (!imageItem) {
-    throw new OpenAiServiceError("OpenAI returned no image data");
-  }
-
   const [width, height] = size.split("x").map(Number) as [number, number];
 
-  // If we have base64, attempt Supabase Storage upload
-  if (imageItem.b64_json) {
+  // Try OpenAI if configured
+  if (process.env["OPENAI_API_KEY"]) {
     try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const buffer = Buffer.from(imageItem.b64_json, "base64");
-      const storagePath = `products/${options.productId}/${Date.now()}.png`;
-
-      const { error: uploadError } = await supabaseAdmin.storage
-        .from("generated-images")
-        .upload(storagePath, buffer, {
-          contentType: "image/png",
-          upsert: true,
+      const imageResponse = await runWithRetries(async () => {
+        const res = await fetch(`${OPENAI_API_BASE_URL}/images/generations`, {
+          method: "POST",
+          headers: buildOpenAiHeaders(),
+          body: JSON.stringify({
+            model: DEFAULT_IMAGE_MODEL,
+            prompt: options.prompt,
+            n: 1,
+            size,
+            quality: "standard",
+            response_format: "b64_json",
+          }),
         });
 
-      if (uploadError) {
-        // Log warning but don't throw — fall back to returning data URL
-        const dataUrl = `data:image/png;base64,${imageItem.b64_json}`;
-        return {
-          imageUrl: dataUrl,
-          storagePath: null,
-          model,
-          promptUsed: options.prompt,
-          width,
-          height,
-        };
+        if (!res.ok) {
+          throw new OpenAiServiceError(await readResponseError(res), res.status);
+        }
+
+        return res;
+      });
+
+      const imageData = (await imageResponse.json()) as {
+        data?: Array<{ b64_json?: string; url?: string; revised_prompt?: string }>;
+      };
+
+      const imageItem = imageData.data?.[0];
+      if (imageItem?.b64_json) {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const buffer = Buffer.from(imageItem.b64_json, "base64");
+        const storagePath = `products/${options.productId}/${Date.now()}.png`;
+
+        const { error: uploadError } = await supabaseAdmin.storage
+          .from("generated-images")
+          .upload(storagePath, buffer, {
+            contentType: "image/png",
+            upsert: true,
+          });
+
+        if (!uploadError) {
+          const { data: urlData } = supabaseAdmin.storage
+            .from("generated-images")
+            .getPublicUrl(storagePath);
+
+          return {
+            imageUrl: urlData.publicUrl,
+            storagePath,
+            model: DEFAULT_IMAGE_MODEL,
+            promptUsed: options.prompt,
+            width,
+            height,
+          };
+        }
       }
-
-      const { data: urlData } = supabaseAdmin.storage
-        .from("generated-images")
-        .getPublicUrl(storagePath);
-
-      return {
-        imageUrl: urlData.publicUrl,
-        storagePath,
-        model,
-        promptUsed: options.prompt,
-        width,
-        height,
-      };
-    } catch {
-      // Fallback to data URL
-      const dataUrl = `data:image/png;base64,${imageItem.b64_json}`;
-      return {
-        imageUrl: dataUrl,
-        storagePath: null,
-        model,
-        promptUsed: options.prompt,
-        width,
-        height,
-      };
+    } catch (err) {
+      console.warn(
+        "[ImageProvider] OpenAI image generation unavailable or credit exhausted. Executing FLUX.1 free provider:",
+        err instanceof Error ? err.message : err,
+      );
     }
   }
 
-  // URL-format fallback (non-b64 response)
-  if (imageItem.url) {
-    return {
-      imageUrl: imageItem.url,
-      storagePath: null,
-      model,
-      promptUsed: options.prompt,
-      width,
-      height,
-    };
-  }
-
-  throw new OpenAiServiceError("OpenAI returned no image URL or base64 data");
+  // FLUX.1 Free Production Engine Execution
+  return await generateFluxImageAndStore({
+    prompt: options.prompt,
+    productId: options.productId,
+    width,
+    height,
+  });
 }
 
 export { OpenAiServiceError };
