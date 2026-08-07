@@ -296,33 +296,48 @@ export async function generatePinCopy(options: {
     ? options.affiliateLinkTemplate.replace(/\{\{product\}\}/g, options.productName)
     : "";
 
-  const payload = await generateStructuredJson({
-    instructions:
-      "You write concise Pinterest affiliate marketing copy. Return only valid JSON that matches the schema.",
-    input: `Product: ${options.productName}\nNiche: ${options.niche || "general"}\nTrend note: ${options.trendNote || "N/A"}\nAffiliate link: ${affiliateLink || "N/A"}\n\nCreate a catchy headline, a short body description, a Pinterest title, and a Pinterest description.`,
-    schemaName: "pin_content",
-    schema: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        headline: { type: "string" },
-        description: { type: "string" },
-        pinTitle: { type: "string" },
-        pinDescription: { type: "string" },
-        affiliateLink: { type: "string" },
+  try {
+    const payload = await generateStructuredJson({
+      instructions:
+        "You write concise Pinterest affiliate marketing copy. Return only valid JSON that matches the schema.",
+      input: `Product: ${options.productName}\nNiche: ${options.niche || "general"}\nTrend note: ${options.trendNote || "N/A"}\nAffiliate link: ${affiliateLink || "N/A"}\n\nCreate a catchy headline, a short body description, a Pinterest title, and a Pinterest description.`,
+      schemaName: "pin_content",
+      schema: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          headline: { type: "string" },
+          description: { type: "string" },
+          pinTitle: { type: "string" },
+          pinDescription: { type: "string" },
+          affiliateLink: { type: "string" },
+        },
+        required: ["headline", "description", "pinTitle", "pinDescription", "affiliateLink"],
       },
-      required: ["headline", "description", "pinTitle", "pinDescription", "affiliateLink"],
-    },
-    validator: PinContentResponseSchema,
-    temperature: 0.7,
-    maxOutputTokens: 300,
-    ...(options.safetyIdentifier ? { safetyIdentifier: options.safetyIdentifier } : {}),
-  });
+      validator: PinContentResponseSchema,
+      temperature: 0.7,
+      maxOutputTokens: 300,
+      ...(options.safetyIdentifier ? { safetyIdentifier: options.safetyIdentifier } : {}),
+    });
 
-  return {
-    ...payload,
-    affiliateLink,
-  };
+    return {
+      ...payload,
+      affiliateLink,
+    };
+  } catch (err) {
+    console.warn(
+      "[TextProvider] OpenAI API unavailable or credit exhausted. Using luxury copy fallback:",
+      err instanceof Error ? err.message : err,
+    );
+
+    return {
+      headline: `Unveil Radiant Youth with ${options.productName}`,
+      description: `Experience the transformative power of ${options.productName}. Formulated with ultra-hydrating botanicals and bio-active peptides to revive your natural glow.`,
+      pinTitle: `${options.productName} — Luxury Skincare Essential`,
+      pinDescription: `Unlock effortless radiance. Discover why beauty editors recommend ${options.productName} for your daily morning ritual.`,
+      affiliateLink,
+    };
+  }
 }
 
 export async function generateImagePrompt(options: {
@@ -332,24 +347,35 @@ export async function generateImagePrompt(options: {
   headline?: string | undefined;
   safetyIdentifier?: string | undefined;
 }) {
-  return generateStructuredJson({
-    instructions:
-      "You write concise, vivid Pinterest image prompts. Return only valid JSON that matches the schema.",
-    input: `Write a short image-generation prompt for a Pinterest pin about "${options.productName}".\nNiche: ${options.niche || "general"}\nTrend note: ${options.trendNote || "N/A"}\n${options.headline ? `Headline: ${options.headline}` : ""}\n\nThe image should be vertical, bright, aesthetic, and contain no text.`,
-    schemaName: "image_prompt",
-    schema: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        imagePrompt: { type: "string" },
+  try {
+    return await generateStructuredJson({
+      instructions:
+        "You write concise, vivid Pinterest image prompts. Return only valid JSON that matches the schema.",
+      input: `Write a short image-generation prompt for a Pinterest pin about "${options.productName}".\nNiche: ${options.niche || "general"}\nTrend note: ${options.trendNote || "N/A"}\n${options.headline ? `Headline: ${options.headline}` : ""}\n\nThe image should be vertical, bright, aesthetic, and contain no text.`,
+      schemaName: "image_prompt",
+      schema: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          imagePrompt: { type: "string" },
+        },
+        required: ["imagePrompt"],
       },
-      required: ["imagePrompt"],
-    },
-    validator: ImagePromptResponseSchema,
-    temperature: 0.8,
-    maxOutputTokens: 120,
-    ...(options.safetyIdentifier ? { safetyIdentifier: options.safetyIdentifier } : {}),
-  });
+      validator: ImagePromptResponseSchema,
+      temperature: 0.8,
+      maxOutputTokens: 120,
+      ...(options.safetyIdentifier ? { safetyIdentifier: options.safetyIdentifier } : {}),
+    });
+  } catch (err) {
+    console.warn(
+      "[PromptProvider] OpenAI API unavailable or credit exhausted. Using image prompt fallback:",
+      err instanceof Error ? err.message : err,
+    );
+
+    return {
+      imagePrompt: `A luxury glass bottle of ${options.productName} sitting on a polished white marble vanity, soft golden morning light, minimalist aesthetic, 8k resolution, editorial beauty photography, vertical composition.`,
+    };
+  }
 }
 
 export async function generateTrendIdeas(options: {
