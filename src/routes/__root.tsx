@@ -93,7 +93,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/brand/logo.jpg", type: "image/jpeg" },
     ],
   }),
   shellComponent: RootShell,
@@ -178,9 +178,22 @@ function Header() {
 
   return (
     <header className="border-b border-border bg-background">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link to="/" className="text-lg font-bold tracking-tight text-foreground">
-          DailyVerse AI
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <Link to="/" className="flex items-center gap-3">
+          <img
+            src="/brand/logo.jpg"
+            alt="DailyVerse Logo"
+            className="h-8 w-8 rounded-full object-cover border border-[#C8A96A]/30 shadow-xs"
+            loading="lazy"
+          />
+          <div className="flex flex-col">
+            <span className="font-serif text-sm font-bold tracking-tight text-[#1E4734]">
+              DAILY VERSE
+            </span>
+            <span className="text-[9px] tracking-widest text-[#C8A96A] uppercase font-semibold">
+              Skincare That Works
+            </span>
+          </div>
         </Link>
         <nav className="flex items-center gap-4">
           <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
@@ -199,7 +212,7 @@ function Header() {
               </Link>
               <button
                 onClick={handleSignOut}
-                className="text-sm text-muted-foreground hover:text-foreground"
+                className="text-sm text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 Sign out
               </button>

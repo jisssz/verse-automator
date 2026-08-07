@@ -99,16 +99,19 @@ function AuthenticatedLayout() {
         {/* Sidebar Brand Header */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-[#28543E]">
           <Link to="/dashboard" className="flex items-center gap-3 overflow-hidden">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C8A96A] text-[#132E22] shadow-sm">
-              <Crown className="h-5 w-5" />
-            </div>
+            <img
+              src="/brand/logo.jpg"
+              alt="DAILY VERSE logo"
+              className="h-9 w-9 shrink-0 rounded-lg object-cover border border-[#C8A96A]/40 shadow-sm"
+              loading="lazy"
+            />
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="font-serif text-lg font-bold tracking-tight text-[#F8F6F2]">
-                  DailyVerse
+                <span className="font-serif text-sm font-bold tracking-tight text-[#F8F6F2]">
+                  DAILY VERSE
                 </span>
-                <span className="text-[10px] tracking-widest text-[#C8A96A] uppercase font-semibold">
-                  Skincare AI
+                <span className="text-[9px] tracking-widest text-[#C8A96A] uppercase font-semibold">
+                  Skincare That Works
                 </span>
               </div>
             )}

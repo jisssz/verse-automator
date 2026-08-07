@@ -192,12 +192,15 @@ function AuthPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#F8F6F2] px-4">
       <div className="w-full max-w-md rounded-2xl border border-[#E7E2D9] bg-white p-8 shadow-md space-y-6">
         <div className="text-center space-y-2">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#1E4734]/10 text-[#1E4734] border border-[#C8A96A]/40">
-            <Sparkles className="h-6 w-6 text-[#C8A96A]" />
-          </div>
-          <h1 className="font-serif text-3xl font-bold text-[#222222]">DailyVerse AI</h1>
-          <p className="text-xs text-[#666666] uppercase tracking-wider font-semibold">
-            Luxury Skincare & Beauty Automation
+          <img
+            src="/brand/logo.jpg"
+            alt="DAILY VERSE logo"
+            className="mx-auto h-20 w-20 rounded-full object-cover border border-[#C8A96A]/40 shadow-sm transition-transform duration-500 hover:scale-105"
+            loading="lazy"
+          />
+          <h1 className="font-serif text-3xl font-bold text-[#1E4734]">DAILY VERSE</h1>
+          <p className="text-[10px] text-[#C8A96A] uppercase tracking-widest font-semibold">
+            Skincare That Works
           </p>
         </div>
 
