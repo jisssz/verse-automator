@@ -32,12 +32,16 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 
 export const requireSupabaseAuth = createMiddleware({ type: "function" }).server(
   async ({ next }) => {
-    const SUPABASE_URL = process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"];
-    const SUPABASE_PUBLISHABLE_KEY =
+    const rawUrl = process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"];
+    const SUPABASE_URL = rawUrl
+      ? rawUrl.trim().replace(/\/rest\/v1\/?$/, "").replace(/\/+$/, "")
+      : undefined;
+    const SUPABASE_PUBLISHABLE_KEY = (
       process.env["SUPABASE_PUBLISHABLE_KEY"] ||
       process.env["SUPABASE_ANON_KEY"] ||
       process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
-      process.env["VITE_SUPABASE_ANON_KEY"];
+      process.env["VITE_SUPABASE_ANON_KEY"]
+    )?.trim();
 
     const request = getRequest();
     // Demo user ID — used when no auth token is present (unauthenticated / demo mode)
