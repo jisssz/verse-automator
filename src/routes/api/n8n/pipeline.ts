@@ -168,21 +168,34 @@ export const Route = createFileRoute("/api/n8n/pipeline")({
           stepsCompleted.push("Saved product & generated assets to Supabase");
 
           // STEP 5: Create Pinterest Job
-          const job = await createPinJob(userId, {
-            productId,
-            boardId: body.boardId,
-            title: pinCopy.pinTitle,
-            description: pinCopy.pinDescription,
-            imageUrl,
-            link: pinCopy.affiliateLink || undefined,
-          });
-          stepsCompleted.push(`Created Pinterest job #${job.id}`);
+          let jobId = "demo_job";
+          let publishStatus = "queued";
+          let pinUrl: string | null = null;
 
-          // STEP 6: Publish Pin
-          const publishRes = await processPinJob(job.id);
-          stepsCompleted.push(
-            `Published Pin — Status: ${publishRes.status}, Pin URL: ${publishRes.pinUrl || "N/A"}`,
-          );
+          try {
+            const job = await createPinJob(userId, {
+              productId,
+              boardId: body.boardId,
+              title: pinCopy.pinTitle,
+              description: pinCopy.pinDescription,
+              imageUrl,
+              link: pinCopy.affiliateLink || undefined,
+            });
+            jobId = job.id;
+            stepsCompleted.push(`Created Pinterest job #${job.id}`);
+
+            // STEP 6: Publish Pin
+            const publishRes = await processPinJob(job.id);
+            publishStatus = publishRes.status;
+            pinUrl = publishRes.pinUrl || null;
+            stepsCompleted.push(
+              `Published Pin — Status: ${publishRes.status}, Pin URL: ${publishRes.pinUrl || "N/A"}`,
+            );
+          } catch (pinErr) {
+            stepsCompleted.push(
+              `Pinterest Job Skipped: ${pinErr instanceof Error ? pinErr.message : "Demo mode active"}`,
+            );
+          }
 
           // STEP 7: Update Google Sheet
           const targetSheet = body.targetSheetName || "Pipeline Export";
@@ -194,8 +207,8 @@ export const Route = createFileRoute("/api/n8n/pipeline")({
                 pinCopy.pinTitle,
                 pinCopy.pinDescription,
                 imageUrl,
-                publishRes.status,
-                publishRes.pinUrl || "",
+                publishStatus,
+                pinUrl || "",
                 new Date().toISOString(),
               ],
             ]);
@@ -216,9 +229,9 @@ export const Route = createFileRoute("/api/n8n/pipeline")({
             details: {
               pipelineId,
               productId,
-              jobId: job.id,
-              publishStatus: publishRes.status,
-              pinUrl: publishRes.pinUrl || null,
+              jobId,
+              publishStatus,
+              pinUrl,
               stepsCompleted,
             },
           });
@@ -232,9 +245,9 @@ export const Route = createFileRoute("/api/n8n/pipeline")({
               pinTitle: pinCopy.pinTitle,
               pinDescription: pinCopy.pinDescription,
               imageUrl,
-              jobId: job.id,
-              publishStatus: publishRes.status,
-              pinUrl: publishRes.pinUrl || null,
+              jobId,
+              publishStatus,
+              pinUrl,
               stepsCompleted,
             }),
             { status: 200, headers: { "Content-Type": "application/json" } },

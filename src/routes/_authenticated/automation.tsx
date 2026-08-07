@@ -304,7 +304,8 @@ function AutomationPage() {
 function IntegrationGatewayStatus({
   pinterestStatus,
 }: {
-  pinterestStatus?: { connected?: boolean };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  pinterestStatus?: any;
 }) {
   const [healthStatus, setHealthStatus] = useState<{
     openai: "unchecked" | "ok" | "error";
