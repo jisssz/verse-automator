@@ -85,7 +85,7 @@ function AutomationPage() {
       });
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const data = await response.json().catch(() => ({}) as any);
+      const data = (await response.json().catch(() => ({}))) as any;
 
       if (response.ok && data.success) {
         setTriggerStatus("success");
@@ -321,21 +321,17 @@ function IntegrationGatewayStatus({ pinterestStatus }: { pinterestStatus: any })
       const resHealth = await fetch("/api/n8n/health");
       const dataHealth = await resHealth.json();
 
-      let n8nTestSuccess = true;
-      try {
-        const testRes = await fetch("/api/n8n/test", { method: "POST" });
-        if (!testRes.ok) n8nTestSuccess = false;
-      } catch {
-        n8nTestSuccess = false;
-      }
-
       setHealthStatus({
-        openai: dataHealth.integrations?.openaiApiKey ? "ok" : "error",
+        openai: dataHealth.integrations?.openaiApiKey === "FOUND" ? "ok" : "error",
         supabase: dataHealth.database?.status === "ok" ? "ok" : "error",
-        n8n: n8nTestSuccess && dataHealth.status !== "unauthorized" ? "ok" : "error",
+        n8n:
+          dataHealth.integrations?.n8nWebhookUrl === "FOUND" ||
+          dataHealth.integrations?.n8nApiKey === "FOUND"
+            ? "ok"
+            : "error",
       });
-    } catch (e: any) {
-      setErrorMsg(e.message);
+    } catch (e: unknown) {
+      setErrorMsg(e instanceof Error ? e.message : "Health check failed");
       setHealthStatus({
         openai: "error",
         supabase: "error",

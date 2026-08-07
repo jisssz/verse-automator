@@ -83,6 +83,39 @@ export const exportImagesMetadataSheetServer = createServerFn({ method: "POST" }
     });
   });
 
+const SEED_PRODUCTS = [
+  {
+    product_name: "Botanical Radiance Elixir",
+    product_category: "Luxury Skincare & Botanical Serums",
+    trend_note: "Cold-pressed rosehip and squalane oil for instant glass-skin radiance.",
+    description:
+      "Formulated with 100% organic cold-pressed botanicals to restore cellular skin moisture and smooth fine lines.",
+    affiliate_link: "https://example.com/botanical-radiance-elixir?tag=dailyverse-21",
+    image_url: "/brand/pinterest-1.jpg",
+    tags: ["botanical", "glow", "organic", "serum"],
+  },
+  {
+    product_name: "Gold Infused Peptide Cream",
+    product_category: "Anti-Aging & Rejuvenation",
+    trend_note: "24K gold flakes and tri-peptides for youth renewal.",
+    description:
+      "An ultra-rich moisturizing cream infused with bio-available 24K gold and firming peptides.",
+    affiliate_link: "https://example.com/gold-infused-peptide-cream?tag=dailyverse-21",
+    image_url: "/brand/pinterest-2.jpg",
+    tags: ["gold", "peptides", "luxury", "anti-aging"],
+  },
+  {
+    product_name: "Hydrating Hyaluronic Acid Serum",
+    product_category: "Hydration & Barrier Repair",
+    trend_note: "Multi-molecular weight hyaluronic acid deep moisture boost.",
+    description:
+      "Delivers triple-layer skin moisture replenishment to soothe skin barrier dryness.",
+    affiliate_link: "https://example.com/hyaluronic-acid-serum?tag=dailyverse-21",
+    image_url: "/brand/hero-banner.jpg",
+    tags: ["hyaluronic", "hydration", "barrier-repair"],
+  },
+];
+
 export const listProducts = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => ListProductsInput.parse(input))
@@ -104,6 +137,40 @@ export const listProducts = createServerFn({ method: "GET" })
 
     const { data: products, error } = await query;
     if (error) throw new Error(error.message);
+
+    // If no products exist for this user, auto-seed default luxury skincare products
+    if (!products || products.length === 0) {
+      try {
+        const seedRows = SEED_PRODUCTS.map((prod, idx) => ({
+          owner_id: userId,
+          source_system: "system_seed",
+          source_spreadsheet_id: "seed_catalog",
+          source_sheet_name: "Catalog",
+          source_row_number: idx + 1,
+          source_hash: `seed-${userId}-${idx}`,
+          product_name: prod.product_name,
+          product_category: prod.product_category,
+          trend_note: prod.trend_note,
+          description: prod.description,
+          affiliate_link: prod.affiliate_link,
+          image_url: prod.image_url,
+          tags: prod.tags,
+          status: "pending",
+        }));
+
+        const { data: inserted, error: seedErr } = await supabase
+          .from("products")
+          .insert(seedRows)
+          .select("*");
+
+        if (!seedErr && inserted && inserted.length > 0) {
+          return inserted;
+        }
+      } catch {
+        // Seeding error is non-fatal fallback
+      }
+    }
+
     return products || [];
   });
 
@@ -141,15 +208,15 @@ export const createProduct = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => CreateProductInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    // Use a stable source_hash so the same product name isn't duplicated
-    // source_spreadsheet_id / source_sheet_name / source_row_number are left out —
-    // the migration makes them nullable; if the migration hasn't been applied yet
-    // the DB will reject the insert and a clear error will be surfaced to the user.
+    const timestamp = Date.now();
     const { error } = await supabase.from("products").insert({
       owner_id: userId,
       campaign_id: data.campaignId || null,
       source_system: "manual",
-      source_hash: `manual-${userId}-${Date.now()}`,
+      source_spreadsheet_id: "manual",
+      source_sheet_name: "Manual Entry",
+      source_row_number: 1,
+      source_hash: `manual-${userId}-${timestamp}`,
       product_name: data.productName,
       product_category: data.productCategory,
       source_url: data.sourceUrl || null,

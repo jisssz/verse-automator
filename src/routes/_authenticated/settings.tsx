@@ -159,8 +159,8 @@ function SettingsPage() {
       setN8nInfo({
         latency: Math.round(performance.now() - start),
         timestamp: new Date().toLocaleTimeString(),
-        url: data.webhookUrl || data.url || undefined,
-        hasApiKey: data.hasApiKey,
+        ...(data.webhookUrl ? { url: data.webhookUrl } : {}),
+        hasApiKey: data.hasApiKey ?? false,
       });
       if (!res.ok) throw new Error("n8n health check failed");
       setN8nStatus("connected");
