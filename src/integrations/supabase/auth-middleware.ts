@@ -89,8 +89,8 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
         },
       });
 
-      const { data, error } = await supabase.auth.getClaims(token);
-      if (error || !data?.claims?.sub) {
+      const { data, error } = await supabase.auth.getUser(token);
+      if (error || !data?.user?.id) {
         // Token is invalid — fall through to demo mode
         return next({
           context: {
@@ -101,16 +101,14 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
         });
       }
 
-      const claimsObj = data.claims as Record<string, unknown>;
-      const userEmail =
-        typeof claimsObj["email"] === "string" ? claimsObj["email"] : "demo@dailyverse.ai";
+      const userEmail = data.user.email || "demo@dailyverse.ai";
 
       return next({
         context: {
           supabase: supabase as unknown as SupabaseClient<Database>,
-          userId: String(data.claims.sub),
+          userId: data.user.id,
           claims: {
-            sub: String(data.claims.sub),
+            sub: data.user.id,
             email: userEmail,
           },
         },

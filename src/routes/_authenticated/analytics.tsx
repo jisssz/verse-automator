@@ -37,15 +37,41 @@ const LUXURY_COLORS = ["#1E4734", "#C8A96A", "#355E4D", "#D4AF37", "#666666"];
 function AnalyticsPage() {
   const getAnalyticsFn = useServerFn(getAnalyticsMetricsServer);
 
-  const { data: metrics, isLoading } = useQuery({
+  const {
+    data: metrics,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["analytics-metrics"],
     queryFn: () => getAnalyticsFn(),
+    retry: 2,
   });
 
-  if (isLoading || !metrics) {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F8F6F2]">
         <Loader2 className="h-8 w-8 animate-spin text-[#1E4734]" />
+      </div>
+    );
+  }
+
+  if (isError || !metrics) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F8F6F2]">
+        <div className="max-w-md text-center space-y-3 p-8 rounded-2xl bg-white border border-red-200 shadow-sm">
+          <Activity className="h-10 w-10 text-red-400 mx-auto" />
+          <p className="font-semibold text-red-700">Analytics failed to load</p>
+          <p className="text-xs text-red-500 font-mono break-all">
+            {error instanceof Error
+              ? error.message
+              : "Unknown database error. Check Supabase connection."}
+          </p>
+          <p className="text-xs text-[#666666]">
+            Go to <strong>Settings → Connection Tests</strong> to verify Supabase is configured
+            correctly.
+          </p>
+        </div>
       </div>
     );
   }

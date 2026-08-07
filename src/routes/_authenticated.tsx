@@ -59,11 +59,25 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function AuthenticatedLayout() {
+  const { user } = Route.useRouteContext();
   const [collapsed, setCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
   const router = useRouter();
   const navigate = useNavigate();
+
+  // Derive display info from real auth user
+  const userEmail = user?.email ?? "creator@dailyverse.ai";
+  const displayName =
+    (user?.user_metadata as Record<string, unknown>)?.["display_name"] ??
+    userEmail.split("@")[0] ??
+    "Creator";
+  const initials = String(displayName)
+    .split(" ")
+    .map((w: string) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   async function handleSignOut() {
     await queryClient.cancelQueries();
@@ -141,10 +155,6 @@ function AuthenticatedLayout() {
               <Link
                 key={item.label}
                 to={item.to}
-                onClick={(e) => {
-                  e.preventDefault();
-                  void navigate({ to: item.to });
-                }}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group cursor-pointer ${
                   isActive
                     ? "bg-[#1E4734] text-white border-l-2 border-[#C8A96A] shadow-xs"
@@ -163,11 +173,13 @@ function AuthenticatedLayout() {
           {!collapsed && (
             <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#1E4734]/50 border border-[#28543E]">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C8A96A] text-[#132E22] font-semibold text-xs shrink-0">
-                DC
+                {initials || "U"}
               </div>
               <div className="flex flex-col truncate">
-                <span className="text-xs font-medium text-[#F8F6F2] truncate">Demo Creator</span>
-                <span className="text-[10px] text-[#C8A96A] truncate">creator@dailyverse.ai</span>
+                <span className="text-xs font-medium text-[#F8F6F2] truncate">
+                  {String(displayName)}
+                </span>
+                <span className="text-[10px] text-[#C8A96A] truncate">{userEmail}</span>
               </div>
             </div>
           )}

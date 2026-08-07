@@ -14,6 +14,7 @@ import {
   AlertCircle,
   Play,
   RotateCcw,
+  Clock,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -38,6 +39,8 @@ function AutomationPage() {
   const {
     data: metrics,
     isLoading,
+    isError,
+    error,
     refetch,
   } = useQuery({
     queryKey: ["analytics-metrics"],
@@ -223,53 +226,7 @@ function AutomationPage() {
               Integration Gateway Status
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-3 sm:grid-cols-2">
-            {/* OpenAI */}
-            <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-              <div>
-                <p className="text-xs font-semibold text-[#222222]">OpenAI API Gateway</p>
-                <p className="text-[10px] text-emerald-600 font-medium">Connected</p>
-              </div>
-            </div>
-
-            {/* Supabase */}
-            <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-              <div>
-                <p className="text-xs font-semibold text-[#222222]">Supabase Database</p>
-                <p className="text-[10px] text-emerald-600 font-medium">Connected</p>
-              </div>
-            </div>
-
-            {/* Pinterest */}
-            <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
-              {pinterestStatus?.connected ? (
-                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-              ) : (
-                <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
-              )}
-              <div>
-                <p className="text-xs font-semibold text-[#222222]">Pinterest Board API</p>
-                <p
-                  className={`text-[10px] font-medium ${pinterestStatus?.connected ? "text-emerald-600" : "text-amber-500"}`}
-                >
-                  {pinterestStatus?.connected ? "Connected (Live Account)" : "Sandbox Demo Mode"}
-                </p>
-              </div>
-            </div>
-
-            {/* n8n */}
-            <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-              <div>
-                <p className="text-xs font-semibold text-[#222222]">n8n Automation Trigger</p>
-                <p className="text-[10px] text-emerald-600 font-medium">
-                  Connected (Webhook Active)
-                </p>
-              </div>
-            </div>
-          </CardContent>
+          <IntegrationGatewayStatus pinterestStatus={pinterestStatus} />
         </Card>
       </div>
 
@@ -294,6 +251,10 @@ function AutomationPage() {
           {isLoading ? (
             <div className="flex justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin text-[#1E4734]" />
+            </div>
+          ) : isError ? (
+            <div className="flex justify-center py-8 text-red-500 text-sm">
+              Error loading logs: {error instanceof Error ? error.message : "Unknown error"}
             </div>
           ) : metrics?.automationLogs.length === 0 ? (
             <p className="text-xs text-center text-[#666666]/60 py-6">
@@ -337,5 +298,160 @@ function AutomationPage() {
         </CardContent>
       </Card>
     </PageLayout>
+  );
+}
+
+function IntegrationGatewayStatus({ pinterestStatus }: { pinterestStatus: any }) {
+  const [healthStatus, setHealthStatus] = useState<{
+    openai: "unchecked" | "ok" | "error";
+    supabase: "unchecked" | "ok" | "error";
+    n8n: "unchecked" | "ok" | "error";
+  }>({
+    openai: "unchecked",
+    supabase: "unchecked",
+    n8n: "unchecked",
+  });
+  const [isChecking, setIsChecking] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const checkHealth = async () => {
+    setIsChecking(true);
+    setErrorMsg("");
+    try {
+      const resHealth = await fetch("/api/n8n/health");
+      const dataHealth = await resHealth.json();
+
+      let n8nTestSuccess = true;
+      try {
+        const testRes = await fetch("/api/n8n/test", { method: "POST" });
+        if (!testRes.ok) n8nTestSuccess = false;
+      } catch {
+        n8nTestSuccess = false;
+      }
+
+      setHealthStatus({
+        openai: dataHealth.integrations?.openaiApiKey ? "ok" : "error",
+        supabase: dataHealth.database?.status === "ok" ? "ok" : "error",
+        n8n: n8nTestSuccess && dataHealth.status !== "unauthorized" ? "ok" : "error",
+      });
+    } catch (e: any) {
+      setErrorMsg(e.message);
+      setHealthStatus({
+        openai: "error",
+        supabase: "error",
+        n8n: "error",
+      });
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  useEffect(() => {
+    void checkHealth();
+  }, []);
+
+  return (
+    <CardContent className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Button
+          onClick={checkHealth}
+          disabled={isChecking}
+          variant="outline"
+          size="sm"
+          className="text-xs"
+        >
+          {isChecking ? (
+            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+          ) : (
+            <Play className="h-3 w-3 mr-1" />
+          )}
+          Run Health Check
+        </Button>
+        {errorMsg && <span className="text-red-500 text-[10px]">{errorMsg}</span>}
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
+          {healthStatus.openai === "ok" ? (
+            <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+          ) : healthStatus.openai === "error" ? (
+            <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
+          ) : (
+            <Clock className="h-5 w-5 text-gray-400 shrink-0" />
+          )}
+          <div>
+            <p className="text-xs font-semibold text-[#222222]">OpenAI API Gateway</p>
+            <p
+              className={`text-[10px] font-medium ${healthStatus.openai === "ok" ? "text-emerald-600" : healthStatus.openai === "error" ? "text-red-500" : "text-gray-400"}`}
+            >
+              {healthStatus.openai === "ok"
+                ? "Configured"
+                : healthStatus.openai === "error"
+                  ? "Not Configured"
+                  : "Unchecked"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
+          {healthStatus.supabase === "ok" ? (
+            <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+          ) : healthStatus.supabase === "error" ? (
+            <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
+          ) : (
+            <Clock className="h-5 w-5 text-gray-400 shrink-0" />
+          )}
+          <div>
+            <p className="text-xs font-semibold text-[#222222]">Supabase Database</p>
+            <p
+              className={`text-[10px] font-medium ${healthStatus.supabase === "ok" ? "text-emerald-600" : healthStatus.supabase === "error" ? "text-red-500" : "text-gray-400"}`}
+            >
+              {healthStatus.supabase === "ok"
+                ? "Connected"
+                : healthStatus.supabase === "error"
+                  ? "Error"
+                  : "Unchecked"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
+          {pinterestStatus?.connected ? (
+            <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+          ) : (
+            <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
+          )}
+          <div>
+            <p className="text-xs font-semibold text-[#222222]">Pinterest Board API</p>
+            <p
+              className={`text-[10px] font-medium ${pinterestStatus?.connected ? "text-emerald-600" : "text-amber-500"}`}
+            >
+              {pinterestStatus?.connected ? "Connected (Live Account)" : "Sandbox Demo Mode"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
+          {healthStatus.n8n === "ok" ? (
+            <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+          ) : healthStatus.n8n === "error" ? (
+            <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
+          ) : (
+            <Clock className="h-5 w-5 text-gray-400 shrink-0" />
+          )}
+          <div>
+            <p className="text-xs font-semibold text-[#222222]">n8n Automation Trigger</p>
+            <p
+              className={`text-[10px] font-medium ${healthStatus.n8n === "ok" ? "text-emerald-600" : healthStatus.n8n === "error" ? "text-red-500" : "text-gray-400"}`}
+            >
+              {healthStatus.n8n === "ok"
+                ? "Connected"
+                : healthStatus.n8n === "error"
+                  ? "Error"
+                  : "Unchecked"}
+            </p>
+          </div>
+        </div>
+      </div>
+    </CardContent>
   );
 }

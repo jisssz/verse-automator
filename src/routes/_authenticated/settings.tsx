@@ -68,13 +68,39 @@ function SettingsPage() {
   const [pinterestUser, setPinterestUser] = useState("");
   const [amazonStatus, setAmazonStatus] = useState<"untested" | "connected" | "failed">("untested");
 
+  const [openaiInfo, setOpenaiInfo] = useState<{ latency: number; timestamp: string } | null>(null);
+  const [supabaseInfo, setSupabaseInfo] = useState<{ latency: number; timestamp: string } | null>(
+    null,
+  );
+  const [pinterestInfo, setPinterestInfo] = useState<{ latency: number; timestamp: string } | null>(
+    null,
+  );
+  const [n8nStatus, setN8nStatus] = useState<"untested" | "loading" | "connected" | "failed">(
+    "untested",
+  );
+  const [n8nInfo, setN8nInfo] = useState<{
+    latency: number;
+    timestamp: string;
+    url?: string;
+    hasApiKey?: boolean;
+  } | null>(null);
+
   const handleTestOpenAi = async () => {
     setOpenaiStatus("loading");
+    const start = performance.now();
     try {
       await testOpenAiFn();
+      setOpenaiInfo({
+        latency: Math.round(performance.now() - start),
+        timestamp: new Date().toLocaleTimeString(),
+      });
       setOpenaiStatus("connected");
       toast.success("OpenAI connection successful!");
     } catch (e) {
+      setOpenaiInfo({
+        latency: Math.round(performance.now() - start),
+        timestamp: new Date().toLocaleTimeString(),
+      });
       setOpenaiStatus("failed");
       toast.error(e instanceof Error ? e.message : "OpenAI connection failed");
     }
@@ -82,11 +108,20 @@ function SettingsPage() {
 
   const handleTestSupabase = async () => {
     setSupabaseStatus("loading");
+    const start = performance.now();
     try {
       await testSupabaseFn();
+      setSupabaseInfo({
+        latency: Math.round(performance.now() - start),
+        timestamp: new Date().toLocaleTimeString(),
+      });
       setSupabaseStatus("connected");
       toast.success("Supabase connection successful!");
     } catch (e) {
+      setSupabaseInfo({
+        latency: Math.round(performance.now() - start),
+        timestamp: new Date().toLocaleTimeString(),
+      });
       setSupabaseStatus("failed");
       toast.error(e instanceof Error ? e.message : "Supabase connection failed");
     }
@@ -94,15 +129,49 @@ function SettingsPage() {
 
   const handleTestPinterest = async () => {
     setPinterestStatusState("loading");
+    const start = performance.now();
     try {
       const res = await testPinterestFn();
+      setPinterestInfo({
+        latency: Math.round(performance.now() - start),
+        timestamp: new Date().toLocaleTimeString(),
+      });
       setPinterestStatusState("connected");
       setPinterestUser(res.username || "");
       toast.success("Pinterest connection successful!");
     } catch (e) {
+      setPinterestInfo({
+        latency: Math.round(performance.now() - start),
+        timestamp: new Date().toLocaleTimeString(),
+      });
       setPinterestStatusState("failed");
       setPinterestUser("");
       toast.error(e instanceof Error ? e.message : "Pinterest connection failed");
+    }
+  };
+
+  const handleTestN8n = async () => {
+    setN8nStatus("loading");
+    const start = performance.now();
+    try {
+      const res = await fetch("/api/n8n/health");
+      const data = await res.json().catch(() => ({}));
+      setN8nInfo({
+        latency: Math.round(performance.now() - start),
+        timestamp: new Date().toLocaleTimeString(),
+        url: data.webhookUrl || data.url || undefined,
+        hasApiKey: data.hasApiKey,
+      });
+      if (!res.ok) throw new Error("n8n health check failed");
+      setN8nStatus("connected");
+      toast.success("n8n connection successful!");
+    } catch (e) {
+      setN8nInfo({
+        latency: Math.round(performance.now() - start),
+        timestamp: new Date().toLocaleTimeString(),
+      });
+      setN8nStatus("failed");
+      toast.error(e instanceof Error ? e.message : "n8n connection failed");
     }
   };
 
@@ -169,6 +238,34 @@ function SettingsPage() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard");
+  };
+
+  const renderBadge = (
+    status: "untested" | "loading" | "connected" | "failed",
+    extraText?: string,
+  ) => {
+    if (status === "untested") {
+      return (
+        <Badge variant="outline" className="text-gray-500">
+          Not Tested
+        </Badge>
+      );
+    }
+    if (status === "loading") {
+      return (
+        <Badge variant="outline" className="text-gray-500">
+          Testing...
+        </Badge>
+      );
+    }
+    if (status === "connected") {
+      return (
+        <Badge variant="secondary" className="bg-emerald-100 text-emerald-800">
+          ✅ Connected{extraText ? `: ${extraText}` : ""}
+        </Badge>
+      );
+    }
+    return <Badge variant="destructive">❌ Failed</Badge>;
   };
 
   return (
@@ -263,20 +360,16 @@ function SettingsPage() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           {/* OpenAI */}
           <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#222222]">OpenAI API Gateway</span>
-              <Badge
-                variant={
-                  openaiStatus === "connected"
-                    ? "secondary"
-                    : openaiStatus === "failed"
-                      ? "destructive"
-                      : "outline"
-                }
-                className={openaiStatus === "connected" ? "bg-emerald-100 text-emerald-800" : ""}
-              >
-                {openaiStatus === "loading" ? "Testing..." : openaiStatus}
-              </Badge>
+            <div className="flex items-start justify-between">
+              <span className="text-xs font-semibold text-[#222222] mt-1">OpenAI API Gateway</span>
+              <div className="flex flex-col items-end">
+                {renderBadge(openaiStatus)}
+                {openaiInfo && (
+                  <div className="text-[10px] text-muted-foreground mt-1">
+                    {openaiInfo.latency}ms · {openaiInfo.timestamp}
+                  </div>
+                )}
+              </div>
             </div>
             <Button
               size="sm"
@@ -290,20 +383,16 @@ function SettingsPage() {
 
           {/* Supabase */}
           <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#222222]">Supabase Database</span>
-              <Badge
-                variant={
-                  supabaseStatus === "connected"
-                    ? "secondary"
-                    : supabaseStatus === "failed"
-                      ? "destructive"
-                      : "outline"
-                }
-                className={supabaseStatus === "connected" ? "bg-emerald-100 text-emerald-800" : ""}
-              >
-                {supabaseStatus === "loading" ? "Testing..." : supabaseStatus}
-              </Badge>
+            <div className="flex items-start justify-between">
+              <span className="text-xs font-semibold text-[#222222] mt-1">Supabase Database</span>
+              <div className="flex flex-col items-end">
+                {renderBadge(supabaseStatus)}
+                {supabaseInfo && (
+                  <div className="text-[10px] text-muted-foreground mt-1">
+                    {supabaseInfo.latency}ms · {supabaseInfo.timestamp}
+                  </div>
+                )}
+              </div>
             </div>
             <Button
               size="sm"
@@ -317,26 +406,16 @@ function SettingsPage() {
 
           {/* Pinterest */}
           <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#222222]">Pinterest Board API</span>
-              <Badge
-                variant={
-                  pinterestStatusState === "connected"
-                    ? "secondary"
-                    : pinterestStatusState === "failed"
-                      ? "destructive"
-                      : "outline"
-                }
-                className={
-                  pinterestStatusState === "connected" ? "bg-emerald-100 text-emerald-800" : ""
-                }
-              >
-                {pinterestStatusState === "loading"
-                  ? "Testing..."
-                  : pinterestStatusState === "connected"
-                    ? `Active: @${pinterestUser}`
-                    : pinterestStatusState}
-              </Badge>
+            <div className="flex items-start justify-between">
+              <span className="text-xs font-semibold text-[#222222] mt-1">Pinterest Board API</span>
+              <div className="flex flex-col items-end">
+                {renderBadge(pinterestStatusState, pinterestUser ? `@${pinterestUser}` : undefined)}
+                {pinterestInfo && (
+                  <div className="text-[10px] text-muted-foreground mt-1">
+                    {pinterestInfo.latency}ms · {pinterestInfo.timestamp}
+                  </div>
+                )}
+              </div>
             </div>
             <Button
               size="sm"
@@ -348,31 +427,60 @@ function SettingsPage() {
             </Button>
           </div>
 
+          {/* n8n Webhook */}
+          <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col mt-1">
+                <span className="text-xs font-semibold text-[#222222]">n8n Webhook Endpoint</span>
+                {n8nInfo?.url && (
+                  <span
+                    className="text-[10px] text-muted-foreground truncate max-w-[150px]"
+                    title={n8nInfo.url}
+                  >
+                    {n8nInfo.url}
+                  </span>
+                )}
+                {n8nInfo?.hasApiKey !== undefined && (
+                  <span className="text-[10px] text-muted-foreground mt-0.5">
+                    API Key: {n8nInfo.hasApiKey ? "Configured" : "Missing"}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col items-end">
+                {renderBadge(n8nStatus)}
+                {n8nInfo && (
+                  <div className="text-[10px] text-muted-foreground mt-1">
+                    {n8nInfo.latency}ms · {n8nInfo.timestamp}
+                  </div>
+                )}
+              </div>
+            </div>
+            <Button
+              size="sm"
+              onClick={handleTestN8n}
+              disabled={n8nStatus === "loading"}
+              className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-8"
+            >
+              Test Connection
+            </Button>
+          </div>
+
           {/* Amazon Affiliate Link */}
           <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#222222]">
+            <div className="flex items-start justify-between">
+              <span className="text-xs font-semibold text-[#222222] mt-1">
                 Amazon Affiliate URL Link
               </span>
-              <Badge
-                variant={
-                  amazonStatus === "connected"
-                    ? "secondary"
-                    : amazonStatus === "failed"
-                      ? "destructive"
-                      : "outline"
-                }
-                className={amazonStatus === "connected" ? "bg-emerald-100 text-emerald-800" : ""}
-              >
-                {amazonStatus}
-              </Badge>
+              <div className="flex flex-col items-end">
+                {renderBadge(amazonStatus as "untested" | "connected" | "failed")}
+              </div>
             </div>
             <Button
               size="sm"
               onClick={handleTestAmazon}
               className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-8"
             >
-              Verify Template
+              Validate Template
             </Button>
           </div>
         </CardContent>
