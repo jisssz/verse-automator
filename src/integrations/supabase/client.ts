@@ -30,32 +30,51 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 }
 
 function createSupabaseClient() {
-  // Use import.meta.env for client-side (Vite build-time replacement)
-  // Fall back to process.env for SSR (server-side rendering)
-  const SUPABASE_URL = import.meta.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"];
-  const SUPABASE_PUBLISHABLE_KEY =
-    import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || process.env["SUPABASE_PUBLISHABLE_KEY"];
+  const isServer = typeof window === "undefined";
+  const serverEnv = isServer && typeof process !== "undefined" ? process.env : {};
 
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  // Use import.meta.env for client-side (Vite build-time replacement)
+  // Fall back to server process.env during SSR (server-side rendering)
+  const SUPABASE_URL =
+    import.meta.env["VITE_SUPABASE_URL"] ||
+    serverEnv["SUPABASE_URL"] ||
+    serverEnv["VITE_SUPABASE_URL"];
+
+  const SUPABASE_KEY =
+    import.meta.env["VITE_SUPABASE_ANON_KEY"] ||
+    import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+    serverEnv["SUPABASE_ANON_KEY"] ||
+    serverEnv["SUPABASE_PUBLISHABLE_KEY"] ||
+    serverEnv["VITE_SUPABASE_ANON_KEY"] ||
+    serverEnv["VITE_SUPABASE_PUBLISHABLE_KEY"];
+
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
     const missing = [
-      ...(!SUPABASE_URL ? ["SUPABASE_URL"] : []),
-      ...(!SUPABASE_PUBLISHABLE_KEY ? ["SUPABASE_PUBLISHABLE_KEY"] : []),
+      ...(!SUPABASE_URL ? ["SUPABASE_URL / VITE_SUPABASE_URL"] : []),
+      ...(!SUPABASE_KEY ? ["SUPABASE_ANON_KEY / VITE_SUPABASE_ANON_KEY"] : []),
     ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(", ")}. Connect Supabase in Lovable Cloud.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    const message = `Missing required Supabase environment variable(s): ${missing.join(", ")}. Please configure them in your Vercel environment settings.`;
+    if (!isServer || (typeof process !== "undefined" && process.env["NODE_ENV"] === "production")) {
+      console.error(`[Supabase FATAL] ${message}`);
+      throw new Error(message);
+    }
+    console.warn(`[Supabase] ${message}`);
   }
 
-  return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-    global: {
-      fetch: createSupabaseFetch(SUPABASE_PUBLISHABLE_KEY),
+  return createClient<Database>(
+    SUPABASE_URL || "https://placeholder.supabase.co",
+    SUPABASE_KEY || "placeholder-key",
+    {
+      global: {
+        fetch: createSupabaseFetch(SUPABASE_KEY || "placeholder-key"),
+      },
+      auth: {
+        storage: typeof window !== "undefined" ? localStorage : undefined,
+        persistSession: true,
+        autoRefreshToken: true,
+      },
     },
-    auth: {
-      storage: typeof window !== "undefined" ? localStorage : undefined,
-      persistSession: true,
-      autoRefreshToken: true,
-    },
-  });
+  );
 }
 
 let _supabase: ReturnType<typeof createSupabaseClient> | undefined;

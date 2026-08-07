@@ -32,8 +32,12 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 
 export const requireSupabaseAuth = createMiddleware({ type: "function" }).server(
   async ({ next }) => {
-    const SUPABASE_URL = process.env["SUPABASE_URL"];
-    const SUPABASE_PUBLISHABLE_KEY = process.env["SUPABASE_PUBLISHABLE_KEY"];
+    const SUPABASE_URL = process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"];
+    const SUPABASE_PUBLISHABLE_KEY =
+      process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+      process.env["SUPABASE_ANON_KEY"] ||
+      process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+      process.env["VITE_SUPABASE_ANON_KEY"];
 
     const request = getRequest();
     const DEMO_USER_ID = "00000000-0000-0000-0000-000000000000";
