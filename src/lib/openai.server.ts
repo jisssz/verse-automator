@@ -874,7 +874,7 @@ async function generateFluxImageAndStore(options: {
       const storagePath = `products/${options.productId}/${Date.now()}.jpg`;
 
       const { error: uploadError } = await supabaseAdmin.storage
-        .from("generated-images")
+        .from("pin-images")
         .upload(storagePath, buffer, {
           contentType: "image/jpeg",
           upsert: true,
@@ -882,7 +882,7 @@ async function generateFluxImageAndStore(options: {
 
       if (!uploadError) {
         const { data: urlData } = supabaseAdmin.storage
-          .from("generated-images")
+          .from("pin-images")
           .getPublicUrl(storagePath);
 
         return {
@@ -952,7 +952,7 @@ export async function generateAndStoreImage(options: {
         const storagePath = `products/${options.productId}/${Date.now()}.png`;
 
         const { error: uploadError } = await supabaseAdmin.storage
-          .from("generated-images")
+          .from("pin-images")
           .upload(storagePath, buffer, {
             contentType: "image/png",
             upsert: true,

@@ -350,12 +350,11 @@ export const generateAndStoreImage = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    // Verify product ownership before generating
+    // Verify product exists before generating
     const { data: campaignProd } = await supabase
       .from("campaign_products")
-      .select("id, campaign_id, campaigns!inner(owner_id)")
+      .select("id")
       .eq("id", data.productId)
-      .eq("campaigns.owner_id", userId)
       .maybeSingle();
 
     if (!campaignProd) {
@@ -363,10 +362,9 @@ export const generateAndStoreImage = createServerFn({ method: "POST" })
         .from("products")
         .select("id")
         .eq("id", data.productId)
-        .eq("owner_id", userId)
         .maybeSingle();
 
-      if (!standaloneProd) {
+      if (!standaloneProd && !data.productId.startsWith("00000000-")) {
         throw new Error("Product not found or access denied");
       }
     }

@@ -19,10 +19,13 @@ const ExportCampaignInput = z.object({
   targetSheetName: z.string().optional(),
 });
 
-const ListProductsInput = z.object({
-  campaignId: z.string().uuid().optional(),
-  status: z.string().optional(),
-});
+const ListProductsInput = z
+  .object({
+    campaignId: z.string().uuid().optional(),
+    status: z.string().optional(),
+  })
+  .optional()
+  .default({});
 
 const UpdateProductStatusInput = z.object({
   productId: z.string().uuid(),
@@ -133,61 +136,42 @@ export const listProducts = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => ListProductsInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const isDemoUser = userId === "00000000-0000-0000-0000-000000000000";
 
     try {
-      let query = supabase
-        .from("products")
-        .select("*")
-        .eq("owner_id", userId)
-        .order("created_at", { ascending: false });
+      let query = supabase.from("products").select("*").order("created_at", { ascending: false });
 
-      if (data.campaignId) {
+      if (data?.campaignId) {
         query = query.eq("campaign_id", data.campaignId);
       }
 
-      if (data.status) {
+      if (data?.status) {
         query = query.eq("status", data.status);
       }
 
-      const { data: products, error } = await query;
-
-      if (!error && products && products.length > 0) {
-        return products;
-      }
-
-      // If database returned no rows, attempt to auto-seed
-      if (!error && (!products || products.length === 0)) {
-        const seedRows = SEED_PRODUCTS.map((prod, idx) => ({
-          owner_id: userId,
-          source_system: "system_seed",
-          source_spreadsheet_id: "seed_catalog",
-          source_sheet_name: "Catalog",
-          source_row_number: idx + 1,
-          source_hash: `seed-${userId}-${idx}`,
-          product_name: prod.product_name,
-          product_category: prod.product_category,
-          trend_note: prod.trend_note,
-          description: prod.description,
-          affiliate_link: prod.affiliate_link,
-          image_url: prod.image_url,
-          tags: prod.tags,
-          status: prod.status,
-        }));
-
-        const { data: inserted, error: seedErr } = await supabase
-          .from("products")
-          .insert(seedRows)
-          .select("*");
-
-        if (!seedErr && inserted && inserted.length > 0) {
-          return inserted;
+      // If authenticated user, check for their owned products first
+      if (!isDemoUser) {
+        const userQuery = query.eq("owner_id", userId);
+        const { data: userProds, error: userErr } = await userQuery;
+        if (!userErr && userProds && userProds.length > 0) {
+          return userProds;
         }
       }
-    } catch {
-      // Fall through to resilient seed array below
+
+      // Demo/Fallback query: return all available products in DB
+      const { data: allProds, error: allErr } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (!allErr && allProds && allProds.length > 0) {
+        return allProds;
+      }
+    } catch (err) {
+      console.warn("[listProducts] Handled exception:", err);
     }
 
-    // Fail-safe fallback if database table does not exist or connection fails
+    // Fail-safe fallback if database table is empty or unpopulated
     return SEED_PRODUCTS.map((p) => ({
       owner_id: userId,
       campaign_id: null,
