@@ -47,14 +47,18 @@ CREATE TABLE IF NOT EXISTS public.products (
   owner_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   campaign_id uuid REFERENCES public.campaigns(id) ON DELETE CASCADE,
   source_system text NOT NULL DEFAULT 'google_sheets',
-  source_spreadsheet_id text NOT NULL,
-  source_sheet_name text NOT NULL,
-  source_row_number integer NOT NULL,
-  source_hash text NOT NULL,
+  source_spreadsheet_id text,
+  source_sheet_name text,
+  source_row_number integer,
+  source_hash text,
   product_name text NOT NULL,
   product_category text NOT NULL,
   source_url text,
   trend_note text,
+  description text,
+  affiliate_link text,
+  tags text[] DEFAULT '{}'::text[],
+  image_url text,
   status text NOT NULL DEFAULT 'pending',
   locked_at timestamptz,
   locked_by uuid,
@@ -96,6 +100,7 @@ CREATE TABLE IF NOT EXISTS public.generated_content (
 
 CREATE INDEX IF NOT EXISTS generated_content_status_idx ON public.generated_content (status, created_at DESC);
 CREATE UNIQUE INDEX IF NOT EXISTS generated_content_campaign_product_id_idx ON public.generated_content (campaign_product_id) WHERE campaign_product_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS generated_content_product_id_idx ON public.generated_content (product_id) WHERE product_id IS NOT NULL;
 
 -- 6. GENERATED IMAGES
 CREATE TABLE IF NOT EXISTS public.generated_images (

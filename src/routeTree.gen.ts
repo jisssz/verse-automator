@@ -12,8 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
+import { Route as AuthenticatedAutomationRouteImport } from './routes/_authenticated/automation'
+import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
+import { Route as AuthenticatedContentGeneratorRouteImport } from './routes/_authenticated/content-generator'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedImageGeneratorRouteImport } from './routes/_authenticated/image-generator'
 import { Route as AuthenticatedPinsRouteImport } from './routes/_authenticated/pins'
+import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
 import { Route as AuthenticatedCampaignsIdRouteImport } from './routes/_authenticated/campaigns.$id'
@@ -59,14 +65,46 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAutomationRoute = AuthenticatedAutomationRouteImport.update({
+  id: '/automation',
+  path: '/automation',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCampaignsRoute = AuthenticatedCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedContentGeneratorRoute =
+  AuthenticatedContentGeneratorRouteImport.update({
+    id: '/content-generator',
+    path: '/content-generator',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedImageGeneratorRoute =
+  AuthenticatedImageGeneratorRouteImport.update({
+    id: '/image-generator',
+    path: '/image-generator',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedPinsRoute = AuthenticatedPinsRouteImport.update({
   id: '/pins',
   path: '/pins',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedProductsRoute = AuthenticatedProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -81,9 +119,9 @@ const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
 } as any)
 const AuthenticatedCampaignsIdRoute =
   AuthenticatedCampaignsIdRouteImport.update({
-    id: '/campaigns/$id',
-    path: '/campaigns/$id',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedCampaignsRoute,
   } as any)
 const ApiN8nAnalyticsRoute = ApiN8nAnalyticsRouteImport.update({
   id: '/api/n8n/analytics',
@@ -224,8 +262,14 @@ const ApiSheetsValidateRoute = ApiSheetsValidateRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/analytics': typeof AuthenticatedAnalyticsRoute
+  '/automation': typeof AuthenticatedAutomationRoute
+  '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
+  '/content-generator': typeof AuthenticatedContentGeneratorRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/image-generator': typeof AuthenticatedImageGeneratorRoute
   '/pins': typeof AuthenticatedPinsRoute
+  '/products': typeof AuthenticatedProductsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
@@ -260,8 +304,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/analytics': typeof AuthenticatedAnalyticsRoute
+  '/automation': typeof AuthenticatedAutomationRoute
+  '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
+  '/content-generator': typeof AuthenticatedContentGeneratorRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/image-generator': typeof AuthenticatedImageGeneratorRoute
   '/pins': typeof AuthenticatedPinsRoute
+  '/products': typeof AuthenticatedProductsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
@@ -298,8 +348,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
+  '/_authenticated/automation': typeof AuthenticatedAutomationRoute
+  '/_authenticated/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
+  '/_authenticated/content-generator': typeof AuthenticatedContentGeneratorRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/image-generator': typeof AuthenticatedImageGeneratorRoute
   '/_authenticated/pins': typeof AuthenticatedPinsRoute
+  '/_authenticated/products': typeof AuthenticatedProductsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/_authenticated/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
@@ -336,8 +392,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/analytics'
+    | '/automation'
+    | '/campaigns'
+    | '/content-generator'
     | '/dashboard'
+    | '/image-generator'
     | '/pins'
+    | '/products'
     | '/settings'
     | '/api/generate-image'
     | '/campaigns/$id'
@@ -372,8 +434,14 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/analytics'
+    | '/automation'
+    | '/campaigns'
+    | '/content-generator'
     | '/dashboard'
+    | '/image-generator'
     | '/pins'
+    | '/products'
     | '/settings'
     | '/api/generate-image'
     | '/campaigns/$id'
@@ -409,8 +477,14 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/analytics'
+    | '/_authenticated/automation'
+    | '/_authenticated/campaigns'
+    | '/_authenticated/content-generator'
     | '/_authenticated/dashboard'
+    | '/_authenticated/image-generator'
     | '/_authenticated/pins'
+    | '/_authenticated/products'
     | '/_authenticated/settings'
     | '/api/generate-image'
     | '/_authenticated/campaigns/$id'
@@ -500,6 +574,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/analytics': {
+      id: '/_authenticated/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/automation': {
+      id: '/_authenticated/automation'
+      path: '/automation'
+      fullPath: '/automation'
+      preLoaderRoute: typeof AuthenticatedAutomationRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/campaigns': {
+      id: '/_authenticated/campaigns'
+      path: '/campaigns'
+      fullPath: '/campaigns'
+      preLoaderRoute: typeof AuthenticatedCampaignsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/content-generator': {
+      id: '/_authenticated/content-generator'
+      path: '/content-generator'
+      fullPath: '/content-generator'
+      preLoaderRoute: typeof AuthenticatedContentGeneratorRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -507,11 +609,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/image-generator': {
+      id: '/_authenticated/image-generator'
+      path: '/image-generator'
+      fullPath: '/image-generator'
+      preLoaderRoute: typeof AuthenticatedImageGeneratorRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/pins': {
       id: '/_authenticated/pins'
       path: '/pins'
       fullPath: '/pins'
       preLoaderRoute: typeof AuthenticatedPinsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/products': {
+      id: '/_authenticated/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof AuthenticatedProductsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/settings': {
@@ -530,10 +646,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/campaigns/$id': {
       id: '/_authenticated/campaigns/$id'
-      path: '/campaigns/$id'
+      path: '/$id'
       fullPath: '/campaigns/$id'
       preLoaderRoute: typeof AuthenticatedCampaignsIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedCampaignsRoute
     }
     '/api/n8n/analytics': {
       id: '/api/n8n/analytics'
@@ -727,18 +843,42 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedRouteChildren {
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedPinsRoute: typeof AuthenticatedPinsRoute
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+interface AuthenticatedCampaignsRouteChildren {
   AuthenticatedCampaignsIdRoute: typeof AuthenticatedCampaignsIdRoute
 }
 
+const AuthenticatedCampaignsRouteChildren: AuthenticatedCampaignsRouteChildren =
+  {
+    AuthenticatedCampaignsIdRoute: AuthenticatedCampaignsIdRoute,
+  }
+
+const AuthenticatedCampaignsRouteWithChildren =
+  AuthenticatedCampaignsRoute._addFileChildren(
+    AuthenticatedCampaignsRouteChildren,
+  )
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
+  AuthenticatedAutomationRoute: typeof AuthenticatedAutomationRoute
+  AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRouteWithChildren
+  AuthenticatedContentGeneratorRoute: typeof AuthenticatedContentGeneratorRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedImageGeneratorRoute: typeof AuthenticatedImageGeneratorRoute
+  AuthenticatedPinsRoute: typeof AuthenticatedPinsRoute
+  AuthenticatedProductsRoute: typeof AuthenticatedProductsRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+}
+
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
+  AuthenticatedAutomationRoute: AuthenticatedAutomationRoute,
+  AuthenticatedCampaignsRoute: AuthenticatedCampaignsRouteWithChildren,
+  AuthenticatedContentGeneratorRoute: AuthenticatedContentGeneratorRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedImageGeneratorRoute: AuthenticatedImageGeneratorRoute,
   AuthenticatedPinsRoute: AuthenticatedPinsRoute,
+  AuthenticatedProductsRoute: AuthenticatedProductsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedCampaignsIdRoute: AuthenticatedCampaignsIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

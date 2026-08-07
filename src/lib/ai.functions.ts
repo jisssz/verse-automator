@@ -141,20 +141,35 @@ export const saveGeneratedContent = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    const { data: product, error: productError } = await supabase
+    // 1. Try to find in campaign_products
+    const { data: campaignProd } = await supabase
       .from("campaign_products")
-      .select("campaign_id, campaigns!inner(owner_id)")
+      .select("id, campaign_id, campaigns!inner(owner_id)")
       .eq("id", data.productId)
       .eq("campaigns.owner_id", userId)
-      .single();
+      .maybeSingle();
 
-    if (productError || !product) {
-      throw new Error(productError?.message || "Product not found or access denied");
+    let isCampaignProduct = false;
+    if (campaignProd) {
+      isCampaignProduct = true;
+    } else {
+      // 2. Try to find in standalone products
+      const { data: standaloneProd } = await supabase
+        .from("products")
+        .select("id")
+        .eq("id", data.productId)
+        .eq("owner_id", userId)
+        .maybeSingle();
+
+      if (!standaloneProd) {
+        throw new Error("Product not found or access denied");
+      }
     }
 
     const { error } = await supabase.from("generated_content").upsert(
       {
-        campaign_product_id: data.productId,
+        campaign_product_id: isCampaignProduct ? data.productId : null,
+        product_id: isCampaignProduct ? null : data.productId,
         headline: data.headline,
         description: data.description,
         pinterest_title: data.pinTitle,
@@ -163,7 +178,7 @@ export const saveGeneratedContent = createServerFn({ method: "POST" })
         image_prompt: data.imagePrompt || null,
         image_url: data.imageUrl || null,
       },
-      { onConflict: "campaign_product_id" },
+      { onConflict: isCampaignProduct ? "campaign_product_id" : "product_id" },
     );
 
     if (error) throw new Error(error.message);
@@ -336,15 +351,24 @@ export const generateAndStoreImage = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
 
     // Verify product ownership before generating
-    const { data: product, error: productError } = await supabase
+    const { data: campaignProd } = await supabase
       .from("campaign_products")
-      .select("campaign_id, campaigns!inner(owner_id)")
+      .select("id, campaign_id, campaigns!inner(owner_id)")
       .eq("id", data.productId)
       .eq("campaigns.owner_id", userId)
-      .single();
+      .maybeSingle();
 
-    if (productError || !product) {
-      throw new Error(productError?.message || "Product not found or access denied");
+    if (!campaignProd) {
+      const { data: standaloneProd } = await supabase
+        .from("products")
+        .select("id")
+        .eq("id", data.productId)
+        .eq("owner_id", userId)
+        .maybeSingle();
+
+      if (!standaloneProd) {
+        throw new Error("Product not found or access denied");
+      }
     }
 
     const result = await generateOpenAiAndStoreImage({
@@ -381,4 +405,30 @@ export const generateAndStoreImage = createServerFn({ method: "POST" })
     }
 
     return result;
+  });
+
+export const listGeneratedImagesServer = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        productId: z.string().uuid().optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    let query = supabase
+      .from("generated_images")
+      .select("*, products!inner(owner_id)")
+      .eq("products.owner_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (data.productId) {
+      query = query.eq("product_id", data.productId);
+    }
+
+    const { data: images, error } = await query;
+    if (error) throw new Error(error.message);
+    return images || [];
   });

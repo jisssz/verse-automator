@@ -242,3 +242,53 @@ export const addProductsToCampaign = createServerFn({ method: "POST" })
     if (insertError) throw new Error(insertError.message);
     return { ok: true, count: productsToInsert.length };
   });
+
+export const testOpenAiConnection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    const apiKey = process.env["OPENAI_API_KEY"];
+    if (!apiKey) throw new Error("Missing OpenAI API Key");
+
+    try {
+      const res = await fetch("https://api.openai.com/v1/models", {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData?.error?.message || `OpenAI returned status ${res.status}`);
+      }
+      return { ok: true };
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : "OpenAI connection failed");
+    }
+  });
+
+export const testSupabaseConnection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const testPinterestConnection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data, error } = await supabase
+      .from("pinterest_accounts")
+      .select("id, username")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    if (!data) throw new Error("No connected Pinterest account found. Please connect in settings.");
+    return { ok: true, username: data.username };
+  });

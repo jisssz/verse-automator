@@ -368,14 +368,18 @@ export type Database = {
           processed_at: string | null;
           product_category: string;
           product_name: string;
-          source_hash: string;
-          source_row_number: number;
-          source_sheet_name: string;
-          source_spreadsheet_id: string;
+          source_hash: string | null;
+          source_row_number: number | null;
+          source_sheet_name: string | null;
+          source_spreadsheet_id: string | null;
           source_system: string;
           source_url: string | null;
           status: string;
           trend_note: string | null;
+          description: string | null;
+          affiliate_link: string | null;
+          tags: string[] | null;
+          image_url: string | null;
           updated_at: string;
         };
         Insert: {
@@ -389,14 +393,18 @@ export type Database = {
           processed_at?: string | null;
           product_category: string;
           product_name: string;
-          source_hash: string;
-          source_row_number: number;
-          source_sheet_name: string;
-          source_spreadsheet_id: string;
+          source_hash?: string | null;
+          source_row_number?: number | null;
+          source_sheet_name?: string | null;
+          source_spreadsheet_id?: string | null;
           source_system?: string;
           source_url?: string | null;
           status?: string;
           trend_note?: string | null;
+          description?: string | null;
+          affiliate_link?: string | null;
+          tags?: string[] | null;
+          image_url?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -410,14 +418,18 @@ export type Database = {
           processed_at?: string | null;
           product_category?: string;
           product_name?: string;
-          source_hash?: string;
-          source_row_number?: number;
-          source_sheet_name?: string;
-          source_spreadsheet_id?: string;
+          source_hash?: string | null;
+          source_row_number?: number | null;
+          source_sheet_name?: string | null;
+          source_spreadsheet_id?: string | null;
           source_system?: string;
           source_url?: string | null;
           status?: string;
           trend_note?: string | null;
+          description?: string | null;
+          affiliate_link?: string | null;
+          tags?: string[] | null;
+          image_url?: string | null;
           updated_at?: string;
         };
         Relationships: [

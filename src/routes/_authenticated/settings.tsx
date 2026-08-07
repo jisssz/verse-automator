@@ -10,7 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { PageLayout } from "@/components/layout/page-layout";
 import { Loader2, Save, Key, Webhook, CheckCircle2, Play, Copy, Link2 } from "lucide-react";
 import { toast } from "sonner";
-import { getProfile, updateProfile } from "@/lib/campaigns.functions";
+import {
+  getProfile,
+  updateProfile,
+  testOpenAiConnection,
+  testSupabaseConnection,
+  testPinterestConnection,
+} from "@/lib/campaigns.functions";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -44,6 +50,76 @@ function SettingsPage() {
   const [affiliateLinkTemplate, setAffiliateLinkTemplate] = useState("");
   const [testingWebhook, setTestingWebhook] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
+
+  // Connection health states
+  const testOpenAiFn = useServerFn(testOpenAiConnection);
+  const testSupabaseFn = useServerFn(testSupabaseConnection);
+  const testPinterestFn = useServerFn(testPinterestConnection);
+
+  const [openaiStatus, setOpenaiStatus] = useState<"untested" | "loading" | "connected" | "failed">(
+    "untested",
+  );
+  const [supabaseStatus, setSupabaseStatus] = useState<
+    "untested" | "loading" | "connected" | "failed"
+  >("untested");
+  const [pinterestStatusState, setPinterestStatusState] = useState<
+    "untested" | "loading" | "connected" | "failed"
+  >("untested");
+  const [pinterestUser, setPinterestUser] = useState("");
+  const [amazonStatus, setAmazonStatus] = useState<"untested" | "connected" | "failed">("untested");
+
+  const handleTestOpenAi = async () => {
+    setOpenaiStatus("loading");
+    try {
+      await testOpenAiFn();
+      setOpenaiStatus("connected");
+      toast.success("OpenAI connection successful!");
+    } catch (e) {
+      setOpenaiStatus("failed");
+      toast.error(e instanceof Error ? e.message : "OpenAI connection failed");
+    }
+  };
+
+  const handleTestSupabase = async () => {
+    setSupabaseStatus("loading");
+    try {
+      await testSupabaseFn();
+      setSupabaseStatus("connected");
+      toast.success("Supabase connection successful!");
+    } catch (e) {
+      setSupabaseStatus("failed");
+      toast.error(e instanceof Error ? e.message : "Supabase connection failed");
+    }
+  };
+
+  const handleTestPinterest = async () => {
+    setPinterestStatusState("loading");
+    try {
+      const res = await testPinterestFn();
+      setPinterestStatusState("connected");
+      setPinterestUser(res.username || "");
+      toast.success("Pinterest connection successful!");
+    } catch (e) {
+      setPinterestStatusState("failed");
+      setPinterestUser("");
+      toast.error(e instanceof Error ? e.message : "Pinterest connection failed");
+    }
+  };
+
+  const handleTestAmazon = () => {
+    if (!affiliateLinkTemplate.trim()) {
+      setAmazonStatus("failed");
+      toast.error("Template cannot be empty");
+      return;
+    }
+    if (!affiliateLinkTemplate.includes("{{product}}")) {
+      setAmazonStatus("failed");
+      toast.error("Template must include {{product}} token");
+      return;
+    }
+    setAmazonStatus("connected");
+    toast.success("Amazon Affiliate link structure validated successfully!");
+  };
 
   useEffect(() => {
     if (profile) {
@@ -170,6 +246,135 @@ function SettingsPage() {
               </Button>
             </form>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Gateway Connections Health Checker */}
+      <Card className="luxury-card border-[#E7E2D9]">
+        <CardHeader>
+          <CardTitle className="font-serif text-xl text-[#222222]">
+            API Credentials & Health Gateway
+          </CardTitle>
+          <p className="text-xs text-[#666666] mt-0.5">
+            Test the live authentication status of external platforms and your local database
+            connection.
+          </p>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
+          {/* OpenAI */}
+          <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#222222]">OpenAI API Gateway</span>
+              <Badge
+                variant={
+                  openaiStatus === "connected"
+                    ? "secondary"
+                    : openaiStatus === "failed"
+                      ? "destructive"
+                      : "outline"
+                }
+                className={openaiStatus === "connected" ? "bg-emerald-100 text-emerald-800" : ""}
+              >
+                {openaiStatus === "loading" ? "Testing..." : openaiStatus}
+              </Badge>
+            </div>
+            <Button
+              size="sm"
+              onClick={handleTestOpenAi}
+              disabled={openaiStatus === "loading"}
+              className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-8"
+            >
+              Test Connection
+            </Button>
+          </div>
+
+          {/* Supabase */}
+          <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#222222]">Supabase Database</span>
+              <Badge
+                variant={
+                  supabaseStatus === "connected"
+                    ? "secondary"
+                    : supabaseStatus === "failed"
+                      ? "destructive"
+                      : "outline"
+                }
+                className={supabaseStatus === "connected" ? "bg-emerald-100 text-emerald-800" : ""}
+              >
+                {supabaseStatus === "loading" ? "Testing..." : supabaseStatus}
+              </Badge>
+            </div>
+            <Button
+              size="sm"
+              onClick={handleTestSupabase}
+              disabled={supabaseStatus === "loading"}
+              className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-8"
+            >
+              Test Connection
+            </Button>
+          </div>
+
+          {/* Pinterest */}
+          <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#222222]">Pinterest Board API</span>
+              <Badge
+                variant={
+                  pinterestStatusState === "connected"
+                    ? "secondary"
+                    : pinterestStatusState === "failed"
+                      ? "destructive"
+                      : "outline"
+                }
+                className={
+                  pinterestStatusState === "connected" ? "bg-emerald-100 text-emerald-800" : ""
+                }
+              >
+                {pinterestStatusState === "loading"
+                  ? "Testing..."
+                  : pinterestStatusState === "connected"
+                    ? `Active: @${pinterestUser}`
+                    : pinterestStatusState}
+              </Badge>
+            </div>
+            <Button
+              size="sm"
+              onClick={handleTestPinterest}
+              disabled={pinterestStatusState === "loading"}
+              className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-8"
+            >
+              Test Connection
+            </Button>
+          </div>
+
+          {/* Amazon Affiliate Link */}
+          <div className="flex flex-col justify-between p-4 rounded-xl border border-[#E7E2D9] bg-white space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#222222]">
+                Amazon Affiliate URL Link
+              </span>
+              <Badge
+                variant={
+                  amazonStatus === "connected"
+                    ? "secondary"
+                    : amazonStatus === "failed"
+                      ? "destructive"
+                      : "outline"
+                }
+                className={amazonStatus === "connected" ? "bg-emerald-100 text-emerald-800" : ""}
+              >
+                {amazonStatus}
+              </Badge>
+            </div>
+            <Button
+              size="sm"
+              onClick={handleTestAmazon}
+              className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-8"
+            >
+              Verify Template
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

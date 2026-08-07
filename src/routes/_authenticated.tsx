@@ -78,13 +78,13 @@ function AuthenticatedLayout() {
 
   const navItems = [
     { label: "Dashboard", icon: LayoutDashboard, to: "/dashboard" },
-    { label: "Campaigns", icon: FolderKanban, to: "/dashboard" },
-    { label: "Products", icon: Layers, to: "/dashboard" },
+    { label: "Campaigns", icon: FolderKanban, to: "/campaigns" },
+    { label: "Products", icon: Layers, to: "/products" },
     { label: "Pinterest Pins", icon: Pin, to: "/pins" },
-    { label: "Content Generator", icon: Sparkles, to: "/dashboard" },
-    { label: "Image Generator", icon: ImageIcon, to: "/dashboard" },
-    { label: "Analytics", icon: BarChart3, to: "/dashboard" },
-    { label: "Automation", icon: Sliders, to: "/settings" },
+    { label: "Content Generator", icon: Sparkles, to: "/content-generator" },
+    { label: "Image Generator", icon: ImageIcon, to: "/image-generator" },
+    { label: "Analytics", icon: BarChart3, to: "/analytics" },
+    { label: "Automation", icon: Sliders, to: "/automation" },
     { label: "Settings", icon: Settings, to: "/settings" },
   ];
 
@@ -134,10 +134,8 @@ function AuthenticatedLayout() {
           )}
           {navItems.map((item) => {
             const isActive =
-              (item.to === "/dashboard" &&
-                (router.state.location.pathname === "/dashboard" ||
-                  router.state.location.pathname.startsWith("/campaigns"))) ||
-              router.state.location.pathname === item.to;
+              router.state.location.pathname === item.to ||
+              (item.to !== "/dashboard" && router.state.location.pathname.startsWith(item.to));
 
             return (
               <Link
