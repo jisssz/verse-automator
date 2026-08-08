@@ -144,7 +144,13 @@ export async function fetchPinterestStatus(userId = DEMO_USER_ID): Promise<{
   mode: "live" | "demo";
   boards: PinterestBoard[];
   username?: string | undefined;
+  configured: boolean;
+  trialPending: boolean;
+  statusMessage: string;
 }> {
+  const clientId = process.env["PINTEREST_CLIENT_ID"]?.trim();
+  const clientSecret = process.env["PINTEREST_CLIENT_SECRET"]?.trim();
+  const configured = Boolean(clientId && clientSecret);
   const accessToken = await getValidAccessToken(userId);
 
   if (!accessToken) {
@@ -152,6 +158,11 @@ export async function fetchPinterestStatus(userId = DEMO_USER_ID): Promise<{
       connected: false,
       mode: "demo",
       boards: getDemoBoards(),
+      configured,
+      trialPending: !configured,
+      statusMessage: configured
+        ? "Account Disconnected — OAuth Ready"
+        : "Waiting for Pinterest Trial Approval",
     };
   }
 
@@ -159,7 +170,16 @@ export async function fetchPinterestStatus(userId = DEMO_USER_ID): Promise<{
 
   // Verify connection is still live by checking if we got real boards
   if (source === "demo" && !accessToken) {
-    return { connected: false, mode: "demo", boards };
+    return {
+      connected: false,
+      mode: "demo",
+      boards,
+      configured,
+      trialPending: !configured,
+      statusMessage: configured
+        ? "Account Disconnected — OAuth Ready"
+        : "Waiting for Pinterest Trial Approval",
+    };
   }
 
   // Try to get username for display
@@ -171,6 +191,9 @@ export async function fetchPinterestStatus(userId = DEMO_USER_ID): Promise<{
     connected: true,
     mode: source === "demo" ? "demo" : "live",
     boards,
+    configured,
+    trialPending: false,
+    statusMessage: "Connected & Active",
     ...(username ? { username } : {}),
   };
 }

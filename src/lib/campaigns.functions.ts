@@ -343,21 +343,7 @@ export const testSupabaseConnection = createServerFn({ method: "POST" })
 export const testPinterestConnection = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
-    try {
-      const { data, error } = await supabase
-        .from("pinterest_accounts")
-        .select("id, username")
-        .eq("user_id", userId)
-        .eq("is_active", true)
-        .maybeSingle();
-
-      if (!error && data) {
-        return { ok: true, username: data.username };
-      }
-    } catch {
-      // Fallback
-    }
-
-    return { ok: true, username: "DailyVerse (Demo Mode)" };
+    const { userId } = context;
+    const { fetchPinterestStatus } = await import("./pinterest.server");
+    return fetchPinterestStatus(userId);
   });

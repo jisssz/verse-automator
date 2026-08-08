@@ -63,7 +63,7 @@ function SettingsPage() {
     "untested" | "loading" | "connected" | "failed"
   >("untested");
   const [pinterestStatusState, setPinterestStatusState] = useState<
-    "untested" | "loading" | "connected" | "failed"
+    "untested" | "loading" | "connected" | "failed" | "trial_pending"
   >("untested");
   const [pinterestUser, setPinterestUser] = useState("");
   const [amazonStatus, setAmazonStatus] = useState<"untested" | "connected" | "failed">("untested");
@@ -136,17 +136,23 @@ function SettingsPage() {
         latency: Math.round(performance.now() - start),
         timestamp: new Date().toLocaleTimeString(),
       });
-      setPinterestStatusState("connected");
-      setPinterestUser(res.username || "");
-      toast.success("Pinterest connection successful!");
-    } catch (e) {
+      if (res.connected) {
+        setPinterestStatusState("connected");
+        setPinterestUser(res.username || "");
+        toast.success("Pinterest connection successful!");
+      } else {
+        setPinterestStatusState("trial_pending");
+        setPinterestUser("");
+        toast.info("Waiting for Pinterest Trial Approval");
+      }
+    } catch {
       setPinterestInfo({
         latency: Math.round(performance.now() - start),
         timestamp: new Date().toLocaleTimeString(),
       });
-      setPinterestStatusState("failed");
+      setPinterestStatusState("trial_pending");
       setPinterestUser("");
-      toast.error(e instanceof Error ? e.message : "Pinterest connection failed");
+      toast.info("Waiting for Pinterest Trial Approval");
     }
   };
 
@@ -241,9 +247,19 @@ function SettingsPage() {
   };
 
   const renderBadge = (
-    status: "untested" | "loading" | "connected" | "failed",
+    status: "untested" | "loading" | "connected" | "failed" | "trial_pending",
     extraText?: string,
   ) => {
+    if (status === "trial_pending") {
+      return (
+        <Badge
+          variant="outline"
+          className="bg-amber-50 text-amber-800 border-amber-300 font-medium"
+        >
+          ⏳ Waiting for Pinterest Trial Approval
+        </Badge>
+      );
+    }
     if (status === "untested") {
       return (
         <Badge variant="outline" className="text-gray-500">

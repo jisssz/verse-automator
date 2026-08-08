@@ -418,15 +418,25 @@ function IntegrationGatewayStatus({
         <div className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E7E2D9] bg-white">
           {pinterestStatus?.connected ? (
             <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+          ) : pinterestStatus?.trialPending ? (
+            <Clock className="h-5 w-5 text-amber-600 shrink-0" />
           ) : (
             <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
           )}
           <div>
             <p className="text-xs font-semibold text-[#222222]">Pinterest Board API</p>
             <p
-              className={`text-[10px] font-medium ${pinterestStatus?.connected ? "text-emerald-600" : "text-amber-500"}`}
+              className={`text-[10px] font-medium ${
+                pinterestStatus?.connected
+                  ? "text-emerald-600"
+                  : pinterestStatus?.trialPending
+                    ? "text-amber-600 font-semibold"
+                    : "text-amber-600"
+              }`}
             >
-              {pinterestStatus?.connected ? "Connected (Live Account)" : "Sandbox Demo Mode"}
+              {pinterestStatus?.connected
+                ? `Connected (${pinterestStatus.username ? `@${pinterestStatus.username}` : "Live Account"})`
+                : pinterestStatus?.statusMessage || "Waiting for Pinterest Trial Approval"}
             </p>
           </div>
         </div>
@@ -442,7 +452,7 @@ function IntegrationGatewayStatus({
             <p
               className={`text-[10px] font-medium ${healthStatus.n8n === "ok" ? "text-emerald-600" : "text-gray-500"}`}
             >
-              {healthStatus.n8n === "ok" ? "Connected" : "Optional (Not Configured)"}
+              {healthStatus.n8n === "ok" ? "Connected" : "Optional (Webhook Not Configured)"}
             </p>
           </div>
         </div>
