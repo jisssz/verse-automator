@@ -237,7 +237,62 @@ h4,
   transform: translateY(-4px) rotateX(2deg) rotateY(-1deg);
 }
 
-/* Animations */
+/* Animations & Framer-style Spring Physics */
+@keyframes auroraFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
+}
+
+@keyframes beamSweep {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(200%) rotate(25deg); }
+}
+
+.aurora-bg-animate {
+  background-size: 200% 200%;
+  animation: auroraFlow 12s ease infinite;
+}
+
+.animate-float-slow {
+  animation: floatSlow 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.magnetic-hover {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.magnetic-hover:hover {
+  transform: scale(1.03) translateY(-2px);
+}
+
+.beam-light-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.beam-light-effect::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 40%,
+    rgba(200, 169, 106, 0.15) 50%,
+    transparent 60%
+  );
+  animation: beamSweep 6s infinite;
+  pointer-events-none: none;
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }

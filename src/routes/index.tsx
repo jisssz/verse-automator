@@ -93,14 +93,14 @@ function LandingPage() {
 
   return (
     <div className="bg-[#F8F6F2] text-[#222222] min-h-screen flex flex-col justify-between selection:bg-[#C8A96A]/30">
-      {/* Hero Section — Cinematic Mesh Radial Lighting */}
-      <section className="relative overflow-hidden pt-16 pb-24 px-4 bg-mesh-dark text-white border-b border-[#C8A96A]/30">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" />
+      {/* Hero Section — Cinematic Aurora Mesh & Beam Sweep Motion */}
+      <section className="relative overflow-hidden pt-16 pb-24 px-4 bg-mesh-dark aurora-bg-animate text-white border-b border-[#C8A96A]/30">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" />
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#C8A96A]/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="mx-auto max-w-6xl space-y-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C8A96A]/20 border border-[#C8A96A]/50 text-[#C8A96A] text-xs font-semibold uppercase tracking-widest shadow-lg animate-float">
-            <Crown className="h-3.5 w-3.5" /> Luxury Skincare AI Automation
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C8A96A]/20 border border-[#C8A96A]/50 text-[#C8A96A] text-xs font-semibold uppercase tracking-widest shadow-lg animate-float-slow backdrop-blur-md">
+            <Crown className="h-3.5 w-3.5" /> Premium Skincare AI Automation
           </div>
 
           <h1 className="font-serif text-5xl sm:text-7xl font-extrabold tracking-tight text-white leading-[1.08] max-w-5xl mx-auto drop-shadow-sm">
@@ -115,7 +115,7 @@ function LandingPage() {
             <Link to="/auth">
               <Button
                 size="lg"
-                className="bg-[#C8A96A] hover:bg-[#D4AF37] text-[#132E22] font-bold shadow-xl h-12 px-8 text-sm cursor-pointer hover-lift rounded-full"
+                className="bg-[#C8A96A] hover:bg-[#D4AF37] text-[#132E22] font-bold shadow-xl h-12 px-8 text-sm cursor-pointer magnetic-hover rounded-full beam-light-effect"
               >
                 Launch Automation Suite <ArrowRight className="ml-2 h-4 w-4 text-[#132E22]" />
               </Button>
@@ -124,20 +124,20 @@ function LandingPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-[#C8A96A]/40 text-white bg-white/5 hover:bg-white/10 font-medium h-12 px-8 text-sm cursor-pointer rounded-full backdrop-blur-md"
+                className="border-[#C8A96A]/40 text-white bg-white/5 hover:bg-white/10 font-medium h-12 px-8 text-sm cursor-pointer rounded-full backdrop-blur-md magnetic-hover"
               >
                 Explore Demo Workspace
               </Button>
             </Link>
           </div>
 
-          {/* Hero Overlapping Glass Composition */}
+          {/* Hero Overlapping Glass Composition with 3D Tilt */}
           <div className="pt-10 mx-auto max-w-5xl relative">
-            <div className="relative rounded-2xl overflow-hidden border border-[#C8A96A]/50 shadow-2xl group glass-panel-dark p-2 text-left">
+            <div className="relative rounded-2xl overflow-hidden border border-[#C8A96A]/50 shadow-2xl group glass-panel-dark p-2 text-left card-3d-tilt beam-light-effect">
               <img
                 src="/brand/hero-banner.jpg"
                 alt="DAILY VERSE - Skincare That Works"
-                className="w-full h-auto rounded-xl object-cover transition-transform duration-700 ease-out group-hover:scale-[1.01]"
+                className="w-full h-auto rounded-xl object-cover transition-transform duration-700 ease-out group-hover:scale-[1.015]"
                 loading="eager"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#132E22]/80 via-transparent to-transparent pointer-events-none" />
