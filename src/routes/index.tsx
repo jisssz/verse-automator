@@ -189,6 +189,66 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* Section 3: Problem vs Solution Storytelling Section */}
+      <section className="bg-white py-20 border-b border-[#E7E2D9]">
+        <div className="mx-auto max-w-6xl px-4 grid gap-12 lg:grid-cols-2 items-center">
+          <div className="space-y-6">
+            <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] font-semibold text-xs bg-[#F8F6F2]">
+              The Affiliate Automation Problem
+            </Badge>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1E4734] leading-tight">
+              Manual Pinterest Marketing Takes Hours of Tedious Work
+            </h2>
+            <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
+              Curating luxury botanical products, writing SEO-optimized pin titles, rendering 9:16 vertical images, and maintaining scheduling calendars manually leads to burnout and inconsistent reach.
+            </p>
+
+            <div className="space-y-4 pt-2">
+              <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 flex items-start gap-3">
+                <div className="p-1 rounded-full bg-red-100 text-red-600 font-bold text-xs shrink-0">✕</div>
+                <div className="text-xs">
+                  <p className="font-semibold text-red-900">Manual Process: 4+ Hours Per Pin</p>
+                  <p className="text-red-700/80 mt-0.5">Designing graphics in Canva, copywriting tags, manual Pinterest uploading.</p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 flex items-start gap-3">
+                <div className="p-1 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs shrink-0">✓</div>
+                <div className="text-xs">
+                  <p className="font-semibold text-emerald-900">DailyVerse Solution: Sub-2 Second Pipeline</p>
+                  <p className="text-emerald-800/80 mt-0.5">FLUX.1 free AI visual studio, GPT-4o copywriter, and direct Pinterest REST API v5 publishing.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative rounded-2xl overflow-hidden border border-[#E7E2D9] shadow-2xl bg-[#F8F6F2] p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E7E2D9] pb-3">
+              <span className="font-serif text-sm font-bold text-[#1E4734]">DailyVerse AI Pipeline vs Manual</span>
+              <Badge className="bg-[#1E4734] text-white text-[10px]">99.4% Efficiency Gain</Badge>
+            </div>
+            <div className="space-y-3 font-mono text-xs">
+              <div className="p-3 rounded-lg bg-white border border-[#E7E2D9] flex justify-between items-center">
+                <span>1. Amazon Product Discovery</span>
+                <span className="text-emerald-700 font-bold">Automated</span>
+              </div>
+              <div className="p-3 rounded-lg bg-white border border-[#E7E2D9] flex justify-between items-center">
+                <span>2. GPT-4o Pin Copywriting & Hashtags</span>
+                <span className="text-emerald-700 font-bold">Automated</span>
+              </div>
+              <div className="p-3 rounded-lg bg-white border border-[#E7E2D9] flex justify-between items-center">
+                <span>3. FLUX.1 9:16 Skincare Visual Rendering</span>
+                <span className="text-emerald-700 font-bold">Automated</span>
+              </div>
+              <div className="p-3 rounded-lg bg-white border border-[#E7E2D9] flex justify-between items-center">
+                <span>4. Pinterest Board REST API v5 Posting</span>
+                <span className="text-emerald-700 font-bold">Automated</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Interactive AI Automation Stepper */}
       <section className="mx-auto max-w-5xl px-4 py-20 space-y-12">
         <div className="text-center space-y-3">
