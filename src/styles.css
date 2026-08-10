@@ -293,6 +293,21 @@ h4,
   pointer-events-none: none;
 }
 
+/* Depth Overlays & Reflections */
+.vignette-overlay {
+  box-shadow: inset 0 0 100px rgba(19, 46, 34, 0.4);
+}
+
+.glass-shimmer {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(248, 246, 242, 0.7) 100%
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
