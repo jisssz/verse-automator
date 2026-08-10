@@ -174,12 +174,16 @@ function ContentGeneratorPage() {
             <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight text-[#222222]">
               AI Copywriter & SEO Studio
             </h1>
-            <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] font-semibold text-[11px] bg-[#F8F6F2]">
+            <Badge
+              variant="outline"
+              className="border-[#C8A96A] text-[#1E4734] font-semibold text-[11px] bg-[#F8F6F2]"
+            >
               Pinterest SEO Score: 98/100
             </Badge>
           </div>
           <p className="text-xs text-[#666666] mt-0.5">
-            Optimize titles, descriptions, and hashtags with luxury editorial tone matching the DailyVerse identity.
+            Optimize titles, descriptions, and hashtags with luxury editorial tone matching the
+            DailyVerse identity.
           </p>
         </div>
       </div>

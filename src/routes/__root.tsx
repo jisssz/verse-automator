@@ -75,23 +75,54 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "DailyVerse AI — Affiliate Content Automation" },
+      { name: "theme-color", content: "#0d1f17" },
+      { title: "DailyVerse AI — Luxury Skincare Automation & Pinterest Growth" },
       {
         name: "description",
         content:
-          "Generate trending product ideas, AI-written Pinterest pins, and images. Built for affiliate marketers.",
+          "Scale your beauty affiliate income & Pinterest traffic automatically. Generate luxury skincare copy, studio-grade aesthetic pin graphics, and automated board syndication.",
       },
       { name: "author", content: "DailyVerse AI" },
-      { property: "og:title", content: "DailyVerse AI — Affiliate Content Automation" },
+      {
+        property: "og:site_name",
+        content: "DailyVerse AI",
+      },
+      {
+        property: "og:title",
+        content: "DailyVerse AI — Luxury Skincare Automation & Pinterest Growth",
+      },
       {
         property: "og:description",
         content:
-          "Generate trending product ideas, AI-written Pinterest pins, and images. Built for affiliate marketers.",
+          "Scale your beauty affiliate income & Pinterest traffic automatically. Generate luxury skincare copy, studio-grade aesthetic pin graphics, and automated board syndication.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://verse-automator.pages.dev" },
+      {
+        property: "og:image",
+        content: "https://verse-automator.pages.dev/brand/hero-banner.jpg",
+      },
+      { property: "og:image:width", content: "1024" },
+      { property: "og:image:height", content: "488" },
+      { property: "og:image:alt", content: "DailyVerse AI — Luxury Skincare Pinterest Automation" },
       { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "DailyVerse AI — Luxury Skincare Automation & Pinterest Growth",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Scale your beauty affiliate income & Pinterest traffic automatically. Generate luxury skincare copy, studio-grade aesthetic pin graphics, and automated board syndication.",
+      },
+      {
+        name: "twitter:image",
+        content: "https://verse-automator.pages.dev/brand/hero-banner.jpg",
+      },
+      { name: "robots", content: "index, follow" },
     ],
     links: [
+      { rel: "canonical", href: "https://verse-automator.pages.dev" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -99,7 +130,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap",
       },
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "icon", href: "/brand/logo.jpg", type: "image/jpeg" },
+      { rel: "apple-touch-icon", href: "/brand/logo.jpg" },
     ],
   }),
   shellComponent: RootShell,
@@ -130,6 +163,7 @@ function RootComponent() {
     router.state.location.pathname.startsWith("/pins") ||
     router.state.location.pathname.startsWith("/settings") ||
     router.state.location.pathname.startsWith("/campaigns");
+  const isLandingRoute = router.state.location.pathname === "/";
 
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange((event) => {
@@ -144,7 +178,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {!isDashboardRoute && <Header />}
+      {!isDashboardRoute && !isLandingRoute && <Header />}
       <Outlet />
       <Toaster />
     </QueryClientProvider>

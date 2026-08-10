@@ -80,7 +80,7 @@ function AuthPage() {
   async function signInWithGoogle() {
     if (googleOauthDisabled) {
       setError(
-        "Google OAuth is not configured in your Supabase project (missing Client Secret). Please use Instant Demo Access or Email sign-in."
+        "Google OAuth is not configured in your Supabase project (missing Client Secret). Please use Instant Demo Access or Email sign-in.",
       );
       return;
     }
@@ -93,7 +93,7 @@ function AuthPage() {
       if (result && "error" in result && result.error) {
         setGoogleOauthDisabled(true);
         setError(
-          "Google OAuth is not configured in your Supabase project. Please use Instant Demo Access or Email sign-in below."
+          "Google OAuth is not configured in your Supabase project. Please use Instant Demo Access or Email sign-in below.",
         );
       }
     } catch (e) {
@@ -101,7 +101,7 @@ function AuthPage() {
       setError(
         e instanceof Error
           ? e.message
-          : "Google OAuth is not configured. Please use Instant Demo Access below."
+          : "Google OAuth is not configured. Please use Instant Demo Access below.",
       );
     } finally {
       setLoading(false);
@@ -128,7 +128,7 @@ function AuthPage() {
         ) {
           setUnconfirmedEmail(email.trim());
           setError(
-            "Your email address has not been confirmed yet. Please check your inbox or click below to resend confirmation."
+            "Your email address has not been confirmed yet. Please check your inbox or click below to resend confirmation.",
           );
           return;
         }
@@ -215,7 +215,8 @@ function AuthPage() {
               Elevate Your Beauty Affiliate Pipeline
             </h2>
             <p className="text-sm text-[#F8F6F2]/80 leading-relaxed">
-              Transform botanical skincare formulas into high-CTR Pinterest pins, FLUX.1 studio renderings, and automated syndication workflows.
+              Transform botanical skincare formulas into high-CTR Pinterest pins, FLUX.1 studio
+              renderings, and automated syndication workflows.
             </p>
           </div>
         </div>
@@ -348,12 +349,15 @@ function AuthPage() {
                   className="w-full text-xs text-[#666666] hover:text-[#1E4734] cursor-pointer"
                   onClick={() => setEmailMode(true)}
                 >
-                  <Mail className="mr-1.5 h-3.5 w-3.5 text-[#C8A96A]" /> Sign in with Email / Password
+                  <Mail className="mr-1.5 h-3.5 w-3.5 text-[#C8A96A]" /> Sign in with Email /
+                  Password
                 </Button>
               ) : (
                 <form onSubmit={handleEmailSignIn} className="space-y-4 pt-2">
                   <div className="space-y-1 text-left">
-                    <Label htmlFor="email" className="text-xs font-semibold text-[#222222]">Email Address</Label>
+                    <Label htmlFor="email" className="text-xs font-semibold text-[#222222]">
+                      Email Address
+                    </Label>
                     <Input
                       id="email"
                       type="email"
@@ -365,7 +369,9 @@ function AuthPage() {
                     />
                   </div>
                   <div className="space-y-1 text-left">
-                    <Label htmlFor="password" className="text-xs font-semibold text-[#222222]">Password</Label>
+                    <Label htmlFor="password" className="text-xs font-semibold text-[#222222]">
+                      Password
+                    </Label>
                     <Input
                       id="password"
                       type="password"
@@ -376,8 +382,16 @@ function AuthPage() {
                       required
                     />
                   </div>
-                  <Button type="submit" disabled={loading} className="w-full bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-10 cursor-pointer">
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin text-[#C8A96A]" /> : "Sign in / Register"}
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-10 cursor-pointer"
+                  >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-[#C8A96A]" />
+                    ) : (
+                      "Sign in / Register"
+                    )}
                   </Button>
                 </form>
               )}

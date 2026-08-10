@@ -119,7 +119,8 @@ function AutomationPage() {
             Automation Pipeline Control
           </h1>
           <p className="text-xs text-[#666666] mt-0.5">
-            Manage auto-syndication pipelines, background image creation, and automated Pinterest scheduler tasks.
+            Manage auto-syndication pipelines, background image creation, and automated Pinterest
+            scheduler tasks.
           </p>
         </div>
 
@@ -154,7 +155,10 @@ function AutomationPage() {
         <CardHeader className="p-0 pb-4 border-b border-[#E7E2D9]">
           <CardTitle className="font-serif text-lg text-[#222222] flex items-center justify-between">
             <span>Visual Pipeline Node Graph</span>
-            <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] font-medium text-[10px] bg-[#F8F6F2]">
+            <Badge
+              variant="outline"
+              className="border-[#C8A96A] text-[#1E4734] font-medium text-[10px] bg-[#F8F6F2]"
+            >
               Live Workflow Active
             </Badge>
           </CardTitle>
@@ -166,7 +170,9 @@ function AutomationPage() {
                 01
               </div>
               <p className="font-serif text-xs font-bold text-[#222222]">Product Curation</p>
-              <p className="text-[10px] text-[#666666]">Import products via AI Trends or Google Sheets</p>
+              <p className="text-[10px] text-[#666666]">
+                Import products via AI Trends or Google Sheets
+              </p>
             </div>
 
             <div className="p-4 rounded-xl border border-[#E7E2D9] bg-[#F8F6F2] text-center space-y-2">
@@ -174,7 +180,9 @@ function AutomationPage() {
                 02
               </div>
               <p className="font-serif text-xs font-bold text-[#222222]">AI Copy Generation</p>
-              <p className="text-[10px] text-[#666666]">GPT-4o editorial title, description & SEO tags</p>
+              <p className="text-[10px] text-[#666666]">
+                GPT-4o editorial title, description & SEO tags
+              </p>
             </div>
 
             <div className="p-4 rounded-xl border border-[#E7E2D9] bg-[#F8F6F2] text-center space-y-2">
@@ -182,7 +190,9 @@ function AutomationPage() {
                 03
               </div>
               <p className="font-serif text-xs font-bold text-[#222222]">FLUX.1 Image Rendering</p>
-              <p className="text-[10px] text-[#666666]">9:16 vertical luxury visual graphics rendering</p>
+              <p className="text-[10px] text-[#666666]">
+                9:16 vertical luxury visual graphics rendering
+              </p>
             </div>
 
             <div className="p-4 rounded-xl border border-[#E7E2D9] bg-[#F8F6F2] text-center space-y-2">
@@ -190,7 +200,9 @@ function AutomationPage() {
                 04
               </div>
               <p className="font-serif text-xs font-bold text-[#222222]">Pinterest Syndication</p>
-              <p className="text-[10px] text-[#666666]">Post live pin to user boards with affiliate links</p>
+              <p className="text-[10px] text-[#666666]">
+                Post live pin to user boards with affiliate links
+              </p>
             </div>
           </div>
         </CardContent>

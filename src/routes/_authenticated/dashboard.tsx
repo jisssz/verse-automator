@@ -177,7 +177,8 @@ function DashboardPage() {
               Welcome back, Creator ✨
             </h1>
             <p className="text-xs sm:text-sm text-[#F8F6F2]/80 leading-relaxed max-w-xl">
-              Automate your luxury skincare affiliate pipeline, generate editorial Pinterest pin copy, and trigger FLUX.1 AI visual renderings seamlessly.
+              Automate your luxury skincare affiliate pipeline, generate editorial Pinterest pin
+              copy, and trigger FLUX.1 AI visual renderings seamlessly.
             </p>
           </div>
 
@@ -218,7 +219,9 @@ function DashboardPage() {
               <h3 className="font-serif text-lg font-bold text-[#1E4734]">Quick Launchpad</h3>
               <Sparkles className="h-4 w-4 text-[#C8A96A]" />
             </div>
-            <p className="text-xs text-[#666666]">Instant access to core AI generators & workflows.</p>
+            <p className="text-xs text-[#666666]">
+              Instant access to core AI generators & workflows.
+            </p>
           </div>
 
           <div className="space-y-2.5">
@@ -618,7 +621,10 @@ function DashboardPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-serif text-2xl font-bold text-[#222222]">Your Campaigns</h2>
-          <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] font-medium text-xs bg-[#F8F6F2]">
+          <Badge
+            variant="outline"
+            className="border-[#C8A96A] text-[#1E4734] font-medium text-xs bg-[#F8F6F2]"
+          >
             {campaigns.length} Active
           </Badge>
         </div>

@@ -12,3 +12,15 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /campaigns
+Disallow: /pins
+Disallow: /settings
+Disallow: /automation
+Disallow: /content-generator
+Disallow: /image-generator
+Disallow: /analytics
+Disallow: /daily-verse-engine
+
+Sitemap: https://verse-automator.pages.dev/sitemap.xml

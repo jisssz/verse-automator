@@ -175,12 +175,16 @@ function ImageGeneratorPage() {
             <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight text-[#222222]">
               AI Skincare Image Studio
             </h1>
-            <Badge variant="outline" className="border-emerald-300 bg-emerald-50 text-emerald-800 text-[11px] font-semibold">
+            <Badge
+              variant="outline"
+              className="border-emerald-300 bg-emerald-50 text-emerald-800 text-[11px] font-semibold"
+            >
               FLUX.1 Engine Active
             </Badge>
           </div>
           <p className="text-xs text-[#666666] mt-0.5">
-            Design stunning 9:16 Pinterest product graphics using Hugging Face FLUX.1-dev or OpenAI DALL-E 3.
+            Design stunning 9:16 Pinterest product graphics using Hugging Face FLUX.1-dev or OpenAI
+            DALL-E 3.
           </p>
         </div>
       </div>

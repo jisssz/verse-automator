@@ -283,17 +283,25 @@ function PinListGrid({
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <CardTitle className="font-serif text-base font-bold text-[#222222]">{productName}</CardTitle>
+                  <CardTitle className="font-serif text-base font-bold text-[#222222]">
+                    {productName}
+                  </CardTitle>
                   <p className="text-xs text-[#666666]">Campaign: {campaignName}</p>
                 </div>
                 <div>
                   {pin.status === "published" && (
-                    <Badge variant="default" className="bg-emerald-600 text-white font-medium text-[10px]">
+                    <Badge
+                      variant="default"
+                      className="bg-emerald-600 text-white font-medium text-[10px]"
+                    >
                       <CheckCircle2 className="mr-1 h-3 w-3" /> Published
                     </Badge>
                   )}
                   {pin.status === "scheduled" && (
-                    <Badge variant="secondary" className="bg-[#C8A96A]/20 text-[#1E4734] font-medium text-[10px]">
+                    <Badge
+                      variant="secondary"
+                      className="bg-[#C8A96A]/20 text-[#1E4734] font-medium text-[10px]"
+                    >
                       <Clock className="mr-1 h-3 w-3 text-[#C8A96A]" /> Scheduled
                     </Badge>
                   )}
@@ -308,7 +316,8 @@ function PinListGrid({
             <CardContent className="space-y-3 pt-0">
               {pin.board_name && (
                 <div className="text-xs text-[#666666] flex items-center gap-1.5">
-                  <Pin className="h-3 w-3 text-[#C8A96A]" /> Board: <span className="font-semibold text-[#1E4734]">{pin.board_name}</span>
+                  <Pin className="h-3 w-3 text-[#C8A96A]" /> Board:{" "}
+                  <span className="font-semibold text-[#1E4734]">{pin.board_name}</span>
                 </div>
               )}
 

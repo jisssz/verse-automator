@@ -23,30 +23,28 @@ import {
   X,
 } from "lucide-react";
 
-export const Route = createFileRoute("/")(
-  {
-    head: () => ({
-      meta: [
-        { title: "DailyVerse AI — Luxury Skincare Automation & Pinterest Growth" },
-        {
-          name: "description",
-          content:
-            "Scale your beauty affiliate income & Pinterest traffic automatically. Generate luxury skincare copy, studio-grade aesthetic pin graphics, and automated board syndication.",
-        },
-        {
-          property: "og:title",
-          content: "DailyVerse AI — Luxury Skincare Automation & Pinterest Growth",
-        },
-        {
-          property: "og:description",
-          content:
-            "Scale your beauty affiliate income & Pinterest traffic automatically. Generate luxury skincare copy, studio-grade aesthetic pin graphics, and automated board syndication.",
-        },
-      ],
-    }),
-    component: LandingPage,
-  }
-);
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "DailyVerse AI — Luxury Skincare Automation & Pinterest Growth" },
+      {
+        name: "description",
+        content:
+          "Scale your beauty affiliate income & Pinterest traffic automatically. Generate luxury skincare copy, studio-grade aesthetic pin graphics, and automated board syndication.",
+      },
+      {
+        property: "og:title",
+        content: "DailyVerse AI — Luxury Skincare Automation & Pinterest Growth",
+      },
+      {
+        property: "og:description",
+        content:
+          "Scale your beauty affiliate income & Pinterest traffic automatically. Generate luxury skincare copy, studio-grade aesthetic pin graphics, and automated board syndication.",
+      },
+    ],
+  }),
+  component: LandingPage,
+});
 
 /* ─── Scroll-reveal hook ─── */
 function useReveal() {
@@ -63,7 +61,7 @@ function useReveal() {
           observer.disconnect();
         }
       },
-      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -101,16 +99,14 @@ function AnimatedCounter({
             const elapsed = now - start;
             const progress = Math.min(elapsed / duration, 1);
             const eased =
-              progress < 0.5
-                ? 4 * progress ** 3
-                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+              progress < 0.5 ? 4 * progress ** 3 : 1 - Math.pow(-2 * progress + 2, 3) / 2;
             setCount(Math.round(eased * target));
             if (progress < 1) requestAnimationFrame(animate);
           };
           requestAnimationFrame(animate);
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -151,14 +147,10 @@ function FaqItem({
         </span>
         <div
           className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ${
-            isOpen
-              ? "bg-[#c8a96a] rotate-180"
-              : "bg-[#f3efe8] group-hover:bg-[#e7e2d9]"
+            isOpen ? "bg-[#c8a96a] rotate-180" : "bg-[#f3efe8] group-hover:bg-[#e7e2d9]"
           }`}
         >
-          <ChevronDown
-            className={`h-4 w-4 ${isOpen ? "text-[#132e22]" : "text-[#6b7280]"}`}
-          />
+          <ChevronDown className={`h-4 w-4 ${isOpen ? "text-[#132e22]" : "text-[#6b7280]"}`} />
         </div>
       </button>
       <div
@@ -198,15 +190,15 @@ function LandingPage() {
   }, []);
 
   /* Reveal refs */
-  const r1  = useReveal();
-  const r2  = useReveal();
-  const r3  = useReveal();
-  const r4  = useReveal();
-  const r5  = useReveal();
-  const r6  = useReveal();
-  const r7  = useReveal();
-  const r8  = useReveal();
-  const r9  = useReveal();
+  const r1 = useReveal();
+  const r2 = useReveal();
+  const r3 = useReveal();
+  const r4 = useReveal();
+  const r5 = useReveal();
+  const r6 = useReveal();
+  const r7 = useReveal();
+  const r8 = useReveal();
+  const r9 = useReveal();
   const r10 = useReveal();
 
   const steps = [
@@ -336,10 +328,10 @@ function LandingPage() {
   ];
 
   const navLinks = [
-    { label: "Features",  id: "features" },
-    { label: "Gallery",   id: "gallery"  },
-    { label: "Community", id: "community"},
-    { label: "FAQ",       id: "faq"      },
+    { label: "Features", id: "features" },
+    { label: "Gallery", id: "gallery" },
+    { label: "Community", id: "community" },
+    { label: "FAQ", id: "faq" },
   ];
 
   return (
@@ -347,20 +339,26 @@ function LandingPage() {
       className="bg-[#f8f6f2] text-[#1a1a1a] min-h-screen flex flex-col selection:bg-[#c8a96a]/25"
       style={{ fontFamily: "var(--font-sans)" }}
     >
+      {/* Skip to main content — accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#c8a96a] focus:text-[#132e22] focus:font-bold focus:text-sm focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       {/* ════════════════════════════
           FLOATING NAVIGATION
       ════════════════════════════ */}
       <nav
+        role="navigation"
+        aria-label="Main navigation"
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           navScrolled ? "glass-nav shadow-xl shadow-black/10" : "bg-transparent"
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Brand */}
-          <Link
-            to="/"
-            className="flex items-center gap-2.5 group cursor-pointer"
-          >
+          <Link to="/" className="flex items-center gap-2.5 group cursor-pointer">
             <img
               src="/brand/logo.jpg"
               alt="DailyVerse AI"
@@ -393,19 +391,21 @@ function LandingPage() {
               href="https://www.youtube.com/@DailyVerse-skincare"
               target="_blank"
               rel="noreferrer"
+              aria-label="DailyVerse AI official YouTube channel (opens in new tab)"
               title="Official YouTube Channel"
               className="p-2 rounded-lg text-white/70 hover:text-red-400 hover:bg-white/8 transition-all magnetic-hover"
             >
-              <Youtube className="h-4 w-4" />
+              <Youtube className="h-4 w-4" aria-hidden="true" />
             </a>
             <a
               href="https://in.pinterest.com/DailyVerse07/_created/"
               target="_blank"
               rel="noreferrer"
+              aria-label="DailyVerse AI official Pinterest profile (opens in new tab)"
               title="Official Pinterest Profile"
               className="p-2 rounded-lg text-white/70 hover:text-[#E60023] hover:bg-white/8 transition-all magnetic-hover"
             >
-              <Pin className="h-4 w-4" />
+              <Pin className="h-4 w-4" aria-hidden="true" />
             </a>
 
             <div className="w-px h-4 bg-white/20 mx-1" />
@@ -469,7 +469,8 @@ function LandingPage() {
           HERO SECTION
       ════════════════════════════ */}
       <section
-        id="hero"
+        id="main-content"
+        aria-label="Hero — DailyVerse AI Luxury Skincare Pinterest Automation"
         className="relative overflow-hidden min-h-[100svh] flex flex-col justify-center bg-mesh-dark aurora-bg-animate text-white"
       >
         {/* Animated orb blobs */}
@@ -515,9 +516,9 @@ function LandingPage() {
               className="mx-auto max-w-2xl text-[#f8f6f2]/75 leading-relaxed font-light"
               style={{ fontSize: "clamp(1rem, 2vw, 1.15rem)" }}
             >
-              DailyVerse AI transforms botanical beauty formulas into editorial
-              pin copy, studio-grade luxury visuals, and fully automated board
-              syndication — so you earn more while doing less.
+              DailyVerse AI transforms botanical beauty formulas into editorial pin copy,
+              studio-grade luxury visuals, and fully automated board syndication — so you earn more
+              while doing less.
             </p>
 
             {/* CTAs */}
@@ -557,8 +558,7 @@ function LandingPage() {
                 <div key={s.label} className="flex items-center gap-2.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#c8a96a] animate-pulse-glow" />
                   <span className="text-xs text-white/60">
-                    <strong className="text-white font-semibold">{s.v}</strong>{" "}
-                    {s.label}
+                    <strong className="text-white font-semibold">{s.v}</strong> {s.label}
                   </span>
                 </div>
               ))}
@@ -578,7 +578,10 @@ function LandingPage() {
               </div>
             </div>
 
-            <div className="absolute -top-5 right-6 z-20 hidden sm:flex items-center gap-2.5 glass-panel-dark px-4 py-2.5 rounded-xl border border-emerald-500/30 shadow-xl animate-float" style={{ animationDelay: "1.5s" }}>
+            <div
+              className="absolute -top-5 right-6 z-20 hidden sm:flex items-center gap-2.5 glass-panel-dark px-4 py-2.5 rounded-xl border border-emerald-500/30 shadow-xl animate-float"
+              style={{ animationDelay: "1.5s" }}
+            >
               <div className="p-1.5 rounded-lg bg-emerald-500/15">
                 <CheckCircle2 className="h-4 w-4 text-emerald-400" />
               </div>
@@ -619,24 +622,22 @@ function LandingPage() {
           STATS BAR
       ════════════════════════════ */}
       <section className="bg-[#0d1f17] border-y border-[#c8a96a]/15">
-        <div ref={r1} className="reveal mx-auto max-w-6xl px-4 py-12 grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          ref={r1}
+          className="reveal mx-auto max-w-6xl px-4 py-12 grid grid-cols-2 lg:grid-cols-4 gap-6"
+        >
           {[
             { n: 1400000, s: "+", label: "Pins Automated", p: "" },
-            { n: 99,      s: ".4%", label: "Automation Uptime", p: "" },
-            { n: 4,       s: ".8 / 5", label: "Creator Rating", p: "" },
-            { n: 100,     s: "%", label: "Scheduled Publishing", p: "" },
+            { n: 99, s: ".4%", label: "Automation Uptime", p: "" },
+            { n: 4, s: ".8 / 5", label: "Creator Rating", p: "" },
+            { n: 100, s: "%", label: "Scheduled Publishing", p: "" },
           ].map((stat, i) => (
             <div
               key={stat.label}
               className={`stat-card rounded-2xl p-6 text-center stagger-${i + 1}`}
             >
               <p className="font-serif text-3xl sm:text-4xl font-black text-[#c8a96a] tabular-nums">
-                <AnimatedCounter
-                  target={stat.n}
-                  suffix={stat.s}
-                  prefix={stat.p}
-                  duration={1600}
-                />
+                <AnimatedCounter target={stat.n} suffix={stat.s} prefix={stat.p} duration={1600} />
               </p>
               <p className="mt-2 text-[11px] font-medium text-white/50 uppercase tracking-[0.13em]">
                 {stat.label}
@@ -657,15 +658,19 @@ function LandingPage() {
               <span className="text-[11px] uppercase tracking-[0.18em] text-[#c8a96a] font-semibold">
                 The Creator Problem
               </span>
-              <h2 className="font-serif font-black text-[#1e4734] leading-tight" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+              <h2
+                className="font-serif font-black text-[#1e4734] leading-tight"
+                style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+              >
                 Great Skincare Content
                 <br />
                 Takes Too Long to Create.
               </h2>
               <p className="text-[#6b7280] leading-relaxed text-[15px]">
-                The average beauty creator spends <strong className="text-[#1a1a1a]">15+ hours per week</strong> designing
-                pins, writing descriptions, and manually scheduling posts to Pinterest — time that
-                should be spent growing your brand and maximising affiliate income.
+                The average beauty creator spends{" "}
+                <strong className="text-[#1a1a1a]">15+ hours per week</strong> designing pins,
+                writing descriptions, and manually scheduling posts to Pinterest — time that should
+                be spent growing your brand and maximising affiliate income.
               </p>
               <ul className="space-y-3">
                 {[
@@ -735,7 +740,8 @@ function LandingPage() {
               Everything a Beauty Creator Needs
             </h2>
             <p className="mx-auto max-w-lg text-[#6b7280] text-[15px] leading-relaxed">
-              Replace manual design, writing, and scheduling with one continuous luxury content engine.
+              Replace manual design, writing, and scheduling with one continuous luxury content
+              engine.
             </p>
           </div>
 
@@ -747,12 +753,12 @@ function LandingPage() {
                   key={feat.title}
                   className={`feature-card rounded-3xl p-7 space-y-4 stagger-${i + 1}`}
                 >
-                  <div className={`${feat.bg} ${feat.color} w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg`}>
+                  <div
+                    className={`${feat.bg} ${feat.color} w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg`}
+                  >
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="font-serif text-lg font-bold text-[#1e4734]">
-                    {feat.title}
-                  </h3>
+                  <h3 className="font-serif text-lg font-bold text-[#1e4734]">{feat.title}</h3>
                   <p className="text-sm text-[#6b7280] leading-relaxed">{feat.body}</p>
                 </div>
               );
@@ -854,27 +860,20 @@ function LandingPage() {
                       </div>
                     </div>
 
-                    <p className="text-[15px] text-[#4b5563] leading-relaxed">
-                      {s.body}
-                    </p>
+                    <p className="text-[15px] text-[#4b5563] leading-relaxed">{s.body}</p>
 
                     <div className="bg-[#0d1f17] rounded-2xl p-5 font-mono text-xs space-y-2">
                       <div className="flex items-center justify-between text-emerald-400">
                         <span>● DailyVerse AI Studio</span>
                         <span className="text-[#c8a96a]">LIVE</span>
                       </div>
-                      <p className="text-[#6b7280]">
-                        &gt; Running: {s.label.toLowerCase()}...
-                      </p>
-                      <p className="text-emerald-400">
-                        &gt; Output ready. Quality verified. ✓
-                      </p>
+                      <p className="text-[#6b7280]">&gt; Running: {s.label.toLowerCase()}...</p>
+                      <p className="text-emerald-400">&gt; Output ready. Quality verified. ✓</p>
                     </div>
 
                     <Link to="/auth">
                       <Button className="w-full bg-[#1e4734] hover:bg-[#355e4d] text-white font-medium rounded-xl h-11 cursor-pointer text-sm">
-                        Try {s.title}{" "}
-                        <ArrowRight className="ml-2 h-4 w-4 text-[#c8a96a]" />
+                        Try {s.title} <ArrowRight className="ml-2 h-4 w-4 text-[#c8a96a]" />
                       </Button>
                     </Link>
                   </div>
@@ -945,9 +944,7 @@ function LandingPage() {
                   AI Generated
                 </div>
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                  <p className="text-[11px] font-semibold text-white">
-                    Peptide Hydrating Serum
-                  </p>
+                  <p className="text-[11px] font-semibold text-white">Peptide Hydrating Serum</p>
                 </div>
               </div>
             </div>
@@ -965,9 +962,7 @@ function LandingPage() {
                   AI Generated
                 </div>
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                  <p className="text-[11px] font-semibold text-white">
-                    Pore Lifting Ampoule
-                  </p>
+                  <p className="text-[11px] font-semibold text-white">Pore Lifting Ampoule</p>
                 </div>
               </div>
             </div>
@@ -981,9 +976,7 @@ function LandingPage() {
                 <p className="font-serif text-lg font-bold text-white leading-tight">
                   Follow our official <br /> Pinterest profile
                 </p>
-                <p className="text-xs text-white/60">
-                  New botanical pins added daily.
-                </p>
+                <p className="text-xs text-white/60">New botanical pins added daily.</p>
               </div>
               <a
                 href="https://in.pinterest.com/DailyVerse07/_created/"
@@ -1050,9 +1043,7 @@ function LandingPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-[#1e4734] text-sm">{b.title}</h3>
-                      <p className="text-[13px] text-[#6b7280] leading-relaxed mt-0.5">
-                        {b.body}
-                      </p>
+                      <p className="text-[13px] text-[#6b7280] leading-relaxed mt-0.5">{b.body}</p>
                     </div>
                   </div>
                 );
@@ -1062,18 +1053,16 @@ function LandingPage() {
             {/* Testimonials stack */}
             <div className="space-y-4">
               {testimonials.map((t, i) => (
-                <div key={t.name} className={`quote-card rounded-2xl p-6 space-y-4 stagger-${i + 1}`}>
+                <div
+                  key={t.name}
+                  className={`quote-card rounded-2xl p-6 space-y-4 stagger-${i + 1}`}
+                >
                   <div className="flex gap-0.5">
                     {Array.from({ length: 5 }).map((_, si) => (
-                      <Star
-                        key={si}
-                        className="h-3.5 w-3.5 text-[#c8a96a] fill-[#c8a96a]"
-                      />
+                      <Star key={si} className="h-3.5 w-3.5 text-[#c8a96a] fill-[#c8a96a]" />
                     ))}
                   </div>
-                  <p className="text-sm text-[#374151] italic leading-relaxed">
-                    "{t.quote}"
-                  </p>
+                  <p className="text-sm text-[#374151] italic leading-relaxed">"{t.quote}"</p>
                   <div className="flex items-center gap-3">
                     <div
                       className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white font-serif"
@@ -1109,7 +1098,8 @@ function LandingPage() {
               Join the DailyVerse Community
             </h2>
             <p className="mx-auto max-w-lg text-white/60 text-[15px]">
-              Follow our official channels for live tutorials, automation guides, and daily aesthetic pin collections.
+              Follow our official channels for live tutorials, automation guides, and daily
+              aesthetic pin collections.
             </p>
           </div>
 
@@ -1162,7 +1152,8 @@ function LandingPage() {
                   Latest AI Skincare Walkthroughs
                 </p>
                 <p className="text-[13px] text-white/55 leading-relaxed">
-                  Step-by-step tutorials on automated Pinterest pin creation, botanical copywriting, and affiliate revenue strategies.
+                  Step-by-step tutorials on automated Pinterest pin creation, botanical copywriting,
+                  and affiliate revenue strategies.
                 </p>
               </div>
             </div>
@@ -1216,11 +1207,10 @@ function LandingPage() {
               </div>
 
               <div className="space-y-1.5">
-                <p className="text-xs font-semibold text-[#c8a96a]">
-                  Aesthetic Skincare Boards
-                </p>
+                <p className="text-xs font-semibold text-[#c8a96a]">Aesthetic Skincare Boards</p>
                 <p className="text-[13px] text-white/55 leading-relaxed">
-                  Browse our daily aesthetic pin collection featuring botanical serums, morning routine highlights, and beauty affiliate inspiration.
+                  Browse our daily aesthetic pin collection featuring botanical serums, morning
+                  routine highlights, and beauty affiliate inspiration.
                 </p>
               </div>
             </div>
@@ -1265,7 +1255,10 @@ function LandingPage() {
       <section className="relative overflow-hidden bg-mesh-dark aurora-bg-animate text-white py-32">
         {/* Orbs */}
         <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-emerald-700/20 rounded-full blur-[120px] animate-orb pointer-events-none" />
-        <div className="absolute bottom-[10%] right-[8%] w-[300px] h-[300px] bg-[#c8a96a]/12 rounded-full blur-[100px] animate-orb pointer-events-none" style={{ animationDelay: "4s" }} />
+        <div
+          className="absolute bottom-[10%] right-[8%] w-[300px] h-[300px] bg-[#c8a96a]/12 rounded-full blur-[100px] animate-orb pointer-events-none"
+          style={{ animationDelay: "4s" }}
+        />
 
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center space-y-8">
           <span className="inline-block text-[11px] uppercase tracking-[0.18em] text-[#c8a96a] font-semibold px-4 py-1.5 rounded-full border border-[#c8a96a]/30 bg-white/5 backdrop-blur-sm">
@@ -1282,7 +1275,8 @@ function LandingPage() {
           </h2>
 
           <p className="mx-auto max-w-xl text-white/65 text-[15px] leading-relaxed">
-            Join beauty creators and affiliate strategists who use DailyVerse AI to publish high-converting Pinterest content at scale — completely automatically.
+            Join beauty creators and affiliate strategists who use DailyVerse AI to publish
+            high-converting Pinterest content at scale — completely automatically.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
@@ -1362,10 +1356,10 @@ function LandingPage() {
               </h4>
               <ul className="space-y-2.5">
                 {[
-                  { label: "Features",  id: "features"  },
-                  { label: "Gallery",   id: "gallery"   },
+                  { label: "Features", id: "features" },
+                  { label: "Gallery", id: "gallery" },
                   { label: "Community", id: "community" },
-                  { label: "FAQ",       id: "faq"       },
+                  { label: "FAQ", id: "faq" },
                 ].map((l) => (
                   <li key={l.id}>
                     <button

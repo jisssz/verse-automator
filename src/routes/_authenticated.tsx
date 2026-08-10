@@ -210,7 +210,10 @@ function AuthenticatedLayout() {
             <span className="text-xs text-[#666666]/80 flex-1 truncate">
               Search campaigns, AI copy, Pinterest pins, or commands...
             </span>
-            <Badge variant="outline" className="text-[9px] border-[#E7E2D9] text-[#666666] font-mono group-hover:border-[#C8A96A]">
+            <Badge
+              variant="outline"
+              className="text-[9px] border-[#E7E2D9] text-[#666666] font-mono group-hover:border-[#C8A96A]"
+            >
               ⌘K
             </Badge>
           </button>
@@ -237,7 +240,10 @@ function AuthenticatedLayout() {
               <Pin className="h-4 w-4" />
             </a>
 
-            <Badge variant="outline" className="hidden sm:flex items-center gap-1.5 border-emerald-200 bg-emerald-50 text-emerald-800 text-[11px] font-medium py-1">
+            <Badge
+              variant="outline"
+              className="hidden sm:flex items-center gap-1.5 border-emerald-200 bg-emerald-50 text-emerald-800 text-[11px] font-medium py-1"
+            >
               <Activity className="h-3 w-3 text-emerald-600 animate-pulse" />
               <span>AI Engine Active</span>
             </Badge>
