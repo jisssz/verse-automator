@@ -415,6 +415,69 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* Section 7: AI Generator Live Playground Demo */}
+      <section className="bg-white py-20 border-b border-[#E7E2D9]">
+        <div className="mx-auto max-w-6xl px-4 space-y-10">
+          <div className="text-center space-y-2">
+            <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] font-semibold text-xs bg-[#F8F6F2]">
+              Interactive AI Playground
+            </Badge>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1E4734]">
+              Experience FLUX.1 & Copywriter Generation Live
+            </h2>
+            <p className="text-xs sm:text-sm text-[#666666] max-w-lg mx-auto">
+              Test how DailyVerse AI generates botanical copy, Pinterest tags, and 9:16 vertical imagery in sub-2 seconds.
+            </p>
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-12 items-center">
+            <div className="lg:col-span-6 luxury-card rounded-2xl p-6 space-y-4 bg-[#F8F6F2] border-[#E7E2D9]">
+              <div className="flex items-center justify-between border-b border-[#E7E2D9] pb-3">
+                <span className="font-serif text-sm font-bold text-[#1E4734]">Live AI Prompt Editor</span>
+                <Badge className="bg-[#1E4734] text-[#C8A96A] text-[10px]">FLUX.1 Active</Badge>
+              </div>
+              <div className="space-y-2 text-xs">
+                <label className="font-semibold text-[#222222]">Target Skincare Product</label>
+                <div className="p-3 rounded-lg bg-white border border-[#E7E2D9] font-medium text-[#1E4734]">
+                  Peptide Botanical Youth Serum
+                </div>
+              </div>
+              <div className="space-y-2 text-xs">
+                <label className="font-semibold text-[#222222]">Editorial Style Prompt</label>
+                <div className="p-3 rounded-lg bg-white border border-[#E7E2D9] text-[#555555] font-mono text-[11px]">
+                  Luxury organic botanical photography, soft natural studio lighting, shadows of tropical leaves, premium high-end skincare aesthetic.
+                </div>
+              </div>
+              <Link to="/auth">
+                <Button className="w-full bg-[#1E4734] hover:bg-[#355E4D] text-white font-semibold text-xs h-10 cursor-pointer">
+                  <Sparkles className="mr-2 h-4 w-4 text-[#C8A96A]" /> Test Live Prompt Studio
+                </Button>
+              </Link>
+            </div>
+
+            <div className="lg:col-span-6 luxury-card rounded-2xl p-6 bg-white border-[#E7E2D9] space-y-4 shadow-xl">
+              <div className="flex items-center justify-between border-b border-[#E7E2D9] pb-3">
+                <span className="font-serif text-sm font-bold text-[#1E4734]">Live Output Studio Preview</span>
+                <span className="text-[10px] font-mono text-emerald-700 font-bold">SEO SCORE: 98/100</span>
+              </div>
+              <div className="space-y-2">
+                <p className="font-serif text-sm font-bold text-[#222222]">
+                  Ultimate Hyaluronic & Peptide Serum Morning Routine 🌿
+                </p>
+                <p className="text-xs text-[#666666] leading-relaxed">
+                  Transform your morning skincare ritual with our botanical peptide serum. Restores elasticity and locks in deep hydration.
+                </p>
+                <div className="flex flex-wrap gap-1.5 pt-2">
+                  <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] text-[9px]">#LuxurySkincare</Badge>
+                  <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] text-[9px]">#BotanicalSerum</Badge>
+                  <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] text-[9px]">#GlowRoutine</Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Cards Section */}
       <section className="bg-[#FFFFFF]/60 border-y border-[#E7E2D9] py-20 px-4">
         <div className="mx-auto max-w-5xl space-y-12 text-center">
