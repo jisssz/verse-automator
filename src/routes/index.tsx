@@ -61,7 +61,7 @@ export const Route = createFileRoute("/")({
    MOTION VARIANTS
 ══════════════════════════════ */
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 36 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
@@ -82,7 +82,7 @@ const fadeIn: Variants = {
 };
 
 const revealLeft: Variants = {
-  hidden: { opacity: 0, x: -48 },
+  hidden: { opacity: 0, x: -44 },
   visible: {
     opacity: 1,
     x: 0,
@@ -91,7 +91,7 @@ const revealLeft: Variants = {
 };
 
 const revealRight: Variants = {
-  hidden: { opacity: 0, x: 48 },
+  hidden: { opacity: 0, x: 44 },
   visible: {
     opacity: 1,
     x: 0,
@@ -100,12 +100,12 @@ const revealRight: Variants = {
 };
 
 const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.88 },
+  hidden: { opacity: 0, scale: 0.92 },
   visible: (delay = 0) => ({
     opacity: 1,
     scale: 1,
     transition: {
-      duration: 0.65,
+      duration: 0.7,
       ease: [0.16, 1, 0.3, 1],
       delay: delay as number,
     },
@@ -128,12 +128,12 @@ const maskReveal: Variants = {
 const staggerContainer: Variants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.08, delayChildren: 0.08 },
   },
 };
 
 const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
@@ -148,7 +148,7 @@ function useMagnetic(strength = 0.35) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springConfig = { stiffness: 200, damping: 20, mass: 0.5 };
+  const springConfig = { stiffness: 220, damping: 20, mass: 0.5 };
   const springX = useSpring(x, springConfig);
   const springY = useSpring(y, springConfig);
 
@@ -232,12 +232,25 @@ function FaqItem({
   return (
     <motion.div
       layout
-      className={`rounded-2xl overflow-hidden border transition-colors duration-300 ${
+      className={`rounded-2xl overflow-hidden border transition-all duration-300 relative ${
         isOpen
-          ? "border-[#c8a96a]/55 bg-white shadow-lg shadow-[#1e4734]/5"
-          : "border-[#e7e2d9] bg-white"
+          ? "border-[#c8a96a]/55 bg-white shadow-lg shadow-[#1e4734]/6"
+          : "border-[#e7e2d9] bg-white hover:border-[#c8a96a]/35"
       }`}
     >
+      {/* Gold side bar on open */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            exit={{ scaleY: 0 }}
+            transition={{ duration: 0.25 }}
+            className="absolute left-0 top-0 bottom-0 w-1 bg-[#c8a96a]"
+          />
+        )}
+      </AnimatePresence>
+
       <button
         onClick={onToggle}
         aria-expanded={isOpen}
@@ -264,7 +277,7 @@ function FaqItem({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
             style={{ overflow: "hidden" }}
           >
             <p className="px-6 pb-6 text-sm text-[#6b7280] leading-relaxed border-t border-[#f0ece4] pt-4">
@@ -274,33 +287,6 @@ function FaqItem({
         )}
       </AnimatePresence>
     </motion.div>
-  );
-}
-
-/* ══════════════════════════════
-   SECTION WRAPPER
-══════════════════════════════ */
-function Section({
-  children,
-  className = "",
-  id,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  id?: string;
-}) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  return (
-    <motion.section
-      ref={ref}
-      id={id}
-      className={className}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
-    >
-      {children}
-    </motion.section>
   );
 }
 
@@ -316,14 +302,14 @@ function LandingPage() {
   /* Parallax scroll refs */
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
-  const heroParallax = useTransform(scrollY, [0, 600], [0, -120]);
-  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const heroParallax = useTransform(scrollY, [0, 600], [0, -110]);
+  const heroOpacity = useTransform(scrollY, [0, 450], [1, 0]);
 
   /* Mouse-reactive hero ambient light */
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const smoothX = useSpring(mouseX, { stiffness: 80, damping: 20 });
-  const smoothY = useSpring(mouseY, { stiffness: 80, damping: 20 });
+  const mouseX = useMotionValue(50);
+  const mouseY = useMotionValue(50);
+  const smoothX = useSpring(mouseX, { stiffness: 70, damping: 22 });
+  const smoothY = useSpring(mouseY, { stiffness: 70, damping: 22 });
 
   const handleHeroMouse = useCallback(
     (e: ReactMouseEvent<HTMLDivElement>) => {
@@ -336,9 +322,9 @@ function LandingPage() {
     [mouseX, mouseY],
   );
 
-  /* Nav scroll state */
+  /* Nav scroll listener */
   useEffect(() => {
-    const onScroll = () => setNavScrolled(window.scrollY > 40);
+    const onScroll = () => setNavScrolled(window.scrollY > 30);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -348,9 +334,9 @@ function LandingPage() {
     setMobileNavOpen(false);
   }, []);
 
-  /* CTA magnetic */
-  const magCta = useMagnetic(0.3);
-  const magCta2 = useMagnetic(0.3);
+  /* CTA magnetic hooks */
+  const magCta = useMagnetic(0.32);
+  const magCta2 = useMagnetic(0.32);
 
   const steps = [
     {
@@ -478,7 +464,7 @@ function LandingPage() {
       className="bg-[#f8f6f2] text-[#1a1a1a] min-h-screen flex flex-col selection:bg-[#c8a96a]/25 overflow-x-hidden"
       style={{ fontFamily: "var(--font-sans)" }}
     >
-      {/* Skip to content */}
+      {/* Accessibility skip link */}
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#c8a96a] focus:text-[#132e22] focus:font-bold focus:text-sm focus:shadow-lg"
@@ -487,7 +473,7 @@ function LandingPage() {
       </a>
 
       {/* ══════════════════════════════
-          FLOATING NAV
+          FLOATING GLASS NAVIGATION
       ══════════════════════════════ */}
       <motion.nav
         role="navigation"
@@ -495,11 +481,17 @@ function LandingPage() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          navScrolled ? "glass-nav shadow-xl shadow-black/10" : "bg-transparent"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex justify-center ${
+          navScrolled ? "pt-3 px-4" : "pt-0 px-0"
         }`}
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div
+          className={`w-full transition-all duration-500 flex items-center justify-between ${
+            navScrolled
+              ? "max-w-5xl h-14 rounded-full floating-glass-pill px-6"
+              : "max-w-7xl h-16 bg-transparent px-4 sm:px-6"
+          }`}
+        >
           {/* Brand */}
           <Link to="/" className="flex items-center gap-2.5 group cursor-pointer">
             <motion.img
@@ -517,7 +509,7 @@ function LandingPage() {
             </span>
           </Link>
 
-          {/* Desktop nav links */}
+          {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-7">
             {navLinks.map((link) => (
               <button
@@ -530,7 +522,7 @@ function LandingPage() {
             ))}
           </div>
 
-          {/* Desktop actions */}
+          {/* Actions */}
           <div className="hidden md:flex items-center gap-2.5">
             <a
               href="https://www.youtube.com/@DailyVerse-skincare"
@@ -550,7 +542,9 @@ function LandingPage() {
             >
               <Pin className="h-4 w-4" aria-hidden="true" />
             </a>
+
             <div className="w-px h-4 bg-white/20 mx-1" />
+
             <Link to="/auth">
               <Button
                 size="sm"
@@ -576,7 +570,7 @@ function LandingPage() {
             </Link>
           </div>
 
-          {/* Mobile hamburger */}
+          {/* Mobile Toggle */}
           <button
             onClick={() => setMobileNavOpen(!mobileNavOpen)}
             className="md:hidden p-2 text-white cursor-pointer"
@@ -608,7 +602,7 @@ function LandingPage() {
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu dropdown */}
         <AnimatePresence>
           {mobileNavOpen && (
             <motion.div
@@ -617,7 +611,7 @@ function LandingPage() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="md:hidden glass-nav border-t border-white/8 overflow-hidden"
+              className="md:hidden glass-nav absolute top-16 left-4 right-4 rounded-2xl border border-white/12 overflow-hidden"
             >
               <div className="px-4 py-4 space-y-1">
                 {navLinks.map((link) => (
@@ -646,7 +640,7 @@ function LandingPage() {
       </motion.nav>
 
       {/* ══════════════════════════════
-          HERO
+          HERO SECTION
       ══════════════════════════════ */}
       <div
         id="main-content"
@@ -654,21 +648,21 @@ function LandingPage() {
         onMouseMove={handleHeroMouse}
         className="relative overflow-hidden min-h-[100svh] flex flex-col justify-center bg-mesh-dark text-white"
       >
-        {/* Mouse-reactive ambient lighting */}
+        {/* Mouse-reactive ambient spotlight */}
         <motion.div
           className="absolute inset-0 pointer-events-none"
           style={{
             background: useTransform(
               [smoothX, smoothY],
               ([x, y]) =>
-                `radial-gradient(ellipse 60% 50% at ${x}% ${y}%, rgba(200,169,106,0.12) 0%, transparent 70%)`,
+                `radial-gradient(ellipse 65% 55% at ${x}% ${y}%, rgba(200,169,106,0.13) 0%, transparent 70%)`,
             ),
           }}
         />
 
-        {/* Animated orb blobs */}
+        {/* Ambient background glowing orbs */}
         <motion.div
-          className="absolute top-[12%] left-[6%] w-[520px] h-[520px] bg-emerald-700/18 rounded-full blur-[130px] pointer-events-none"
+          className="absolute top-[12%] left-[6%] w-[520px] h-[520px] bg-emerald-700/20 rounded-full blur-[130px] pointer-events-none"
           animate={{
             scale: [1, 1.08, 0.96, 1],
             x: [0, 12, -8, 0],
@@ -677,7 +671,7 @@ function LandingPage() {
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute top-[8%] right-[4%] w-[380px] h-[380px] bg-[#c8a96a]/10 rounded-full blur-[110px] pointer-events-none"
+          className="absolute top-[8%] right-[4%] w-[400px] h-[400px] bg-[#c8a96a]/12 rounded-full blur-[110px] pointer-events-none"
           animate={{
             scale: [1, 0.94, 1.06, 1],
             x: [0, -10, 6, 0],
@@ -685,41 +679,36 @@ function LandingPage() {
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
         />
-        <motion.div
-          className="absolute bottom-[6%] left-[28%] w-[560px] h-[300px] bg-[#1e4734]/45 rounded-full blur-[140px] pointer-events-none"
-          animate={{ scale: [1, 1.04, 0.97, 1] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-        />
 
-        {/* Content layer with parallax */}
+        {/* Content container */}
         <motion.div
           className="relative z-10 mx-auto max-w-6xl w-full px-4 sm:px-6 pt-28 pb-20"
           style={{ y: heroParallax, opacity: heroOpacity }}
         >
           <div className="text-center space-y-8">
-            {/* Entrance badge */}
+            {/* Top crown badge */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
               animate="visible"
               custom={0.3}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#c8a96a]/40 text-[#c8a96a] text-[11px] font-semibold uppercase tracking-[0.15em] bg-white/5 backdrop-blur-sm"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#c8a96a]/40 text-[#c8a96a] text-[11px] font-semibold uppercase tracking-[0.15em] bg-white/5 backdrop-blur-sm shadow-sm"
             >
               <Crown className="h-3 w-3" aria-hidden="true" />
               Luxury Skincare · AI Automation · Pinterest Growth
             </motion.div>
 
-            {/* Headline mask reveal */}
+            {/* Editorial title */}
             <div className="overflow-hidden">
               <motion.h1
                 variants={maskReveal}
                 initial="hidden"
                 animate="visible"
                 custom={0.45}
-                className="font-serif font-black tracking-tight leading-[1.05] text-white"
+                className="font-serif font-black tracking-tight leading-[1.02] text-white"
                 style={{
                   fontSize: "clamp(2.8rem, 7.5vw, 5.8rem)",
-                  textShadow: "0 2px 24px rgba(0,0,0,0.4)",
+                  textShadow: "0 2px 24px rgba(0,0,0,0.45)",
                 }}
               >
                 Turn Skincare Into
@@ -728,13 +717,13 @@ function LandingPage() {
               </motion.h1>
             </div>
 
-            {/* Subheadline */}
+            {/* Subtext */}
             <motion.p
               variants={fadeUp}
               initial="hidden"
               animate="visible"
               custom={0.65}
-              className="mx-auto max-w-2xl text-[#f8f6f2]/72 leading-relaxed font-light"
+              className="mx-auto max-w-2xl text-[#f8f6f2]/75 leading-relaxed font-light"
               style={{ fontSize: "clamp(1rem, 2.2vw, 1.18rem)" }}
             >
               DailyVerse AI transforms botanical beauty formulas into editorial pin copy,
@@ -742,7 +731,7 @@ function LandingPage() {
               while doing less.
             </motion.p>
 
-            {/* CTA row */}
+            {/* Action buttons */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
@@ -750,7 +739,6 @@ function LandingPage() {
               custom={0.8}
               className="flex flex-wrap justify-center gap-4 pt-2"
             >
-              {/* Primary CTA — magnetic */}
               <motion.div
                 ref={magCta.ref}
                 style={{ x: magCta.springX, y: magCta.springY }}
@@ -764,7 +752,6 @@ function LandingPage() {
                     transition={{ type: "spring", stiffness: 400, damping: 22 }}
                     className="relative overflow-hidden inline-flex items-center gap-2 bg-[#c8a96a] hover:bg-[#d4af37] text-[#132e22] font-bold h-13 px-9 text-[15px] rounded-full cursor-pointer shadow-2xl shadow-[#c8a96a]/30"
                   >
-                    {/* Shimmer sweep */}
                     <motion.span
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent"
                       initial={{ x: "-100%" }}
@@ -784,7 +771,6 @@ function LandingPage() {
                 </Link>
               </motion.div>
 
-              {/* Secondary CTA */}
               <motion.div
                 ref={magCta2.ref}
                 style={{ x: magCta2.springX, y: magCta2.springY }}
@@ -809,7 +795,7 @@ function LandingPage() {
               </motion.div>
             </motion.div>
 
-            {/* Inline trust marks */}
+            {/* Social trust row */}
             <motion.div
               variants={staggerContainer}
               initial="hidden"
@@ -835,7 +821,7 @@ function LandingPage() {
             </motion.div>
           </div>
 
-          {/* Hero image */}
+          {/* Hero Studio Banner Card */}
           <motion.div
             variants={scaleIn}
             initial="hidden"
@@ -843,9 +829,9 @@ function LandingPage() {
             custom={0.9}
             className="mt-14 relative mx-auto max-w-4xl"
           >
-            {/* Floating glass badges */}
+            {/* Left Glass Tag */}
             <motion.div
-              className="absolute -top-5 left-4 sm:left-6 z-20 hidden sm:flex items-center gap-2.5 glass-panel-dark px-4 py-2.5 rounded-xl border border-[#c8a96a]/30 shadow-xl"
+              className="absolute -top-5 left-4 sm:left-6 z-20 hidden sm:flex items-center gap-2.5 glass-panel-dark px-4 py-2.5 rounded-xl border border-[#c8a96a]/35 shadow-xl"
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             >
@@ -854,12 +840,13 @@ function LandingPage() {
               </div>
               <div>
                 <p className="text-[11px] font-bold text-white">AI Visual Studio</p>
-                <p className="text-[10px] text-[#c8a96a]/80">9:16 Studio-grade Pins</p>
+                <p className="text-[10px] text-[#c8a96a]/85">9:16 Studio-grade Pins</p>
               </div>
             </motion.div>
 
+            {/* Right Glass Tag */}
             <motion.div
-              className="absolute -top-5 right-4 sm:right-6 z-20 hidden sm:flex items-center gap-2.5 glass-panel-dark px-4 py-2.5 rounded-xl border border-emerald-500/30 shadow-xl"
+              className="absolute -top-5 right-4 sm:right-6 z-20 hidden sm:flex items-center gap-2.5 glass-panel-dark px-4 py-2.5 rounded-xl border border-emerald-500/35 shadow-xl"
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
             >
@@ -868,15 +855,15 @@ function LandingPage() {
               </div>
               <div>
                 <p className="text-[11px] font-bold text-white">Auto-Published</p>
-                <p className="text-[10px] text-emerald-400/80">Pinterest Syndication</p>
+                <p className="text-[10px] text-emerald-400/85">Pinterest Board Syndication</p>
               </div>
             </motion.div>
 
-            {/* Main hero image with hover tilt */}
+            {/* Hero image container */}
             <motion.div
               whileHover={{ scale: 1.015, rotateX: 1.5, rotateY: -1 }}
               transition={{ type: "spring", stiffness: 180, damping: 22 }}
-              className="relative rounded-3xl overflow-hidden border border-[#c8a96a]/25 shadow-[0_32px_100px_-20px_rgba(0,0,0,0.65)]"
+              className="relative rounded-3xl overflow-hidden border border-[#c8a96a]/30 shadow-[0_32px_100px_-20px_rgba(0,0,0,0.65)]"
               style={{ transformPerspective: 1000 }}
             >
               <img
@@ -888,14 +875,14 @@ function LandingPage() {
                 fetchPriority="high"
                 decoding="async"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0d1f17]/65 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c1c14]/70 via-transparent to-transparent" />
               <div
                 className="absolute inset-0"
-                style={{ boxShadow: "inset 0 0 120px rgba(13,31,23,0.4)" }}
+                style={{ boxShadow: "inset 0 0 120px rgba(12,28,20,0.45)" }}
               />
             </motion.div>
 
-            {/* Scroll cue */}
+            {/* Scroll indicator */}
             <motion.div
               className="mt-12 flex flex-col items-center gap-2"
               animate={{ y: [0, 8, 0] }}
@@ -915,25 +902,25 @@ function LandingPage() {
       {/* ══════════════════════════════
           STATS BAR
       ══════════════════════════════ */}
-      <section className="bg-[#0d1f17] border-y border-[#c8a96a]/15">
+      <section className="bg-[#0c1c14] border-y border-[#c8a96a]/18 relative">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
-          className="mx-auto max-w-6xl px-4 py-12 grid grid-cols-2 lg:grid-cols-4 gap-6"
+          className="mx-auto max-w-6xl px-4 py-12 grid grid-cols-2 lg:grid-cols-4 gap-6 relative"
         >
           {[
             { n: 1400000, s: "+", label: "Pins Automated" },
             { n: 99, s: ".4%", label: "Automation Uptime" },
             { n: 4, s: ".8 / 5", label: "Creator Rating" },
             { n: 100, s: "%", label: "Scheduled Publishing" },
-          ].map((stat) => (
+          ].map((stat, idx) => (
             <motion.div
               key={stat.label}
               variants={staggerItem}
-              whileHover={{ y: -2, borderColor: "rgba(200,169,106,0.45)" }}
-              className="stat-card rounded-2xl p-6 text-center cursor-default"
+              whileHover={{ y: -2, borderColor: "rgba(200,169,106,0.5)" }}
+              className="stat-card rounded-2xl p-6 text-center cursor-default relative group"
             >
               <p className="font-serif text-3xl sm:text-4xl font-black text-[#c8a96a] tabular-nums">
                 <AnimatedCounter target={stat.n} suffix={stat.s} duration={1600} />
@@ -947,11 +934,12 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          PROBLEM → SOLUTION
+          PROBLEM → SOLUTION SPLIT
       ══════════════════════════════ */}
       <section className="bg-cream-section py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Problem column */}
             <motion.div
               variants={revealLeft}
               initial="hidden"
@@ -997,13 +985,15 @@ function LandingPage() {
               </motion.ul>
             </motion.div>
 
+            {/* Solution column */}
             <motion.div
               variants={revealRight}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-80px" }}
-              className="space-y-5"
+              className="space-y-5 p-8 rounded-3xl bg-white border border-[#e7e2d9] shadow-xl shadow-[#1e4734]/5 relative overflow-hidden"
             >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#c8a96a]/10 rounded-full blur-2xl pointer-events-none" />
               <span className="text-[11px] uppercase tracking-[0.18em] text-[#1e4734] font-semibold">
                 The DailyVerse Solution
               </span>
@@ -1015,7 +1005,7 @@ function LandingPage() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                className="space-y-3"
+                className="space-y-3 pt-1"
               >
                 {[
                   "Studio-grade 9:16 pin graphics — generated instantly",
@@ -1031,12 +1021,12 @@ function LandingPage() {
                   </motion.li>
                 ))}
               </motion.ul>
-              <div className="pt-2">
+              <div className="pt-3">
                 <Link to="/auth">
                   <motion.button
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.97 }}
-                    className="inline-flex items-center gap-2 bg-[#1e4734] hover:bg-[#355e4d] text-white font-semibold rounded-full px-7 h-11 cursor-pointer text-sm transition-colors"
+                    className="inline-flex items-center gap-2 bg-[#1e4734] hover:bg-[#355e4d] text-white font-semibold rounded-full px-7 h-11 cursor-pointer text-sm transition-colors shadow-md"
                   >
                     Start Automating
                     <ArrowRight className="h-4 w-4 text-[#c8a96a]" aria-hidden="true" />
@@ -1080,7 +1070,7 @@ function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
-            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
             {features.map((feat) => {
               const Icon = feat.icon;
@@ -1092,12 +1082,12 @@ function LandingPage() {
                     y: -6,
                     boxShadow:
                       "0 20px 60px -12px rgba(30,71,52,0.14), 0 4px 16px -4px rgba(200,169,106,0.12)",
-                    borderColor: "rgba(200,169,106,0.45)",
+                    borderColor: "rgba(200,169,106,0.5)",
                   }}
                   transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                  className="feature-card rounded-3xl p-7 space-y-4 cursor-default"
+                  className="feature-card rounded-3xl p-8 space-y-4 cursor-default group"
                 >
-                  <div className="bg-[#1e4734] text-[#c8a96a] w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg">
+                  <div className="bg-[#1e4734] text-[#c8a96a] w-12 h-12 rounded-2xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </div>
                   <h3 className="font-serif text-lg font-bold text-[#1e4734]">{feat.title}</h3>
@@ -1110,7 +1100,7 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          HOW IT WORKS — INTERACTIVE
+          WORKFLOW VISUALIZATION
       ══════════════════════════════ */}
       <section className="bg-cream-section py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-6xl px-4">
@@ -1133,7 +1123,7 @@ function LandingPage() {
           </motion.div>
 
           <div className="grid lg:grid-cols-12 gap-10 items-start">
-            {/* Step selector */}
+            {/* Step selector list */}
             <motion.div
               variants={staggerContainer}
               initial="hidden"
@@ -1151,12 +1141,18 @@ function LandingPage() {
                     onClick={() => setActiveStep(idx)}
                     whileHover={{ x: active ? 0 : 4 }}
                     transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                    className={`w-full text-left rounded-2xl border p-5 flex items-center gap-4 cursor-pointer ${
+                    className={`w-full text-left rounded-2xl border p-5 flex items-center gap-4 cursor-pointer relative overflow-hidden transition-all duration-300 ${
                       active
                         ? "bg-[#1e4734] border-[#c8a96a] shadow-lg shadow-[#1e4734]/15"
                         : "bg-white border-[#e7e2d9] hover:border-[#c8a96a]/50"
                     }`}
                   >
+                    {active && (
+                      <motion.div
+                        layoutId="activeStepIndicator"
+                        className="absolute left-0 top-0 bottom-0 w-1 bg-[#c8a96a]"
+                      />
+                    )}
                     <div
                       className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
                         active
@@ -1169,7 +1165,7 @@ function LandingPage() {
                     <div>
                       <p
                         className={`text-[10px] uppercase tracking-widest font-semibold font-mono ${
-                          active ? "text-[#c8a96a]/70" : "text-[#9ca3af]"
+                          active ? "text-[#c8a96a]/80" : "text-[#9ca3af]"
                         }`}
                       >
                         Step {step.num}
@@ -1187,7 +1183,7 @@ function LandingPage() {
               })}
             </motion.div>
 
-            {/* Step detail — animated swap */}
+            {/* Step detail card */}
             <div className="lg:col-span-7">
               <AnimatePresence mode="wait">
                 {(() => {
@@ -1197,15 +1193,15 @@ function LandingPage() {
                   return (
                     <motion.div
                       key={activeStep}
-                      initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                      initial={{ opacity: 0, y: 16, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -12, scale: 0.98 }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
                       className="luxury-card rounded-3xl p-8 space-y-6 bg-white border-[#e7e2d9]"
                     >
                       <div className="flex items-center justify-between border-b border-[#f0ece4] pb-5">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-[#c8a96a] text-[#132e22] flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl bg-[#c8a96a] text-[#132e22] flex items-center justify-center shadow-sm">
                             <Icon className="h-5 w-5" aria-hidden="true" />
                           </div>
                           <div>
@@ -1227,7 +1223,7 @@ function LandingPage() {
 
                       <p className="text-[15px] text-[#4b5563] leading-relaxed">{s.body}</p>
 
-                      <div className="bg-[#0d1f17] rounded-2xl p-5 font-mono text-xs space-y-2">
+                      <div className="bg-[#0c1c14] rounded-2xl p-5 font-mono text-xs space-y-2 border border-[#c8a96a]/20">
                         <div className="flex items-center justify-between text-emerald-400">
                           <span>● DailyVerse AI Studio</span>
                           <motion.span
@@ -1238,8 +1234,10 @@ function LandingPage() {
                             LIVE
                           </motion.span>
                         </div>
-                        <p className="text-[#6b7280]">&gt; Running: {s.label.toLowerCase()}...</p>
-                        <p className="text-emerald-400">&gt; Output ready. Quality verified. ✓</p>
+                        <p className="text-[#6b7280]">&gt; Executing: {s.label.toLowerCase()}...</p>
+                        <p className="text-emerald-400">
+                          &gt; Output generated. Editorial quality verified. ✓
+                        </p>
                       </div>
 
                       <Link to="/auth">
@@ -1262,7 +1260,7 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          GALLERY (MASONRY)
+          PINTEREST MASONRY GALLERY
       ══════════════════════════════ */}
       <section id="gallery" className="bg-white py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-6xl px-4">
@@ -1294,7 +1292,7 @@ function LandingPage() {
             viewport={{ once: true, margin: "-60px" }}
             className="grid grid-cols-2 md:grid-cols-4 gap-4"
           >
-            {/* Large hero card */}
+            {/* Big feature banner */}
             <motion.div
               variants={staggerItem}
               whileHover={{ scale: 1.015 }}
@@ -1316,23 +1314,23 @@ function LandingPage() {
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 1 }}
                   transition={{ duration: 0.35 }}
-                  className="absolute inset-0 bg-gradient-to-t from-[#0d1f17]/70 via-transparent to-transparent flex items-end p-6"
+                  className="absolute inset-0 bg-gradient-to-t from-[#0c1c14]/75 via-transparent to-transparent flex items-end p-6"
                 >
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest text-[#c8a96a] font-bold">
+                    <span className="text-[10px] uppercase tracking-widest text-[#c8a96a] font-bold">
                       DailyVerse AI
-                    </p>
+                    </span>
                     <p className="font-serif text-xl font-bold text-white mt-1 leading-tight">
                       Luxury Editorial
                       <br />
-                      Skincare Pin
+                      Skincare Pin Render
                     </p>
                   </div>
                 </motion.div>
               </div>
             </motion.div>
 
-            {/* Portrait pin cards */}
+            {/* Individual portrait cards */}
             {[
               { src: "/brand/pinterest-1.jpg", label: "Peptide Hydrating Serum" },
               { src: "/brand/pinterest-2.jpg", label: "Pore Lifting Ampoule" },
@@ -1354,14 +1352,14 @@ function LandingPage() {
                     loading="lazy"
                     decoding="async"
                   />
-                  <div className="absolute top-2.5 left-2.5 bg-[#1e4734] text-[#c8a96a] text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md">
+                  <div className="absolute top-2.5 left-2.5 bg-[#1e4734] text-[#c8a96a] text-[9px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md shadow-sm">
                     AI Generated
                   </div>
                   <motion.div
                     initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
                     transition={{ duration: 0.25 }}
-                    className="absolute inset-0 bg-black/22 flex items-end p-4"
+                    className="absolute inset-0 bg-black/25 flex items-end p-4"
                   >
                     <p className="text-[11px] font-semibold text-white">{pin.label}</p>
                   </motion.div>
@@ -1369,10 +1367,10 @@ function LandingPage() {
               </motion.div>
             ))}
 
-            {/* Pinterest follow card */}
+            {/* Profile link card */}
             <motion.div
               variants={staggerItem}
-              className="col-span-2 rounded-2xl overflow-hidden border border-[#e7e2d9] shadow-md bg-[#0d1f17] p-6 flex items-center justify-between gap-6"
+              className="col-span-2 rounded-2xl overflow-hidden border border-[#e7e2d9] shadow-md bg-[#0c1c14] p-6 flex items-center justify-between gap-6"
             >
               <div className="space-y-2">
                 <p className="text-[10px] text-[#c8a96a] uppercase tracking-widest font-bold">
@@ -1406,12 +1404,12 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          BENEFITS + TESTIMONIALS
+          BENEFITS & TESTIMONIALS
       ══════════════════════════════ */}
       <section className="bg-cream-section py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
-            {/* Benefits */}
+            {/* Left benefits */}
             <motion.div
               variants={revealLeft}
               initial="hidden"
@@ -1480,7 +1478,7 @@ function LandingPage() {
               </motion.div>
             </motion.div>
 
-            {/* Testimonials */}
+            {/* Right testimonials */}
             <motion.div
               variants={staggerContainer}
               initial="hidden"
@@ -1530,7 +1528,7 @@ function LandingPage() {
       {/* ══════════════════════════════
           COMMUNITY (DUAL SOCIAL)
       ══════════════════════════════ */}
-      <section id="community" className="bg-[#0d1f17] py-28 border-y border-[#c8a96a]/15">
+      <section id="community" className="bg-[#0c1c14] py-28 border-y border-[#c8a96a]/18">
         <div className="mx-auto max-w-6xl px-4">
           <motion.div
             variants={fadeUp}
@@ -1566,7 +1564,7 @@ function LandingPage() {
               variants={staggerItem}
               whileHover={{ y: -4 }}
               transition={{ type: "spring", stiffness: 220, damping: 22 }}
-              className="rounded-3xl p-7 bg-[#132e22] border border-[#c8a96a]/20 space-y-6"
+              className="rounded-3xl p-7 bg-[#132e22] border border-[#c8a96a]/22 space-y-6"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -1605,7 +1603,6 @@ function LandingPage() {
                 </a>
               </div>
 
-              {/* Thumbnail play */}
               <a
                 href="https://www.youtube.com/@DailyVerse-skincare"
                 target="_blank"
@@ -1655,7 +1652,7 @@ function LandingPage() {
               variants={staggerItem}
               whileHover={{ y: -4 }}
               transition={{ type: "spring", stiffness: 220, damping: 22 }}
-              className="rounded-3xl p-7 bg-[#132e22] border border-[#c8a96a]/20 space-y-6"
+              className="rounded-3xl p-7 bg-[#132e22] border border-[#c8a96a]/22 space-y-6"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -1694,7 +1691,6 @@ function LandingPage() {
                 </a>
               </div>
 
-              {/* Pin preview grid */}
               <div className="grid grid-cols-2 gap-3 aspect-video">
                 {[
                   { src: "/brand/pinterest-1.jpg", label: "Peptide Serum" },
@@ -1750,7 +1746,7 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          FAQ
+          FAQ SECTION
       ══════════════════════════════ */}
       <section id="faq" className="bg-white py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-3xl px-4">
@@ -1794,17 +1790,17 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          FINAL CTA
+          FINAL CALL TO ACTION
       ══════════════════════════════ */}
       <section className="relative overflow-hidden bg-mesh-dark text-white py-32">
-        {/* Orbs */}
+        {/* Background glowing orb circles */}
         <motion.div
-          className="absolute top-[18%] left-[8%] w-[420px] h-[420px] bg-emerald-700/18 rounded-full blur-[130px] pointer-events-none"
+          className="absolute top-[18%] left-[8%] w-[420px] h-[420px] bg-emerald-700/20 rounded-full blur-[130px] pointer-events-none"
           animate={{ scale: [1, 1.06, 0.96, 1], x: [0, 8, -6, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-[8%] right-[6%] w-[320px] h-[320px] bg-[#c8a96a]/10 rounded-full blur-[110px] pointer-events-none"
+          className="absolute bottom-[8%] right-[6%] w-[340px] h-[340px] bg-[#c8a96a]/12 rounded-full blur-[110px] pointer-events-none"
           animate={{ scale: [1, 0.94, 1.05, 1] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 3 }}
         />
@@ -1815,7 +1811,7 @@ function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="inline-block text-[11px] uppercase tracking-[0.18em] text-[#c8a96a] font-semibold px-4 py-1.5 rounded-full border border-[#c8a96a]/30 bg-white/5 backdrop-blur-sm"
+            className="inline-block text-[11px] uppercase tracking-[0.18em] text-[#c8a96a] font-semibold px-4 py-1.5 rounded-full border border-[#c8a96a]/30 bg-white/5 backdrop-blur-sm shadow-sm"
           >
             Start Automating Today
           </motion.span>
@@ -1840,7 +1836,7 @@ function LandingPage() {
             whileInView="visible"
             viewport={{ once: true }}
             custom={0.2}
-            className="mx-auto max-w-xl text-white/62 text-[15px] leading-relaxed"
+            className="mx-auto max-w-xl text-white/65 text-[15px] leading-relaxed"
           >
             Join beauty creators and affiliate strategists who use DailyVerse AI to publish
             high-converting Pinterest content at scale — completely automatically.
@@ -1894,12 +1890,12 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          FOOTER
+          LUXURY FOOTER
       ══════════════════════════════ */}
-      <footer className="bg-[#0a1a10] border-t border-[#c8a96a]/10 text-white/58 py-16">
+      <footer className="bg-[#0a1a10] border-t border-[#c8a96a]/12 text-white/58 py-16">
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-            {/* Brand */}
+            {/* Brand column */}
             <div className="space-y-4 lg:col-span-2">
               <Link to="/" className="flex items-center gap-2.5 group w-fit">
                 <motion.img
@@ -1949,7 +1945,7 @@ function LandingPage() {
               </div>
             </div>
 
-            {/* Platform */}
+            {/* Navigation Column */}
             <div className="space-y-4">
               <h4 className="text-[11px] uppercase tracking-[0.15em] text-white/38 font-semibold">
                 Platform
@@ -1968,7 +1964,7 @@ function LandingPage() {
               </ul>
             </div>
 
-            {/* Follow */}
+            {/* Social Links */}
             <div className="space-y-4">
               <h4 className="text-[11px] uppercase tracking-[0.15em] text-white/38 font-semibold">
                 Follow Us
@@ -2015,9 +2011,13 @@ function LandingPage() {
             <p className="text-[12px] text-white/28">
               © {new Date().getFullYear()} DAILY VERSE AI. All rights reserved.
             </p>
-            <p className="text-[11px] text-white/22 uppercase tracking-widest">
-              Luxury Skincare Automation Platform
-            </p>
+
+            <div className="flex items-center gap-2 bg-emerald-950/60 border border-emerald-800/40 px-3 py-1 rounded-full">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-glow" />
+              <span className="text-[11px] text-emerald-300 font-medium">
+                All Systems Operational
+              </span>
+            </div>
           </div>
         </div>
       </footer>
