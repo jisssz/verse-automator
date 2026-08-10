@@ -116,11 +116,10 @@ function AutomationPage() {
       <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-2xl bg-white border border-[#E7E2D9] shadow-xs">
         <div>
           <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight text-[#222222]">
-            n8n Automation Control
+            Automation Pipeline Control
           </h1>
           <p className="text-xs text-[#666666] mt-0.5">
-            Manage auto-syndication pipelines, background image creation, and automated Pinterest
-            scheduler tasks.
+            Manage auto-syndication pipelines, background image creation, and automated Pinterest scheduler tasks.
           </p>
         </div>
 
@@ -128,11 +127,11 @@ function AutomationPage() {
           <Button
             onClick={handleTriggerPipeline}
             disabled={triggerStatus === "running"}
-            className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-9"
+            className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-9 cursor-pointer"
           >
             {triggerStatus === "running" ? (
               <>
-                <Loader2 className="mr-1 h-3 w-3 animate-spin" /> Running...
+                <Loader2 className="mr-1 h-3 w-3 animate-spin text-[#C8A96A]" /> Running Pipeline...
               </>
             ) : (
               <>
@@ -149,6 +148,53 @@ function AutomationPage() {
           )}
         </div>
       </div>
+
+      {/* Visual Pipeline Node Graph Card */}
+      <Card className="luxury-card border-[#E7E2D9] bg-white p-6">
+        <CardHeader className="p-0 pb-4 border-b border-[#E7E2D9]">
+          <CardTitle className="font-serif text-lg text-[#222222] flex items-center justify-between">
+            <span>Visual Pipeline Node Graph</span>
+            <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] font-medium text-[10px] bg-[#F8F6F2]">
+              Live Workflow Active
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 pt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 relative">
+            <div className="p-4 rounded-xl border border-[#E7E2D9] bg-[#F8F6F2] text-center space-y-2">
+              <div className="w-8 h-8 rounded-full bg-[#1E4734]/10 text-[#1E4734] font-bold text-xs flex items-center justify-center mx-auto">
+                01
+              </div>
+              <p className="font-serif text-xs font-bold text-[#222222]">Product Curation</p>
+              <p className="text-[10px] text-[#666666]">Import products via AI Trends or Google Sheets</p>
+            </div>
+
+            <div className="p-4 rounded-xl border border-[#E7E2D9] bg-[#F8F6F2] text-center space-y-2">
+              <div className="w-8 h-8 rounded-full bg-[#C8A96A]/20 text-[#1E4734] font-bold text-xs flex items-center justify-center mx-auto">
+                02
+              </div>
+              <p className="font-serif text-xs font-bold text-[#222222]">AI Copy Generation</p>
+              <p className="text-[10px] text-[#666666]">GPT-4o editorial title, description & SEO tags</p>
+            </div>
+
+            <div className="p-4 rounded-xl border border-[#E7E2D9] bg-[#F8F6F2] text-center space-y-2">
+              <div className="w-8 h-8 rounded-full bg-[#355E4D]/20 text-[#1E4734] font-bold text-xs flex items-center justify-center mx-auto">
+                03
+              </div>
+              <p className="font-serif text-xs font-bold text-[#222222]">FLUX.1 Image Rendering</p>
+              <p className="text-[10px] text-[#666666]">9:16 vertical luxury visual graphics rendering</p>
+            </div>
+
+            <div className="p-4 rounded-xl border border-[#E7E2D9] bg-[#F8F6F2] text-center space-y-2">
+              <div className="w-8 h-8 rounded-full bg-emerald-600/10 text-emerald-700 font-bold text-xs flex items-center justify-center mx-auto">
+                04
+              </div>
+              <p className="font-serif text-xs font-bold text-[#222222]">Pinterest Syndication</p>
+              <p className="text-[10px] text-[#666666]">Post live pin to user boards with affiliate links</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Automation Status Panel */}

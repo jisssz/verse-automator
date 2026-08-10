@@ -279,26 +279,26 @@ function PinListGrid({
         const campaignName = pin.campaign_products?.campaigns?.name || "Campaign";
 
         return (
-          <Card key={pin.id} className="flex flex-col justify-between">
+          <Card key={pin.id} className="luxury-card border-[#E7E2D9] flex flex-col justify-between">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <CardTitle className="text-base font-semibold">{productName}</CardTitle>
-                  <p className="text-xs text-muted-foreground">Campaign: {campaignName}</p>
+                  <CardTitle className="font-serif text-base font-bold text-[#222222]">{productName}</CardTitle>
+                  <p className="text-xs text-[#666666]">Campaign: {campaignName}</p>
                 </div>
                 <div>
                   {pin.status === "published" && (
-                    <Badge variant="default" className="bg-emerald-600">
+                    <Badge variant="default" className="bg-emerald-600 text-white font-medium text-[10px]">
                       <CheckCircle2 className="mr-1 h-3 w-3" /> Published
                     </Badge>
                   )}
                   {pin.status === "scheduled" && (
-                    <Badge variant="secondary">
-                      <Clock className="mr-1 h-3 w-3" /> Scheduled
+                    <Badge variant="secondary" className="bg-[#C8A96A]/20 text-[#1E4734] font-medium text-[10px]">
+                      <Clock className="mr-1 h-3 w-3 text-[#C8A96A]" /> Scheduled
                     </Badge>
                   )}
                   {pin.status === "failed" && (
-                    <Badge variant="destructive">
+                    <Badge variant="destructive" className="font-medium text-[10px]">
                       <AlertCircle className="mr-1 h-3 w-3" /> Failed
                     </Badge>
                   )}
@@ -307,34 +307,36 @@ function PinListGrid({
             </CardHeader>
             <CardContent className="space-y-3 pt-0">
               {pin.board_name && (
-                <div className="text-xs text-muted-foreground">Board: {pin.board_name}</div>
+                <div className="text-xs text-[#666666] flex items-center gap-1.5">
+                  <Pin className="h-3 w-3 text-[#C8A96A]" /> Board: <span className="font-semibold text-[#1E4734]">{pin.board_name}</span>
+                </div>
               )}
 
               {pin.scheduled_at && (
-                <div className="flex items-center text-xs text-muted-foreground">
-                  <Calendar className="mr-1 h-3.5 w-3.5" />
+                <div className="flex items-center text-xs text-[#666666]">
+                  <Calendar className="mr-1 h-3.5 w-3.5 text-[#C8A96A]" />
                   Scheduled for: {new Date(pin.scheduled_at).toLocaleString()}
                 </div>
               )}
 
               {pin.error_message && (
-                <div className="rounded bg-destructive/10 p-2 text-xs text-destructive">
+                <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-2.5 text-xs text-destructive">
                   {pin.error_message}
                 </div>
               )}
 
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t">
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#E7E2D9]">
                 {pin.pin_url ? (
                   <a
                     href={pin.pin_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center text-xs text-primary hover:underline"
+                    className="inline-flex items-center text-xs text-[#1E4734] hover:underline font-semibold"
                   >
                     View on Pinterest <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
                 ) : (
-                  <span className="text-xs text-muted-foreground">Not published yet</span>
+                  <span className="text-xs text-[#666666] italic">Not published yet</span>
                 )}
 
                 <div className="flex gap-2">
@@ -344,6 +346,7 @@ function PinListGrid({
                       variant="outline"
                       disabled={isBusy}
                       onClick={() => onRetry(pin.product_id)}
+                      className="border-destructive/40 text-destructive hover:bg-destructive/10 text-xs h-8 cursor-pointer"
                     >
                       {isBusy ? (
                         <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
@@ -357,11 +360,12 @@ function PinListGrid({
                       size="sm"
                       disabled={isBusy}
                       onClick={() => onPublishNow(pin.product_id)}
+                      className="bg-[#1E4734] hover:bg-[#355E4D] text-white text-xs h-8 cursor-pointer"
                     >
                       {isBusy ? (
-                        <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                        <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin text-[#C8A96A]" />
                       ) : (
-                        <Sparkles className="mr-1 h-3.5 w-3.5" />
+                        <Sparkles className="mr-1 h-3.5 w-3.5 text-[#C8A96A]" />
                       )}
                       Publish Now
                     </Button>

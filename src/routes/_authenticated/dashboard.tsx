@@ -165,67 +165,106 @@ function DashboardPage() {
   };
 
   return (
-    <PageLayout contentClassName="max-w-6xl space-y-8 p-6 md:p-8 bg-[#F8F6F2]">
-      {/* Top Luxury Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#132E22] via-[#1E4734] to-[#28543E] p-8 text-[#F8F6F2] shadow-md border border-[#C8A96A]/30">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C8A96A]/20 border border-[#C8A96A]/40 text-[#C8A96A] text-xs font-semibold uppercase tracking-wider">
+    <PageLayout contentClassName="max-w-7xl space-y-8 p-6 md:p-8 bg-[#F8F6F2]">
+      {/* Top Luxury Bento Hero & Quick Launchpad */}
+      <div className="grid gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-8 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#132E22] via-[#1E4734] to-[#28543E] p-8 text-[#F8F6F2] shadow-xl border border-[#C8A96A]/40 flex flex-col justify-between">
+          <div className="relative z-10 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C8A96A]/20 border border-[#C8A96A]/40 text-[#C8A96A] text-xs font-semibold uppercase tracking-wider shadow-xs">
               <Crown className="h-3.5 w-3.5" /> Luxury Skincare AI Suite
             </div>
-            <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-[#FFFFFF]">
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-[#FFFFFF]">
               Welcome back, Creator ✨
             </h1>
-            <p className="text-sm text-[#F8F6F2]/80 leading-relaxed">
-              Automate your high-end skincare affiliate pipeline, generate editorial Pinterest pin
-              copy, and schedule pins seamlessly.
+            <p className="text-xs sm:text-sm text-[#F8F6F2]/80 leading-relaxed max-w-xl">
+              Automate your luxury skincare affiliate pipeline, generate editorial Pinterest pin copy, and trigger FLUX.1 AI visual renderings seamlessly.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <Button
-              onClick={() => void refetchMetrics()}
-              variant="outline"
-              size="sm"
-              className="border-[#C8A96A]/50 bg-[#1E4734] text-[#F8F6F2] hover:bg-[#C8A96A] hover:text-[#132E22] text-xs font-medium"
-            >
-              <RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Refresh Analytics
-            </Button>
+          <div className="mt-8 pt-6 border-t border-[#FFFFFF]/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs relative z-10">
+            <div className="space-y-0.5">
+              <span className="text-[#C8A96A] uppercase font-semibold tracking-wider text-[10px]">
+                Today&apos;s AI Copy
+              </span>
+              <p className="text-base font-bold text-white">28 Generated</p>
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[#C8A96A] uppercase font-semibold tracking-wider text-[10px]">
+                Pinterest Pins
+              </span>
+              <p className="text-base font-bold text-white">14 Scheduled</p>
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[#C8A96A] uppercase font-semibold tracking-wider text-[10px]">
+                FLUX.1 Engine
+              </span>
+              <p className="text-base font-bold text-emerald-400">Ready</p>
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[#C8A96A] uppercase font-semibold tracking-wider text-[10px]">
+                Pipeline Health
+              </span>
+              <p className="text-base font-bold text-white">
+                {metricsLoading ? "..." : `${metrics?.successRate}%`}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Hero Quick Stat Badges */}
-        <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-[#FFFFFF]/10 text-xs">
-          <div className="space-y-0.5">
-            <span className="text-[#C8A96A] uppercase font-semibold tracking-wider text-[10px]">
-              Today's Generation
-            </span>
-            <p className="text-lg font-bold text-white">28 AI Copy</p>
+        {/* Quick Launchpad Card */}
+        <div className="lg:col-span-4 luxury-card rounded-2xl p-6 bg-white border-[#E7E2D9] shadow-xl flex flex-col justify-between space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between border-b border-[#E7E2D9] pb-3">
+              <h3 className="font-serif text-lg font-bold text-[#1E4734]">Quick Launchpad</h3>
+              <Sparkles className="h-4 w-4 text-[#C8A96A]" />
+            </div>
+            <p className="text-xs text-[#666666]">Instant access to core AI generators & workflows.</p>
           </div>
-          <div className="space-y-0.5">
-            <span className="text-[#C8A96A] uppercase font-semibold tracking-wider text-[10px]">
-              Pinterest Posts
-            </span>
-            <p className="text-lg font-bold text-white">14 Scheduled</p>
+
+          <div className="space-y-2.5">
+            <Button
+              onClick={() => void navigate({ to: "/content-generator" })}
+              className="w-full justify-between bg-[#F8F6F2] hover:bg-[#1E4734] text-[#1E4734] hover:text-white border border-[#E7E2D9] h-10 text-xs font-medium cursor-pointer group transition-all"
+            >
+              <span className="flex items-center gap-2">
+                <Sparkles className="h-3.5 w-3.5 text-[#C8A96A]" /> Content Generator
+              </span>
+              <ArrowRight className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100" />
+            </Button>
+
+            <Button
+              onClick={() => void navigate({ to: "/image-generator" })}
+              className="w-full justify-between bg-[#F8F6F2] hover:bg-[#1E4734] text-[#1E4734] hover:text-white border border-[#E7E2D9] h-10 text-xs font-medium cursor-pointer group transition-all"
+            >
+              <span className="flex items-center gap-2">
+                <Package className="h-3.5 w-3.5 text-[#C8A96A]" /> FLUX.1 Image Engine
+              </span>
+              <ArrowRight className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100" />
+            </Button>
+
+            <Button
+              onClick={() => void navigate({ to: "/automation" })}
+              className="w-full justify-between bg-[#F8F6F2] hover:bg-[#1E4734] text-[#1E4734] hover:text-white border border-[#E7E2D9] h-10 text-xs font-medium cursor-pointer group transition-all"
+            >
+              <span className="flex items-center gap-2">
+                <Activity className="h-3.5 w-3.5 text-[#C8A96A]" /> n8n Workflow Trigger
+              </span>
+              <ArrowRight className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100" />
+            </Button>
           </div>
-          <div className="space-y-0.5">
-            <span className="text-[#C8A96A] uppercase font-semibold tracking-wider text-[10px]">
-              OpenAI Gateway
-            </span>
-            <p className="text-lg font-bold text-emerald-400">Connected</p>
-          </div>
-          <div className="space-y-0.5">
-            <span className="text-[#C8A96A] uppercase font-semibold tracking-wider text-[10px]">
-              Success Rate
-            </span>
-            <p className="text-lg font-bold text-white">
-              {metricsLoading ? "..." : `${metrics?.successRate}%`}
-            </p>
-          </div>
+
+          <Button
+            onClick={() => void refetchMetrics()}
+            variant="outline"
+            size="sm"
+            className="w-full border-[#E7E2D9] text-[#666666] hover:text-[#1E4734] text-xs h-9"
+          >
+            <RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Sync Live Realtime Data
+          </Button>
         </div>
       </div>
 
-      {/* Analytics KPI Cards Grid */}
+      {/* Bento KPI Cards Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="luxury-card border-[#E7E2D9]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -340,7 +379,7 @@ function DashboardPage() {
               </CardTitle>
               <Badge
                 variant="outline"
-                className="border-[#C8A96A] text-[#1E4734] font-medium text-xs"
+                className="border-[#C8A96A] text-[#1E4734] font-medium text-xs bg-[#F8F6F2]"
               >
                 Realtime Metrics
               </Badge>
@@ -489,8 +528,8 @@ function DashboardPage() {
                   onClick={() => setImportMode("trends")}
                   className={
                     importMode === "trends"
-                      ? "bg-[#1E4734] text-white"
-                      : "border-[#E7E2D9] text-[#222222]"
+                      ? "bg-[#1E4734] text-white cursor-pointer"
+                      : "border-[#E7E2D9] text-[#222222] cursor-pointer"
                   }
                 >
                   <Sparkles className="mr-1.5 h-3.5 w-3.5 text-[#C8A96A]" /> AI Trends
@@ -502,8 +541,8 @@ function DashboardPage() {
                   onClick={() => setImportMode("manual")}
                   className={
                     importMode === "manual"
-                      ? "bg-[#1E4734] text-white"
-                      : "border-[#E7E2D9] text-[#222222]"
+                      ? "bg-[#1E4734] text-white cursor-pointer"
+                      : "border-[#E7E2D9] text-[#222222] cursor-pointer"
                   }
                 >
                   <Layers className="mr-1.5 h-3.5 w-3.5 text-[#C8A96A]" /> Manual
@@ -515,8 +554,8 @@ function DashboardPage() {
                   onClick={() => setImportMode("sheets")}
                   className={
                     importMode === "sheets"
-                      ? "bg-[#1E4734] text-white"
-                      : "border-[#E7E2D9] text-[#222222]"
+                      ? "bg-[#1E4734] text-white cursor-pointer"
+                      : "border-[#E7E2D9] text-[#222222] cursor-pointer"
                   }
                 >
                   <FileSpreadsheet className="mr-1.5 h-3.5 w-3.5 text-[#C8A96A]" /> Sheets
@@ -558,7 +597,7 @@ function DashboardPage() {
               type="submit"
               disabled={createMutation.isPending}
               size="lg"
-              className="w-full bg-[#1E4734] hover:bg-[#355E4D] text-white font-medium shadow-sm h-10"
+              className="w-full bg-[#1E4734] hover:bg-[#355E4D] text-white font-medium shadow-sm h-10 cursor-pointer"
             >
               {createMutation.isPending ? (
                 <>
@@ -579,7 +618,7 @@ function DashboardPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-serif text-2xl font-bold text-[#222222]">Your Campaigns</h2>
-          <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] font-medium text-xs">
+          <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] font-medium text-xs bg-[#F8F6F2]">
             {campaigns.length} Active
           </Badge>
         </div>
@@ -625,7 +664,7 @@ function DashboardPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-[#1E4734] text-[#1E4734] hover:bg-[#1E4734] hover:text-white text-xs h-8"
+                      className="border-[#1E4734] text-[#1E4734] hover:bg-[#1E4734] hover:text-white text-xs h-8 cursor-pointer"
                     >
                       Open Campaign <ArrowRight className="ml-1 h-3 w-3" />
                     </Button>
@@ -634,7 +673,7 @@ function DashboardPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-destructive hover:bg-destructive/10 h-8 w-8"
+                    className="text-destructive hover:bg-destructive/10 h-8 w-8 cursor-pointer"
                     onClick={() => deleteMutation.mutate({ id: campaign.id })}
                     disabled={deleteMutation.isPending}
                   >

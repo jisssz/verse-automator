@@ -171,12 +171,16 @@ function ImageGeneratorPage() {
       {/* Header Banner */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-2xl bg-white border border-[#E7E2D9] shadow-xs">
         <div>
-          <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight text-[#222222]">
-            AI Skincare Image Studio
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight text-[#222222]">
+              AI Skincare Image Studio
+            </h1>
+            <Badge variant="outline" className="border-emerald-300 bg-emerald-50 text-emerald-800 text-[11px] font-semibold">
+              FLUX.1 Engine Active
+            </Badge>
+          </div>
           <p className="text-xs text-[#666666] mt-0.5">
-            Design stunning Pinterest product pins using OpenAI DALL-E 3 with botanical lux
-            aesthetics.
+            Design stunning 9:16 Pinterest product graphics using Hugging Face FLUX.1-dev or OpenAI DALL-E 3.
           </p>
         </div>
       </div>
