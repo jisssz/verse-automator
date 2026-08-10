@@ -493,96 +493,124 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* SECTION 8: Watch DailyVerse in Action (YouTube Integration) */}
-      <section className="bg-[#132E22] text-white py-20 px-4 border-y border-[#C8A96A]/30">
-        <div className="max-w-5xl mx-auto space-y-10 text-center">
-          <div className="space-y-3">
+      {/* SECTION 8 & 9: Join the DailyVerse Community (Dual Equal Social Cards) */}
+      <section id="community" className="bg-[#132E22] text-white py-20 px-4 border-y border-[#C8A96A]/30">
+        <div className="max-w-6xl mx-auto space-y-12">
+          <div className="text-center space-y-3">
             <Badge variant="outline" className="border-[#C8A96A] text-[#C8A96A] font-semibold text-xs bg-white/5">
-              Official YouTube Channel
+              Official Social Channels
             </Badge>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white">
-              Watch DailyVerse AI in Action
+            <h2 className="font-serif text-3xl sm:text-5xl font-extrabold text-white">
+              Join the DailyVerse Community
             </h2>
             <p className="text-xs sm:text-sm text-white/80 max-w-lg mx-auto">
-              Subscribe to our official channel @DailyVerse-skincare for live tutorials, skincare breakdowns, and automation guides.
+              Follow our official channels for live skincare tutorials, Pinterest automation guides, and aesthetic pin collections.
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto rounded-2xl overflow-hidden border border-[#C8A96A]/40 bg-[#1E4734] shadow-2xl relative group p-8 space-y-6 text-left">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-red-600 text-white shadow-lg">
-                  <Youtube className="h-6 w-6" />
+          <div className="grid gap-8 lg:grid-cols-2">
+            {/* Card 1: Official YouTube Channel */}
+            <div className="luxury-card rounded-2xl p-6 sm:p-8 space-y-6 bg-[#1E4734] border-[#C8A96A]/40 text-white shadow-2xl relative overflow-hidden group">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-full bg-red-600 text-white shadow-lg animate-pulse-glow">
+                    <Youtube className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-white">YouTube Channel</h3>
+                    <p className="text-xs text-[#C8A96A]">@DailyVerse-skincare</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-serif text-lg font-bold text-white">DailyVerse Skincare</h3>
-                  <p className="text-xs text-[#C8A96A]">@DailyVerse-skincare · YouTube Channel</p>
+                <a
+                  href="https://www.youtube.com/@DailyVerse-skincare"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Button className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-full px-5 h-9 cursor-pointer shadow-lg magnetic-hover">
+                    Subscribe <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                  </Button>
+                </a>
+              </div>
+
+              <div className="relative rounded-xl overflow-hidden aspect-video bg-black/40 border border-white/10 flex items-center justify-center group/play cursor-pointer">
+                <img
+                  src="/brand/hero-banner.jpg"
+                  alt="DailyVerse YouTube Channel Preview"
+                  className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover/play:scale-105"
+                />
+                <a
+                  href="https://www.youtube.com/@DailyVerse-skincare"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="absolute p-4 rounded-full bg-red-600 text-white shadow-2xl transition-transform duration-300 group-hover/play:scale-110 flex items-center justify-center"
+                >
+                  <Play className="h-6 w-6 fill-current ml-0.5" />
+                </a>
+              </div>
+
+              <div className="space-y-2 text-xs text-white/90">
+                <p className="font-semibold text-[#C8A96A]">Latest AI Skincare Walkthroughs</p>
+                <p className="text-white/70 leading-relaxed text-[11px]">
+                  Step-by-step videos on setting up automated Pinterest pin creation, botanical copywriting, and affiliate revenue strategies.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2: Official Pinterest Profile */}
+            <div className="luxury-card rounded-2xl p-6 sm:p-8 space-y-6 bg-[#1E4734] border-[#C8A96A]/40 text-white shadow-2xl relative overflow-hidden group">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-full bg-[#E60023] text-white shadow-lg animate-pulse-glow">
+                    <Pin className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-white">Pinterest Profile</h3>
+                    <p className="text-xs text-[#C8A96A]">@DailyVerse07</p>
+                  </div>
+                </div>
+                <a
+                  href="https://in.pinterest.com/DailyVerse07/_created/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Button className="bg-[#E60023] hover:bg-[#b8001c] text-white font-bold text-xs rounded-full px-5 h-9 cursor-pointer shadow-lg magnetic-hover">
+                    Follow Profile <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                  </Button>
+                </a>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 aspect-video">
+                <div className="relative rounded-xl overflow-hidden border border-white/10 group/pin">
+                  <img
+                    src="/brand/pinterest-1.jpg"
+                    alt="Pinterest Pin 1"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover/pin:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/pin:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-[#E60023] text-white px-2 py-1 rounded">View Pin</span>
+                  </div>
+                </div>
+
+                <div className="relative rounded-xl overflow-hidden border border-white/10 group/pin">
+                  <img
+                    src="/brand/pinterest-2.jpg"
+                    alt="Pinterest Pin 2"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover/pin:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/pin:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-[#E60023] text-white px-2 py-1 rounded">View Pin</span>
+                  </div>
                 </div>
               </div>
-              <a
-                href="https://www.youtube.com/@DailyVerse-skincare"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Button className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-full px-6 h-10 cursor-pointer">
-                  Subscribe Channel <ExternalLink className="ml-2 h-3.5 w-3.5" />
-                </Button>
-              </a>
-            </div>
 
-            <div className="relative rounded-xl overflow-hidden aspect-video bg-black/40 border border-white/10 flex items-center justify-center group/play cursor-pointer">
-              <img
-                src="/brand/hero-banner.jpg"
-                alt="DailyVerse YouTube Channel Preview"
-                className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover/play:scale-105"
-              />
-              <a
-                href="https://www.youtube.com/@DailyVerse-skincare"
-                target="_blank"
-                rel="noreferrer"
-                className="absolute p-5 rounded-full bg-red-600 text-white shadow-2xl transition-transform duration-300 group-hover/play:scale-110 flex items-center justify-center"
-              >
-                <Play className="h-8 w-8 fill-current ml-1" />
-              </a>
+              <div className="space-y-2 text-xs text-white/90">
+                <p className="font-semibold text-[#C8A96A]">Aesthetic Skincare Boards</p>
+                <p className="text-white/70 leading-relaxed text-[11px]">
+                  Browse our daily aesthetic pin collection featuring botanical peptide serums, morning routine highlights, and beauty affiliate ideas.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* SECTION 9: Pinterest Community */}
-      <section className="py-20 px-4 max-w-5xl mx-auto space-y-10">
-        <div className="text-center space-y-3">
-          <Badge variant="outline" className="border-[#C8A96A] text-[#1E4734] font-semibold text-xs bg-[#F8F6F2]">
-            Official Pinterest Profile
-          </Badge>
-          <h2 className="font-serif text-3xl font-bold text-[#1E4734]">
-            Explore Our Pinterest Community
-          </h2>
-          <p className="text-xs text-[#666666] max-w-md mx-auto">
-            Follow @DailyVerse07 on Pinterest to browse our latest skincare pin collection.
-          </p>
-        </div>
-
-        <div className="max-w-2xl mx-auto luxury-card rounded-2xl p-8 border-[#E7E2D9] text-center space-y-6 bg-white shadow-xl">
-          <div className="w-16 h-16 rounded-full bg-[#1E4734] text-[#C8A96A] font-bold flex items-center justify-center mx-auto text-2xl font-serif border-2 border-[#C8A96A]">
-            DV
-          </div>
-          <div className="space-y-1">
-            <h3 className="font-serif text-xl font-bold text-[#1E4734]">DailyVerse Skincare</h3>
-            <p className="text-xs text-[#666666]">@DailyVerse07 · Official Pinterest Niche Board</p>
-          </div>
-          <p className="text-xs text-[#555555] max-w-md mx-auto leading-relaxed">
-            Discover curated peptide formulas, botanical morning routines, and aesthetic skincare pin inspirations updated daily.
-          </p>
-          <a
-            href="https://in.pinterest.com/DailyVerse07/_created/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Button className="bg-[#1E4734] hover:bg-[#355E4D] text-white font-bold text-xs rounded-full px-8 h-11 cursor-pointer hover-lift">
-              <Pin className="mr-2 h-4 w-4 text-[#C8A96A]" /> Follow on Pinterest <ExternalLink className="ml-2 h-3.5 w-3.5" />
-            </Button>
-          </a>
         </div>
       </section>
 

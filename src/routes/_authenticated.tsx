@@ -27,6 +27,7 @@ import {
   Plus,
   Layers,
   Activity,
+  Youtube,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -216,6 +217,26 @@ function AuthenticatedLayout() {
 
           {/* Header Right Indicators & Actions */}
           <div className="flex items-center gap-3">
+            <a
+              href="https://www.youtube.com/@DailyVerse-skincare"
+              target="_blank"
+              rel="noreferrer"
+              title="Official YouTube Channel"
+              className="p-2 rounded-lg border border-[#E7E2D9] bg-[#F8F6F2] hover:bg-[#F3EFE8] text-red-600 transition-all magnetic-hover hidden sm:flex items-center justify-center cursor-pointer"
+            >
+              <Youtube className="h-4 w-4" />
+            </a>
+
+            <a
+              href="https://in.pinterest.com/DailyVerse07/_created/"
+              target="_blank"
+              rel="noreferrer"
+              title="Official Pinterest Profile"
+              className="p-2 rounded-lg border border-[#E7E2D9] bg-[#F8F6F2] hover:bg-[#F3EFE8] text-[#E60023] transition-all magnetic-hover hidden sm:flex items-center justify-center cursor-pointer"
+            >
+              <Pin className="h-4 w-4" />
+            </a>
+
             <Badge variant="outline" className="hidden sm:flex items-center gap-1.5 border-emerald-200 bg-emerald-50 text-emerald-800 text-[11px] font-medium py-1">
               <Activity className="h-3 w-3 text-emerald-600 animate-pulse" />
               <span>AI Engine Active</span>
