@@ -58,15 +58,15 @@ export const Route = createFileRoute("/")({
 });
 
 /* ══════════════════════════════
-   MOTION VARIANTS
+   SCENE CHOREOGRAPHY VARIANTS
 ══════════════════════════════ */
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 36 },
+  hidden: { opacity: 0, y: 32 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.75,
+      duration: 0.8,
       ease: [0.16, 1, 0.3, 1],
       delay: delay as number,
     },
@@ -77,35 +77,35 @@ const fadeIn: Variants = {
   hidden: { opacity: 0 },
   visible: (delay = 0) => ({
     opacity: 1,
-    transition: { duration: 0.6, ease: "easeOut", delay: delay as number },
+    transition: { duration: 0.65, ease: "easeOut", delay: delay as number },
   }),
 };
 
 const revealLeft: Variants = {
-  hidden: { opacity: 0, x: -44 },
+  hidden: { opacity: 0, x: -40 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
 const revealRight: Variants = {
-  hidden: { opacity: 0, x: 44 },
+  hidden: { opacity: 0, x: 40 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
 const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.92 },
+  hidden: { opacity: 0, scale: 0.94 },
   visible: (delay = 0) => ({
     opacity: 1,
     scale: 1,
     transition: {
-      duration: 0.7,
+      duration: 0.75,
       ease: [0.16, 1, 0.3, 1],
       delay: delay as number,
     },
@@ -118,7 +118,7 @@ const maskReveal: Variants = {
     clipPath: "inset(0% 0% 0% 0%)",
     opacity: 1,
     transition: {
-      duration: 0.9,
+      duration: 0.95,
       ease: [0.16, 1, 0.3, 1],
       delay: delay as number,
     },
@@ -128,16 +128,16 @@ const maskReveal: Variants = {
 const staggerContainer: Variants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.08 },
+    transition: { staggerChildren: 0.09, delayChildren: 0.1 },
   },
 };
 
 const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 22 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
@@ -216,7 +216,7 @@ function AnimatedCounter({
 }
 
 /* ══════════════════════════════
-   FAQ ITEM
+   FAQ ACCORDION ITEM
 ══════════════════════════════ */
 function FaqItem({
   question,
@@ -234,11 +234,10 @@ function FaqItem({
       layout
       className={`rounded-2xl overflow-hidden border transition-all duration-300 relative ${
         isOpen
-          ? "border-[#c8a96a]/55 bg-white shadow-lg shadow-[#1e4734]/6"
-          : "border-[#e7e2d9] bg-white hover:border-[#c8a96a]/35"
+          ? "border-[#c8a96a]/60 bg-white shadow-lg shadow-[#1e4734]/6"
+          : "border-[#e7e2d9] bg-white hover:border-[#c8a96a]/40"
       }`}
     >
-      {/* Gold side bar on open */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -291,7 +290,7 @@ function FaqItem({
 }
 
 /* ══════════════════════════════
-   MAIN LANDING PAGE
+   MAIN LANDING PAGE COMPONENT
 ══════════════════════════════ */
 function LandingPage() {
   const [activeStep, setActiveStep] = useState(0);
@@ -299,13 +298,13 @@ function LandingPage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
 
-  /* Parallax scroll refs */
+  /* Scroll Parallax Hooks */
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const heroParallax = useTransform(scrollY, [0, 600], [0, -110]);
-  const heroOpacity = useTransform(scrollY, [0, 450], [1, 0]);
+  const heroOpacity = useTransform(scrollY, [0, 480], [1, 0]);
 
-  /* Mouse-reactive hero ambient light */
+  /* Mouse Spotlight Tracking */
   const mouseX = useMotionValue(50);
   const mouseY = useMotionValue(50);
   const smoothX = useSpring(mouseX, { stiffness: 70, damping: 22 });
@@ -322,7 +321,7 @@ function LandingPage() {
     [mouseX, mouseY],
   );
 
-  /* Nav scroll listener */
+  /* Scroll listener for floating nav */
   useEffect(() => {
     const onScroll = () => setNavScrolled(window.scrollY > 30);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -334,7 +333,7 @@ function LandingPage() {
     setMobileNavOpen(false);
   }, []);
 
-  /* CTA magnetic hooks */
+  /* Magnetic button instances */
   const magCta = useMagnetic(0.32);
   const magCta2 = useMagnetic(0.32);
 
@@ -464,7 +463,7 @@ function LandingPage() {
       className="bg-[#f8f6f2] text-[#1a1a1a] min-h-screen flex flex-col selection:bg-[#c8a96a]/25 overflow-x-hidden"
       style={{ fontFamily: "var(--font-sans)" }}
     >
-      {/* Accessibility skip link */}
+      {/* Skip Link for Accessibility */}
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#c8a96a] focus:text-[#132e22] focus:font-bold focus:text-sm focus:shadow-lg"
@@ -473,14 +472,14 @@ function LandingPage() {
       </a>
 
       {/* ══════════════════════════════
-          FLOATING GLASS NAVIGATION
+          SCENE 1: FLOATING GLASS NAV
       ══════════════════════════════ */}
       <motion.nav
         role="navigation"
         aria-label="Main navigation"
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex justify-center ${
           navScrolled ? "pt-3 px-4" : "pt-0 px-0"
         }`}
@@ -492,7 +491,7 @@ function LandingPage() {
               : "max-w-7xl h-16 bg-transparent px-4 sm:px-6"
           }`}
         >
-          {/* Brand */}
+          {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 group cursor-pointer">
             <motion.img
               whileHover={{ scale: 1.08 }}
@@ -509,7 +508,7 @@ function LandingPage() {
             </span>
           </Link>
 
-          {/* Desktop Links */}
+          {/* Desktop Nav Items */}
           <div className="hidden md:flex items-center gap-7">
             {navLinks.map((link) => (
               <button
@@ -522,7 +521,7 @@ function LandingPage() {
             ))}
           </div>
 
-          {/* Actions */}
+          {/* Action Buttons */}
           <div className="hidden md:flex items-center gap-2.5">
             <a
               href="https://www.youtube.com/@DailyVerse-skincare"
@@ -570,7 +569,7 @@ function LandingPage() {
             </Link>
           </div>
 
-          {/* Mobile Toggle */}
+          {/* Mobile Menu Icon */}
           <button
             onClick={() => setMobileNavOpen(!mobileNavOpen)}
             className="md:hidden p-2 text-white cursor-pointer"
@@ -602,7 +601,7 @@ function LandingPage() {
           </button>
         </div>
 
-        {/* Mobile menu dropdown */}
+        {/* Mobile Dropdown */}
         <AnimatePresence>
           {mobileNavOpen && (
             <motion.div
@@ -640,7 +639,7 @@ function LandingPage() {
       </motion.nav>
 
       {/* ══════════════════════════════
-          HERO SECTION
+          SCENE 2: CINEMATIC HERO
       ══════════════════════════════ */}
       <div
         id="main-content"
@@ -648,7 +647,7 @@ function LandingPage() {
         onMouseMove={handleHeroMouse}
         className="relative overflow-hidden min-h-[100svh] flex flex-col justify-center bg-mesh-dark text-white"
       >
-        {/* Mouse-reactive ambient spotlight */}
+        {/* Interactive Mouse Ambient Spotlight */}
         <motion.div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -660,7 +659,7 @@ function LandingPage() {
           }}
         />
 
-        {/* Ambient background glowing orbs */}
+        {/* Ambient Glowing Orbs */}
         <motion.div
           className="absolute top-[12%] left-[6%] w-[520px] h-[520px] bg-emerald-700/20 rounded-full blur-[130px] pointer-events-none"
           animate={{
@@ -680,31 +679,31 @@ function LandingPage() {
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
         />
 
-        {/* Content container */}
+        {/* Hero Content Layer */}
         <motion.div
           className="relative z-10 mx-auto max-w-6xl w-full px-4 sm:px-6 pt-28 pb-20"
           style={{ y: heroParallax, opacity: heroOpacity }}
         >
           <div className="text-center space-y-8">
-            {/* Top crown badge */}
+            {/* Top Crown Badge */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              custom={0.3}
+              custom={0.25}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#c8a96a]/40 text-[#c8a96a] text-[11px] font-semibold uppercase tracking-[0.15em] bg-white/5 backdrop-blur-sm shadow-sm"
             >
               <Crown className="h-3 w-3" aria-hidden="true" />
               Luxury Skincare · AI Automation · Pinterest Growth
             </motion.div>
 
-            {/* Editorial title */}
+            {/* Headline Line Reveal */}
             <div className="overflow-hidden">
               <motion.h1
                 variants={maskReveal}
                 initial="hidden"
                 animate="visible"
-                custom={0.45}
+                custom={0.4}
                 className="font-serif font-black tracking-tight leading-[1.02] text-white"
                 style={{
                   fontSize: "clamp(2.8rem, 7.5vw, 5.8rem)",
@@ -717,12 +716,12 @@ function LandingPage() {
               </motion.h1>
             </div>
 
-            {/* Subtext */}
+            {/* Subtitle Fade */}
             <motion.p
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              custom={0.65}
+              custom={0.6}
               className="mx-auto max-w-2xl text-[#f8f6f2]/75 leading-relaxed font-light"
               style={{ fontSize: "clamp(1rem, 2.2vw, 1.18rem)" }}
             >
@@ -731,12 +730,12 @@ function LandingPage() {
               while doing less.
             </motion.p>
 
-            {/* Action buttons */}
+            {/* Magnetic CTA Buttons */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              custom={0.8}
+              custom={0.75}
               className="flex flex-wrap justify-center gap-4 pt-2"
             >
               <motion.div
@@ -795,7 +794,7 @@ function LandingPage() {
               </motion.div>
             </motion.div>
 
-            {/* Social trust row */}
+            {/* Trust Marks Row */}
             <motion.div
               variants={staggerContainer}
               initial="hidden"
@@ -821,7 +820,7 @@ function LandingPage() {
             </motion.div>
           </div>
 
-          {/* Hero Studio Banner Card */}
+          {/* Hero Banner Showcase */}
           <motion.div
             variants={scaleIn}
             initial="hidden"
@@ -859,7 +858,7 @@ function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Hero image container */}
+            {/* Main Showcase Image with 3D Tilt */}
             <motion.div
               whileHover={{ scale: 1.015, rotateX: 1.5, rotateY: -1 }}
               transition={{ type: "spring", stiffness: 180, damping: 22 }}
@@ -882,7 +881,7 @@ function LandingPage() {
               />
             </motion.div>
 
-            {/* Scroll indicator */}
+            {/* Scroll Cue */}
             <motion.div
               className="mt-12 flex flex-col items-center gap-2"
               animate={{ y: [0, 8, 0] }}
@@ -900,7 +899,7 @@ function LandingPage() {
       </div>
 
       {/* ══════════════════════════════
-          STATS BAR
+          SCENE 3: STATS BAR
       ══════════════════════════════ */}
       <section className="bg-[#0c1c14] border-y border-[#c8a96a]/18 relative">
         <motion.div
@@ -915,7 +914,7 @@ function LandingPage() {
             { n: 99, s: ".4%", label: "Automation Uptime" },
             { n: 4, s: ".8 / 5", label: "Creator Rating" },
             { n: 100, s: "%", label: "Scheduled Publishing" },
-          ].map((stat, idx) => (
+          ].map((stat) => (
             <motion.div
               key={stat.label}
               variants={staggerItem}
@@ -934,12 +933,12 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          PROBLEM → SOLUTION SPLIT
+          SCENE 4: PROBLEM / SOLUTION
       ══════════════════════════════ */}
       <section className="bg-cream-section py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Problem column */}
+            {/* Problem Column */}
             <motion.div
               variants={revealLeft}
               initial="hidden"
@@ -985,7 +984,7 @@ function LandingPage() {
               </motion.ul>
             </motion.div>
 
-            {/* Solution column */}
+            {/* Solution Column */}
             <motion.div
               variants={revealRight}
               initial="hidden"
@@ -1039,7 +1038,7 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          FEATURES GRID
+          SCENE 5: FEATURE GRID
       ══════════════════════════════ */}
       <section id="features" className="bg-white py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-6xl px-4">
@@ -1100,7 +1099,7 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          WORKFLOW VISUALIZATION
+          SCENE 6: WORKFLOW VISUALIZATION
       ══════════════════════════════ */}
       <section className="bg-cream-section py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-6xl px-4">
@@ -1260,7 +1259,7 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          PINTEREST MASONRY GALLERY
+          SCENE 7: PINTEREST GALLERY
       ══════════════════════════════ */}
       <section id="gallery" className="bg-white py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-6xl px-4">
@@ -1292,7 +1291,7 @@ function LandingPage() {
             viewport={{ once: true, margin: "-60px" }}
             className="grid grid-cols-2 md:grid-cols-4 gap-4"
           >
-            {/* Big feature banner */}
+            {/* Featured Studio Render Banner */}
             <motion.div
               variants={staggerItem}
               whileHover={{ scale: 1.015 }}
@@ -1330,7 +1329,7 @@ function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Individual portrait cards */}
+            {/* Portrait Cards */}
             {[
               { src: "/brand/pinterest-1.jpg", label: "Peptide Hydrating Serum" },
               { src: "/brand/pinterest-2.jpg", label: "Pore Lifting Ampoule" },
@@ -1367,7 +1366,7 @@ function LandingPage() {
               </motion.div>
             ))}
 
-            {/* Profile link card */}
+            {/* Profile CTA card */}
             <motion.div
               variants={staggerItem}
               className="col-span-2 rounded-2xl overflow-hidden border border-[#e7e2d9] shadow-md bg-[#0c1c14] p-6 flex items-center justify-between gap-6"
@@ -1404,12 +1403,12 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          BENEFITS & TESTIMONIALS
+          SCENE 8: BENEFITS & TESTIMONIALS
       ══════════════════════════════ */}
       <section className="bg-cream-section py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
-            {/* Left benefits */}
+            {/* Left Column Benefits */}
             <motion.div
               variants={revealLeft}
               initial="hidden"
@@ -1478,7 +1477,7 @@ function LandingPage() {
               </motion.div>
             </motion.div>
 
-            {/* Right testimonials */}
+            {/* Right Column Testimonials */}
             <motion.div
               variants={staggerContainer}
               initial="hidden"
@@ -1526,7 +1525,7 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          COMMUNITY (DUAL SOCIAL)
+          SCENE 9: DUAL COMMUNITY SHOWCASE
       ══════════════════════════════ */}
       <section id="community" className="bg-[#0c1c14] py-28 border-y border-[#c8a96a]/18">
         <div className="mx-auto max-w-6xl px-4">
@@ -1559,7 +1558,7 @@ function LandingPage() {
             viewport={{ once: true, margin: "-60px" }}
             className="grid lg:grid-cols-2 gap-6"
           >
-            {/* YouTube */}
+            {/* YouTube Card */}
             <motion.div
               variants={staggerItem}
               whileHover={{ y: -4 }}
@@ -1647,7 +1646,7 @@ function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Pinterest */}
+            {/* Pinterest Card */}
             <motion.div
               variants={staggerItem}
               whileHover={{ y: -4 }}
@@ -1746,7 +1745,7 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          FAQ SECTION
+          SCENE 10: FAQ ACCORDION
       ══════════════════════════════ */}
       <section id="faq" className="bg-white py-28 border-b border-[#e7e2d9]">
         <div className="mx-auto max-w-3xl px-4">
@@ -1790,10 +1789,10 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          FINAL CALL TO ACTION
+          SCENE 11: FINAL CALL TO ACTION
       ══════════════════════════════ */}
       <section className="relative overflow-hidden bg-mesh-dark text-white py-32">
-        {/* Background glowing orb circles */}
+        {/* Ambient Glow Circles */}
         <motion.div
           className="absolute top-[18%] left-[8%] w-[420px] h-[420px] bg-emerald-700/20 rounded-full blur-[130px] pointer-events-none"
           animate={{ scale: [1, 1.06, 0.96, 1], x: [0, 8, -6, 0] }}
@@ -1890,12 +1889,12 @@ function LandingPage() {
       </section>
 
       {/* ══════════════════════════════
-          LUXURY FOOTER
+          SCENE 12: LUXURY FOOTER
       ══════════════════════════════ */}
       <footer className="bg-[#0a1a10] border-t border-[#c8a96a]/12 text-white/58 py-16">
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-            {/* Brand column */}
+            {/* Brand Column */}
             <div className="space-y-4 lg:col-span-2">
               <Link to="/" className="flex items-center gap-2.5 group w-fit">
                 <motion.img
@@ -1945,7 +1944,7 @@ function LandingPage() {
               </div>
             </div>
 
-            {/* Navigation Column */}
+            {/* Nav Column */}
             <div className="space-y-4">
               <h4 className="text-[11px] uppercase tracking-[0.15em] text-white/38 font-semibold">
                 Platform
@@ -1964,7 +1963,7 @@ function LandingPage() {
               </ul>
             </div>
 
-            {/* Social Links */}
+            {/* Social Column */}
             <div className="space-y-4">
               <h4 className="text-[11px] uppercase tracking-[0.15em] text-white/38 font-semibold">
                 Follow Us
