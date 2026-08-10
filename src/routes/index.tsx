@@ -121,7 +121,7 @@ function LandingPage() {
                 size="lg"
                 className="bg-[#C8A96A] hover:bg-[#D4AF37] text-[#132E22] font-bold shadow-xl h-12 px-8 text-sm cursor-pointer magnetic-hover rounded-full beam-light-effect"
               >
-                Launch Creator Suite <ArrowRight className="ml-2 h-4 w-4 text-[#132E22]" />
+                Start Creating <ArrowRight className="ml-2 h-4 w-4 text-[#132E22]" />
               </Button>
             </Link>
             <a
@@ -134,7 +134,7 @@ function LandingPage() {
                 variant="outline"
                 className="border-[#C8A96A]/40 text-white bg-white/5 hover:bg-white/10 font-medium h-12 px-8 text-sm cursor-pointer rounded-full backdrop-blur-md magnetic-hover"
               >
-                <Youtube className="mr-2 h-4 w-4 text-red-400" /> Watch on YouTube
+                <Youtube className="mr-2 h-4 w-4 text-red-400" /> Watch Demo
               </Button>
             </a>
           </div>
