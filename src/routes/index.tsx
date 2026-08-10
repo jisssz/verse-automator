@@ -93,73 +93,73 @@ function LandingPage() {
 
   return (
     <div className="bg-[#F8F6F2] text-[#222222] min-h-screen flex flex-col justify-between selection:bg-[#C8A96A]/30">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-20 px-4">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-[#1E4734]/10 via-[#C8A96A]/5 to-transparent blur-3xl pointer-events-none" />
+      {/* Hero Section — Cinematic Mesh Radial Lighting */}
+      <section className="relative overflow-hidden pt-16 pb-24 px-4 bg-mesh-dark text-white border-b border-[#C8A96A]/30">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#C8A96A]/10 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="mx-auto max-w-5xl space-y-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1E4734]/10 border border-[#C8A96A]/40 text-[#1E4734] text-xs font-semibold uppercase tracking-widest shadow-xs animate-float">
-            <Crown className="h-3.5 w-3.5 text-[#C8A96A]" /> Premium Skincare AI Automation
+        <div className="mx-auto max-w-6xl space-y-8 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C8A96A]/20 border border-[#C8A96A]/50 text-[#C8A96A] text-xs font-semibold uppercase tracking-widest shadow-lg animate-float">
+            <Crown className="h-3.5 w-3.5" /> Luxury Skincare AI Automation
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-[#1E4734] leading-[1.1] max-w-4xl mx-auto">
-            Automate Luxury Beauty Content & Syndication
+          <h1 className="font-serif text-5xl sm:text-7xl font-extrabold tracking-tight text-white leading-[1.08] max-w-5xl mx-auto drop-shadow-sm">
+            Automate Beauty Content & Syndication
           </h1>
 
-          <p className="mx-auto max-w-2xl text-sm sm:text-base text-[#666666] leading-relaxed">
-            DailyVerse AI transforms botanical skincare trends into editorial Pinterest pins,
-            FLUX.1 generated visual assets, and automated revenue pipelines.
+          <p className="mx-auto max-w-2xl text-sm sm:text-base text-[#F8F6F2]/80 leading-relaxed font-light">
+            DailyVerse AI transforms botanical skincare formulas into editorial Pinterest pins, FLUX.1 visual renderings, and automated affiliate growth pipelines.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4 pt-2">
+          <div className="flex flex-wrap justify-center gap-4 pt-4">
             <Link to="/auth">
               <Button
                 size="lg"
-                className="bg-[#1E4734] hover:bg-[#355E4D] text-white font-medium shadow-md h-12 px-8 text-sm cursor-pointer hover-lift"
+                className="bg-[#C8A96A] hover:bg-[#D4AF37] text-[#132E22] font-bold shadow-xl h-12 px-8 text-sm cursor-pointer hover-lift rounded-full"
               >
-                Launch Automation Suite <ArrowRight className="ml-2 h-4 w-4 text-[#C8A96A]" />
+                Launch Automation Suite <ArrowRight className="ml-2 h-4 w-4 text-[#132E22]" />
               </Button>
             </Link>
             <Link to="/auth">
               <Button
                 size="lg"
                 variant="outline"
-                className="border-[#E7E2D9] text-[#1E4734] hover:bg-[#F3EFE8] font-medium h-12 px-8 text-sm cursor-pointer"
+                className="border-[#C8A96A]/40 text-white bg-white/5 hover:bg-white/10 font-medium h-12 px-8 text-sm cursor-pointer rounded-full backdrop-blur-md"
               >
                 Explore Demo Workspace
               </Button>
             </Link>
           </div>
 
-          {/* Hero Banner Visual Showcase */}
-          <div className="pt-8 mx-auto max-w-5xl">
-            <div className="relative rounded-2xl overflow-hidden border border-[#C8A96A]/40 shadow-2xl group glass-panel p-2">
+          {/* Hero Overlapping Glass Composition */}
+          <div className="pt-10 mx-auto max-w-5xl relative">
+            <div className="relative rounded-2xl overflow-hidden border border-[#C8A96A]/50 shadow-2xl group glass-panel-dark p-2 text-left">
               <img
                 src="/brand/hero-banner.jpg"
                 alt="DAILY VERSE - Skincare That Works"
                 className="w-full h-auto rounded-xl object-cover transition-transform duration-700 ease-out group-hover:scale-[1.01]"
                 loading="eager"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#132E22]/60 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#132E22]/80 via-transparent to-transparent pointer-events-none" />
 
               {/* Floating Glass Badges */}
-              <div className="absolute bottom-6 left-6 hidden sm:flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-xl border border-[#E7E2D9] shadow-lg">
-                <div className="p-2 rounded-lg bg-[#1E4734] text-[#C8A96A]">
+              <div className="absolute bottom-6 left-6 hidden sm:flex items-center gap-3 bg-[#132E22]/90 backdrop-blur-xl px-4 py-2.5 rounded-xl border border-[#C8A96A]/40 shadow-2xl">
+                <div className="p-2 rounded-lg bg-[#C8A96A]/20 text-[#C8A96A]">
                   <Sparkles className="h-4 w-4" />
                 </div>
                 <div className="text-left">
-                  <p className="text-xs font-bold text-[#1E4734]">FLUX.1 AI Engine</p>
-                  <p className="text-[10px] text-[#666666]">9:16 Studio Skincare Rendering</p>
+                  <p className="text-xs font-bold text-white">FLUX.1 AI Engine</p>
+                  <p className="text-[10px] text-[#C8A96A]">9:16 Studio Visual Rendering</p>
                 </div>
               </div>
 
-              <div className="absolute bottom-6 right-6 hidden sm:flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-xl border border-[#E7E2D9] shadow-lg">
-                <div className="p-2 rounded-lg bg-emerald-50 text-emerald-700">
+              <div className="absolute bottom-6 right-6 hidden sm:flex items-center gap-3 bg-[#132E22]/90 backdrop-blur-xl px-4 py-2.5 rounded-xl border border-[#C8A96A]/40 shadow-2xl">
+                <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400">
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
                 <div className="text-left">
-                  <p className="text-xs font-bold text-[#1E4734]">Pinterest API v5</p>
-                  <p className="text-[10px] text-emerald-700 font-medium">Automatic Pin Syndication</p>
+                  <p className="text-xs font-bold text-white">Pinterest API v5</p>
+                  <p className="text-[10px] text-emerald-400 font-medium">Automatic Pin Syndication</p>
                 </div>
               </div>
             </div>
@@ -168,23 +168,23 @@ function LandingPage() {
       </section>
 
       {/* Metrics Counter Section */}
-      <section className="bg-[#132E22] text-[#F8F6F2] py-12 border-y border-[#28543E]">
-        <div className="mx-auto max-w-5xl px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <section className="bg-[#132E22] text-[#F8F6F2] py-14 border-b border-[#C8A96A]/20">
+        <div className="mx-auto max-w-6xl px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div className="space-y-1">
-            <p className="font-serif text-3xl sm:text-4xl font-bold text-[#C8A96A]">1.4M+</p>
-            <p className="text-xs text-[#F8F6F2]/70 uppercase tracking-wider">Pins Syndicated</p>
+            <p className="font-serif text-4xl sm:text-5xl font-extrabold text-[#C8A96A]">1.4M+</p>
+            <p className="text-[11px] text-[#F8F6F2]/70 uppercase tracking-widest font-medium">Pins Syndicated</p>
           </div>
           <div className="space-y-1">
-            <p className="font-serif text-3xl sm:text-4xl font-bold text-[#C8A96A]">99.4%</p>
-            <p className="text-xs text-[#F8F6F2]/70 uppercase tracking-wider">Automation Health</p>
+            <p className="font-serif text-4xl sm:text-5xl font-extrabold text-[#C8A96A]">99.4%</p>
+            <p className="text-[11px] text-[#F8F6F2]/70 uppercase tracking-widest font-medium">Automation Health</p>
           </div>
           <div className="space-y-1">
-            <p className="font-serif text-3xl sm:text-4xl font-bold text-[#C8A96A]">&lt; 1.2s</p>
-            <p className="text-xs text-[#F8F6F2]/70 uppercase tracking-wider">FLUX.1 Generation</p>
+            <p className="font-serif text-4xl sm:text-5xl font-extrabold text-[#C8A96A]">&lt; 1.2s</p>
+            <p className="text-[11px] text-[#F8F6F2]/70 uppercase tracking-widest font-medium">FLUX.1 Generation</p>
           </div>
           <div className="space-y-1">
-            <p className="font-serif text-3xl sm:text-4xl font-bold text-[#C8A96A]">100%</p>
-            <p className="text-xs text-[#F8F6F2]/70 uppercase tracking-wider">Supabase RLS Protected</p>
+            <p className="font-serif text-4xl sm:text-5xl font-extrabold text-[#C8A96A]">100%</p>
+            <p className="text-[11px] text-[#F8F6F2]/70 uppercase tracking-widest font-medium">Supabase RLS Protected</p>
           </div>
         </div>
       </section>
