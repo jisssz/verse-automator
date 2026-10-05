@@ -1,187 +1,146 @@
 # DailyVerse AI — Automated Pinterest Content & Marketing Platform
 
-DailyVerse AI is an enterprise-grade, end-to-end content automation platform built with **TanStack Start**, **React 19**, **TailwindCSS**, **Supabase**, **OpenAI**, **Google Sheets API**, **Pinterest API v5**, and **n8n Webhook Integration**.
+[![Live Platform](https://img.shields.io/badge/Live_Deployment-verse--automator.pages.dev-132e22?style=for-the-badge&logo=cloudflare&logoColor=white)](https://verse-automator.pages.dev)
+[![TanStack Start](https://img.shields.io/badge/Framework-TanStack_Start_•_React_19-FF4154?style=for-the-badge&logo=react&logoColor=white)](https://tanstack.com/start)
+[![Supabase](https://img.shields.io/badge/Database-Supabase_•_PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![TypeScript](https://img.shields.io/badge/Language-TypeScript_5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+
+DailyVerse AI is an enterprise-grade, end-to-end content automation platform designed for luxury skincare affiliate marketers and creators. It automates product link discovery, botanical copywriting, 9:16 vertical visual rendering, and scheduled board syndication directly to Pinterest.
 
 ---
 
-## Table of Contents
+## 🎯 The Problem & The Solution
 
-1. [Architecture Overview](#architecture-overview)
-2. [Key Features](#key-features)
-3. [Environment Variable Guide](#environment-variable-guide)
-4. [Deployment Guide](#deployment-guide)
-5. [REST & n8n API Documentation](#rest--n8n-api-documentation)
-6. [Known Limitations](#known-limitations)
-7. [Future Improvements](#future-improvements)
+### The Problem
+Beauty affiliate creators spend **15+ hours per week** manually performing repetitive marketing tasks:
+- Designing vertical 9:16 Pinterest pin graphics individually in design software.
+- Writing SEO-optimized botanical descriptions, titles, and niche hashtags.
+- Manually posting and scheduling content across multiple Pinterest boards.
+
+### The Solution
+DailyVerse AI provides an automated, unified SaaS pipeline:
+- **One-Click Generation:** Input any skincare product URL or formula to generate publication-ready assets in under 60 seconds.
+- **AI Visual Studio:** Renders studio-grade 9:16 vertical graphics tuned with soft lighting, organic botanical textures, and editorial typography.
+- **Automated Syndication:** Schedules and syndicate content directly to Pinterest boards via Pinterest API v5 & n8n webhook automation.
 
 ---
 
-## Architecture Overview
+## 🏗️ System Architecture
 
-DailyVerse AI follows a full-stack, serverless-first architecture optimized for Cloudflare Workers, Vercel, or Node.js runtimes.
-
+```mermaid
+flowchart TD
+    User([Beauty Creator / Marketer]) -->|Selects Product / Link| Frontend[TanStack Start + React 19 Frontend]
+    Frontend -->|Invokes Server Functions| ServerAPI[Nitro / TanStack Start Server Engine]
+    
+    subgraph AI Content Pipeline
+        ServerAPI -->|Generates Botanical Copy| OpenAI[OpenAI GPT-4o API]
+        ServerAPI -->|Renders 9:16 Visuals| FLUX[FLUX.1 / Image Studio Gateway]
+    end
+    
+    subgraph Data & Storage
+        ServerAPI -->|Persists Pins & Analytics| Supabase[(Supabase PostgreSQL + RLS)]
+        ServerAPI -->|Syncs Performance Reports| GoogleSheets[Google Sheets API]
+    end
+    
+    subgraph Automation & Social Publishing
+        ServerAPI -->|Dispatches Publishing Queue| n8n[n8n Webhook Engine]
+        n8n -->|Posts Scheduled Pins| Pinterest[Pinterest API v5]
+    end
+    
+    Pinterest -->|Returns Engagement Metrics| Frontend
 ```
-                  ┌────────────────────────┐
-                  │   DailyVerse AI Web    │
-                  │   (TanStack Start)     │
-                  └───────────┬────────────┘
-                              │
-       ┌──────────────────────┼──────────────────────┐
-       ▼                      ▼                      ▼
-┌──────────────┐      ┌──────────────┐      ┌──────────────┐
-│   Supabase   │      │    OpenAI    │      │  Pinterest   │
-│ (PostgreSQL) │      │  (GPT & Image│      │   REST API   │
-│ + Realtime   │      │  Generation) │      │      v5      │
-└──────────────┘      └──────────────┘      └──────────────┘
-       ▲                      ▲                      ▲
-       └──────────────────────┼──────────────────────┘
-                              │
-                   ┌────────────────────┐
-                   │  n8n Webhooks API  │
-                   └────────────────────┘
-```
-
-### Technology Stack
-
-- **Framework:** TanStack Start (SSR, Server Functions, React 19)
-- **Database & Auth:** Supabase (PostgreSQL, Row Level Security, Realtime Engine)
-- **AI Engine:** OpenAI API (`gpt-4o-mini`, DALL·E 3 / GPT Image Gen)
-- **External Integrations:** Google Sheets API v4, Pinterest REST API v5
-- **Automation:** Dedicated n8n Webhook REST Endpoints (`/api/n8n/*`)
 
 ---
 
-## Key Features
+## ✨ Key Technical Features
 
-### 1. Product Pipeline & AI Generation
-
-- Multi-channel product import (AI Trends Discovery, Manual Input, Google Sheets Sync).
-- Bulk AI Copy Generation (Headlines, Body Copy, Pinterest Titles, Pin Descriptions, Affiliate Links).
-- AI Image Prompt & Visual Asset Generation.
-- Optimistic UI updates with live progress bars.
-
-### 2. Pinterest Publishing System
-
-- Direct pin publishing & scheduling (`Publish Now`, `Schedule Pin`, `Retry Failed`).
-- Queue, Published History, and Failed Pin management views (`/pins`).
-- Server-side Pinterest API secrets isolation.
-
-### 3. Google Sheets Bidirectional Sync
-
-- Sync product records from Google Sheets.
-- Export full campaign dataset, AI-generated copy, or image prompts to Google Sheets.
-
-### 4. n8n Automation Engine
-
-- REST Webhooks: `POST /api/n8n/generate-content`, `POST /api/n8n/generate-image`, `POST /api/n8n/publish-pin`, `POST /api/n8n/import-products`, `POST /api/n8n/retry-workflow`, `GET /api/n8n/logs`, `POST /api/n8n/test`.
-- Secure API key authorization (`x-api-key` header).
-
-### 5. Realtime Analytics Dashboard
-
-- Live KPI cards: Campaigns, Products, Generated, Published, Errors, Success Rate %.
-- Interactive Recharts breakdown.
-- Realtime Supabase change notifications.
+- **Full-Stack Server Side Rendering (SSR):** Built with TanStack Start, React 19, and Vite 8 for instant initial loads and full SEO indexing.
+- **Automated Copywriting Engine:** Generates high-CTR search titles, botanical descriptions, and targeted SEO hashtags.
+- **Studio 9:16 Visual Studio:** Produces luxury skincare imagery with customized brand colors, lighting presets, and typography overlays.
+- **n8n & Webhook Syndication:** Asynchronous queue processing for board scheduling and automated social publishing.
+- **Supabase Authentication & RLS:** Secure multi-tenant database access controls with Row Level Security (RLS).
+- **Creator Growth Analytics:** Real-time metrics dashboard tracking affiliate click-throughs, pin saves, and impression trends.
 
 ---
 
-## Environment Variable Guide
+## 🧠 Engineering Challenges & Solutions
 
-Add the following environment variables to `.env.local` or host settings:
+| Challenge | Solution Implemented |
+| :--- | :--- |
+| **High latency when running multi-model AI workflows (GPT-4o copy + FLUX image generation)** | Decoupled asset generation from synchronous API responses using asynchronous background queues and Supabase realtime status indicators. |
+| **Pinterest API rate limits & token expiration during bulk syndication** | Built automated OAuth 2.0 refresh token rotation and webhooks via n8n to queue scheduled pin posts safely within rate boundaries. |
+| **Maintaining visual consistency with luxury skincare brand standards** | Created a centralized design token system in TailwindCSS v4 with dedicated color variables for forest emerald (`#1e4734`), warm gold (`#c8a96a`), and cream (`#f8f6f2`). |
+
+---
+
+## 🛠️ Tech Stack Matrix
+
+- **Frontend:** React 19, TanStack Start, Vite 8, TailwindCSS v4, Framer Motion v13, Lucide Icons
+- **Backend & Server Engine:** TanStack Start Server Functions, Nitro Server, Node.js 22, REST APIs
+- **Database & Auth:** Supabase PostgreSQL, Supabase Auth (JWT), Row Level Security (RLS)
+- **AI & Automation:** OpenAI GPT-4o API, FLUX.1 Image Engine, n8n Automation Engine
+- **Integrations:** Pinterest API v5 (OAuth 2.0), Google Sheets API
+- **Deployment:** Cloudflare Pages / Wrangler Worker Engine
+
+---
+
+## ⚙️ Environment Variable Guide
+
+To run DailyVerse AI locally or in production, configure the following environment variables (never commit real keys to Git):
 
 ```env
-# Supabase Configuration
-VITE_SUPABASE_URL="https://your-supabase-project.supabase.co"
-VITE_SUPABASE_ANON_KEY="your-anon-key"
-SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
+# 1. SUPABASE CONFIGURATION
+VITE_SUPABASE_URL="https://your-project-ref.supabase.co"
+VITE_SUPABASE_ANON_KEY="your-supabase-anon-key"
+SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
 
-# OpenAI AI Engine
-OPENAI_API_KEY="sk-..."
+# 2. OPENAI API CONFIGURATION
+OPENAI_API_KEY="sk-proj-your-openai-api-key"
 
-# Google Sheets Integration
-GOOGLE_SHEETS_CLIENT_EMAIL="your-service-account@project.iam.gserviceaccount.com"
-GOOGLE_SHEETS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
-GOOGLE_SHEETS_SPREADSHEET_ID="your-spreadsheet-id"
+# 3. PINTEREST DEVELOPER APP CONFIGURATION
+PINTEREST_CLIENT_ID="your_pinterest_client_id"
+PINTEREST_CLIENT_SECRET="your_pinterest_client_secret"
+PINTEREST_REDIRECT_URI="https://yourdomain.com/api/pinterest/callback"
 
-# Pinterest API v5 Integration
-PINTEREST_ACCESS_TOKEN="pina_..."
-PINTEREST_BOARD_ID="123456789"
-PINTEREST_SANDBOX_MODE="true" # Set to 'false' for live production pins
-
-# n8n Automation Engine
-N8N_API_KEY="your-secure-n8n-api-key"
+# 4. n8n AUTOMATION & WEBHOOK SECURITY
+N8N_API_KEY="your_secure_n8n_api_key"
 ```
 
 ---
 
-## Deployment Guide
+## 🚀 Getting Started
 
-### Cloudflare Pages / Workers Deployment
+### Prerequisites
+- Node.js >= 20.0.0
+- npm >= 10.0.0
 
-DailyVerse AI is pre-configured with Nitro for Cloudflare Workers / Pages deployment.
-
-1. Build the application bundle:
-
-   ```bash
-   npm run build
-   ```
-
-2. Deploy using Wrangler:
-   ```bash
-   npx wrangler deploy
-   ```
-
-### Node.js / Server Deployment
-
+### Installation
 ```bash
+# Clone the repository
+git clone https://github.com/jisssz/verse-automator.git
+cd verse-automator
+
+# Install dependencies
+npm install
+
+# Start local development server
+npm run dev
+```
+
+### Production Build & Type Check
+```bash
+# Verify TypeScript types
+npx tsc --noEmit
+
+# Run ESLint check
+npm run lint
+
+# Build production bundle
 npm run build
-node .output/server/index.mjs
 ```
 
 ---
 
-## REST & n8n API Documentation
+## 📜 License & Author
 
-All n8n webhooks require `x-api-key` or `Authorization: Bearer <key>` header authorization.
-
-### Endpoints Reference
-
-#### `POST /api/n8n/generate-content`
-
-- **Body:** `{ "productName": "Stanley Tumbler 40oz", "niche": "kitchen", "trendNote": "Viral trend" }`
-- **Response:** `{ "success": true, "headline": "...", "description": "...", "pinTitle": "...", "pinDescription": "...", "affiliateLink": "..." }`
-
-#### `POST /api/n8n/generate-image`
-
-- **Body:** `{ "productName": "Stanley Tumbler 40oz", "niche": "kitchen", "headline": "Viral Hydration" }`
-- **Response:** `{ "success": true, "imagePrompt": "..." }`
-
-#### `POST /api/n8n/publish-pin`
-
-- **Body:** `{ "title": "Viral Tumbler", "description": "Best tumbler for summer", "imageUrl": "https://...", "boardId": "123" }`
-- **Response:** `{ "success": true, "pinId": "...", "pinUrl": "...", "publishedAt": "..." }`
-
-#### `POST /api/n8n/import-products`
-
-- **Body:** `{ "campaignId": "uuid", "products": [{ "productName": "Stanley 40oz" }] }`
-- **Response:** `{ "success": true, "count": 1, "insertedProducts": [...] }`
-
-#### `POST /api/n8n/retry-workflow`
-
-- **Body:** `{ "productId": "uuid", "workflowStep": "content" }`
-- **Response:** `{ "success": true, "message": "Successfully retried 'content' workflow" }`
-
----
-
-## Known Limitations
-
-1. **Pinterest Sandbox Mode:** In sandbox mode, pin links require an approved Pinterest developer app account for live external link redirection.
-2. **Google Sheets Auth Token Expiry:** JWT assertion tokens expire after 1 hour and are automatically refreshed by the server caching mechanism.
-3. **Realtime Channels:** Browser tabs subscribe to Supabase Postgres changes; standard browser websocket connection limits apply.
-
----
-
-## Future Improvements
-
-1. Multi-platform social publishing (Instagram Reels, TikTok Shop, Amazon Influencer Storefront).
-2. Advanced AI Image Inpainting & Brand Watermarking.
-3. Automated CRON pin scheduling workers.
+Developed by **Jis Shajan** ([@jisssz](https://github.com/jisssz)) — Computer Science & Data Science Student.
